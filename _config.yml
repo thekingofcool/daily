@@ -1,0 +1,23 @@
+title: data statistics space
+author: thekingofcool
+favicon: /assets/images/favicon.ico
+email: sayhi@thekingof.cool
+url: data.thekingof.cool
+description: > 
+ you're too slow and have no rhythm. 
+
+# Build settings
+remote_theme: riggraz/no-style-please
+
+theme_config:
+  appearance: "light" # can be "light", "dark" or "auto"
+  back_home_text: "<-" # customize text for homepage link in post layout
+  date_format: "%Y-%m-%d" # customize how date is formatted
+  show_description: true # show blog description in home page
+
+plugins:
+  - jekyll-feed
+
+sass:
+  sass_dir: _sass
+  style: compressed

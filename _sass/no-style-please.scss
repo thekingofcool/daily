@@ -1,0 +1,126 @@
+
+// -------------- FONT FACE -------------- //
+@font-face {
+  font-family: 'Minecraft';
+  src: url('../fonts/Minecraft.ttf') format('truetype'); // 确保路径正确
+}
+@font-face {
+  font-family: 'Fangzheng Pixel'; /* 自定义字体名称 */
+  src: url('../fonts/FangzhengPixel.ttf') format('truetype'); /* 确保路径正确 */
+}
+
+// -------------- THEME SWITCHER -------------- //
+@mixin dark-appearance {
+  filter: invert(1);
+  img {
+    filter: invert(1);
+
+    &.ioda { filter: invert(0); }
+  }
+}
+
+body[a="dark"] { @include dark-appearance; }
+
+@media (prefers-color-scheme: dark) {
+  body[a="auto"] { @include dark-appearance; }
+}
+// -------------------------------------------- //
+
+// bg color is also needed in html in order to
+// block body's background propagation
+// see: https://stackoverflow.com/a/61265706
+html, body { background-color: white; }
+
+html { height: 100%; }
+
+body {
+  color: black;
+  font-family: "Minecraft", "Fangzheng Pixel";
+  font-size: 1.3rem;
+  line-height: 1.3;
+  margin: 0;
+  min-height: 100%;
+}
+
+h2, h3, h4, h5 { margin-top: 3rem; }
+
+hr { margin: 2rem 0; }
+
+p { margin: 1rem 0; }
+
+li { margin: 0.4rem 0; }
+
+*:target { background-color: yellow; }
+
+.w {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+hr {
+  text-align: center;
+  border: 0;
+
+  &:before { content: '/////' }
+  &:after { content: attr(data-content) '/////' }
+}
+
+table {
+    width: 100%;
+    border: thin solid black;
+    border-collapse: collapse;
+    table-layout: auto; /* 自动调整表格布局 */
+    overflow-x: auto; /* 当内容超出时，允许水平滚动 */
+    display: block; /* 使表格成为块级元素 */
+}
+
+th, td {
+    border: thin solid black;
+    padding: 0.4rem;
+}
+
+code {
+  color: white;
+  background-color: black;
+}
+
+div.highlighter-rouge code {
+  display: block;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+blockquote {
+  font-style: italic;
+  border: thin solid black;
+  padding: 1rem;
+
+  p { margin: 0; }
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+footer {
+	font-size: 0.8em; /* 缩小字体 */
+	/* border-top: 1px solid #ccc;  添加分隔线 */
+	padding-top: 10px;
+	text-align: center; /* 居中对齐 */
+}
+footer ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+footer ul li {
+	display: inline;
+	margin-right: 15px;
+}
+footer ul li:last-child {
+	margin-right: 0;
+}
+

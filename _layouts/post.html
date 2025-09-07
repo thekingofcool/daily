@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+{%-include back_link.html-%}
+<article>
+  <h1>{{ page.title }}</h1>
+  <p class="post-meta">
+    <span style="float: left;">{{ page.author | default: site.author }}</span>
+    <time datetime="{{ page.date }}" style="float: right;">{{ page.date | date: site.theme_config.date_format }}</time>
+  </p>
+  <div style="clear: both;"></div>
+  {{ content }}
+</article>
+<script src="https://utteranc.es/client.js"
+        repo="thekingofcool/thekingofcool.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
