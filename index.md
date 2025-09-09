@@ -2,7 +2,7 @@
 layout: home
 ---
 
-2025-09-07 | diagram
+### demo diagram of the day
 
 {% include lazy_image.html src="assets/images/demo.png" alt="" %}
 
