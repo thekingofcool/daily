@@ -3,7 +3,7 @@ entries:
   #   entries:
   #     - title: What am I Doing Now
   #       url: /now
-  - title: data statistics
+  - title: daily thoughts
     post_list:
-      category: statistics
+      category: thoughts
     entries: false
