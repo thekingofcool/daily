@@ -3,7 +3,4 @@
 Gemfile.lock
 .DS_Store
 _posts/.obsidian/
-_posts/00 - template/
-_posts/.trash/
-_posts/01 - work/
-_posts/02 - personal/
+_posts/template/
