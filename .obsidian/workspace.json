@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-10-11-trade-war3.md",
+                "file": "_posts/2025-10-12-crypto.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "2025-10-11-trade-war3"
+              "title": "2025-10-12-crypto"
             }
           }
         ]
@@ -169,10 +169,13 @@
   },
   "active": "d486640d85d466e3",
   "lastOpenFiles": [
+    "_site/thoughts/2025/10/12/crypto.html",
+    "_site/thoughts/2025/10/12",
+    "_posts/2025-10-11-trade-war3.md",
+    "_posts/2025-10-12-crypto.md",
     "_site/thoughts/2025/10/11/trade-war3.html",
     "_site/thoughts/2025/10/11",
     "_posts/template/temp.md",
-    "_posts/2025-10-11-trade-war3.md",
     "_posts/2025-10-10-ai.md",
     "_posts/template",
     "_posts/templete/temp.md",
