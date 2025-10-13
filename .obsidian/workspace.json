@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-10-12-crypto.md",
+                "file": "_posts/2025-10-13-purpose.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "2025-10-12-crypto"
+              "title": "2025-10-13-purpose"
             }
           }
         ]
@@ -78,8 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 253.5,
-    "collapsed": true
+    "width": 253.5
   },
   "right": {
     "id": "219592bb846b2490",
@@ -169,10 +168,13 @@
   },
   "active": "d486640d85d466e3",
   "lastOpenFiles": [
+    "_site/thoughts/2025/10/13/purpose.html",
+    "_site/thoughts/2025/10/13",
+    "_posts/2025-10-12-crypto.md",
+    "_posts/2025-10-13-purpose.md",
     "_site/thoughts/2025/10/12/crypto.html",
     "_site/thoughts/2025/10/12",
     "_posts/2025-10-11-trade-war3.md",
-    "_posts/2025-10-12-crypto.md",
     "_site/thoughts/2025/10/11/trade-war3.html",
     "_site/thoughts/2025/10/11",
     "_posts/template/temp.md",
@@ -184,8 +186,6 @@
     "_site/thoughts/2025/10/09/quit-my-job.html",
     "_site/thoughts/2025/10/09",
     "_site/thoughts/2025/10",
-    "_site/thoughts/2025",
-    "_site/thoughts",
     "assets/images/population_1.jpeg",
     "assets/images/img.jpg",
     "assets/images/demo.png",
