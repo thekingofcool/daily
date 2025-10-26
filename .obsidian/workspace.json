@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-10-13-purpose.md",
+                "file": "_posts/2025-10-26-do-the-right-thing.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "2025-10-13-purpose"
+              "title": "2025-10-26-do-the-right-thing"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 253.5
+    "width": 253.5,
+    "collapsed": true
   },
   "right": {
     "id": "219592bb846b2490",
@@ -168,10 +169,13 @@
   },
   "active": "d486640d85d466e3",
   "lastOpenFiles": [
+    "_site/thoughts/2025/10/26/do-the-right-thing.html",
+    "_site/thoughts/2025/10/26",
+    "_posts/2025-10-13-purpose.md",
+    "_posts/2025-10-26-do-the-right-thing.md",
     "_site/thoughts/2025/10/13/purpose.html",
     "_site/thoughts/2025/10/13",
     "_posts/2025-10-12-crypto.md",
-    "_posts/2025-10-13-purpose.md",
     "_site/thoughts/2025/10/12/crypto.html",
     "_site/thoughts/2025/10/12",
     "_posts/2025-10-11-trade-war3.md",
@@ -184,8 +188,6 @@
     "_posts/2025-10-09-quit-my-job.md",
     "_posts/templete",
     "_site/thoughts/2025/10/09/quit-my-job.html",
-    "_site/thoughts/2025/10/09",
-    "_site/thoughts/2025/10",
     "assets/images/population_1.jpeg",
     "assets/images/img.jpg",
     "assets/images/demo.png",
