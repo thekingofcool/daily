@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 1a - From Prompt to Action" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/10/day-1a-from-prompt-to-action.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 1a - From Prompt to Action</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 1a - From Prompt to Action</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-10 00:00:00 +0800" style="float: right;">2025-11-10</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h5 id="copyright-2025-google-llc">Copyright 2025 Google LLC.</h5>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># @title Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+</span></code></pre></div></div>
+
+<h1 id="-your-first-ai-agent-from-prompt-to-action">🚀 Your First AI Agent: From Prompt to Action</h1>
+
+<p><strong>Welcome to the Kaggle 5-day Agents course!</strong></p>
+
+<p>This notebook is your first step into building AI agents. An agent can do more than just respond to a prompt — it can <strong>take actions</strong> to find information or get things done.</p>
+
+<p>In this notebook, you’ll:</p>
+
+<ul>
+  <li>✅ Install <a href="https://google.github.io/adk-docs/">Agent Development Kit (ADK)</a></li>
+  <li>✅ Configure your API key to use the Gemini model</li>
+  <li>✅ Build your first simple agent</li>
+  <li>✅ Run your agent and watch it use a tool (like Google Search) to answer a question</li>
+</ul>
+
+<p><strong>ℹ️ Note: No submission required!</strong></p>
+
+<p>This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+
+<h2 id="-get-started-with-kaggle-notebooks">📖 Get started with Kaggle Notebooks</h2>
+
+<p>If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks <a href="https://www.kaggle.com/docs/notebooks">in the documentation</a>.</p>
+
+<p>Here’s how to get started:</p>
+
+<p><strong>1. Verify Your Account (Required)</strong></p>
+
+<p>To use the Kaggle Notebooks in this course, you’ll need to verify your account with a phone number.</p>
+
+<p>You can do this in your <a href="https://www.kaggle.com/settings">Kaggle settings</a>.</p>
+
+<p><strong>2. Make Your Own Copy</strong></p>
+
+<p>To run any code in this notebook, you first need your own editable copy.</p>
+
+<p>Click the <code class="language-plaintext highlighter-rouge">Copy and Edit</code> button in the top-right corner.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png" alt="Copy and Edit button" /></p>
+
+<p>This creates a private copy of the notebook just for you.</p>
+
+<p><strong>3. Run Code Cells</strong></p>
+
+<p>Once you have your copy, you can run code.</p>
+
+<p>Click the ▶️ Run button next to any code cell to execute it.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png" alt="Run cell button" /></p>
+
+<p>Run the cells in order from top to bottom.</p>
+
+<p><strong>4. If You Get Stuck</strong></p>
+
+<p>To restart: Select <code class="language-plaintext highlighter-rouge">Factory reset</code> from the <code class="language-plaintext highlighter-rouge">Run</code> menu.</p>
+
+<p>For help: Ask questions on the <a href="https://discord.com/invite/kaggle">Kaggle Discord</a> server.</p>
+
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<h3 id="install-dependencies">Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies, so you don’t need to install additional packages in this notebook.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="11-configure-your-gemini-api-key">1.1 Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/docs">Gemini API</a>, which requires authentication.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to complete authentication.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_GENAI_USE_VERTEXAI</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">FALSE</span><span class="sh">"</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Gemini API key setup complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Gemini API key setup complete.
+</code></pre></div></div>
+
+<h3 id="12-import-adk-components">1.2 Import ADK components</h3>
+
+<p>Now, import the specific components you’ll need from the Agent Development Kit and the Generative AI library. This keeps your code organized and ensures we have access to the necessary building blocks.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">Agent</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">InMemoryRunner</span>
+<span class="kn">from</span> <span class="n">google.adk.tools</span> <span class="kn">import</span> <span class="n">google_search</span>
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ ADK components imported successfully.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ ADK components imported successfully.
+</code></pre></div></div>
+
+<h3 id="13-helper-functions">1.3 Helper functions</h3>
+
+<p>We’ll define some helper functions. If you are running this outside the Kaggle environment, you don’t need to do this.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define helper functions that will be reused throughout the notebook
+</span>
+<span class="kn">from</span> <span class="n">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="n">jupyter_server.serverapp</span> <span class="kn">import</span> <span class="n">list_running_servers</span>
+
+<span class="c1"># Gets the proxied URL in the Kaggle Notebooks environment
+</span><span class="k">def</span> <span class="nf">get_adk_proxy_url</span><span class="p">():</span>
+    <span class="n">PROXY_HOST</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://kkb-production.jupyter-proxy.kaggle.net</span><span class="sh">"</span>
+    <span class="n">ADK_PORT</span> <span class="o">=</span> <span class="sh">"</span><span class="s">8000</span><span class="sh">"</span>
+
+    <span class="n">servers</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">list_running_servers</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">servers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nc">Exception</span><span class="p">(</span><span class="sh">"</span><span class="s">No running Jupyter servers found.</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="n">baseURL</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">base_url</span><span class="sh">'</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">path_parts</span> <span class="o">=</span> <span class="n">baseURL</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">'</span><span class="s">/</span><span class="sh">'</span><span class="p">)</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nc">Exception</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Could not parse kernel/token from base URL: </span><span class="si">{</span><span class="n">baseURL</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="n">url_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="s">/k/</span><span class="si">{</span><span class="n">kernel</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s">/proxy/proxy/</span><span class="si">{</span><span class="n">ADK_PORT</span><span class="si">}</span><span class="sh">"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">PROXY_HOST</span><span class="si">}{</span><span class="n">url_prefix</span><span class="si">}</span><span class="sh">"</span>
+
+    <span class="n">styled_html</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">
+    &lt;div style=</span><span class="sh">"</span><span class="s">padding: 15px; border: 2px solid #f0ad4e; border-radius: 8px; background-color: #fef9f0; margin: 20px 0;</span><span class="sh">"</span><span class="s">&gt;
+        &lt;div style=</span><span class="sh">"</span><span class="s">font-family: sans-serif; margin-bottom: 12px; color: #333; font-size: 1.1em;</span><span class="sh">"</span><span class="s">&gt;
+            &lt;strong&gt;⚠️ IMPORTANT: Action Required&lt;/strong&gt;
+        &lt;/div&gt;
+        &lt;div style=</span><span class="sh">"</span><span class="s">font-family: sans-serif; margin-bottom: 15px; color: #333; line-height: 1.5;</span><span class="sh">"</span><span class="s">&gt;
+            The ADK web UI is &lt;strong&gt;not running yet&lt;/strong&gt;. You must start it in the next cell.
+            &lt;ol style=</span><span class="sh">"</span><span class="s">margin-top: 10px; padding-left: 20px;</span><span class="sh">"</span><span class="s">&gt;
+                &lt;li style=</span><span class="sh">"</span><span class="s">margin-bottom: 5px;</span><span class="sh">"</span><span class="s">&gt;&lt;strong&gt;Run the next cell&lt;/strong&gt; (the one with &lt;code&gt;!adk web ...&lt;/code&gt;) to start the ADK web UI.&lt;/li&gt;
+                &lt;li style=</span><span class="sh">"</span><span class="s">margin-bottom: 5px;</span><span class="sh">"</span><span class="s">&gt;Wait for that cell to show it is </span><span class="sh">"</span><span class="s">Running</span><span class="sh">"</span><span class="s"> (it will not </span><span class="sh">"</span><span class="s">complete</span><span class="sh">"</span><span class="s">).&lt;/li&gt;
+                &lt;li&gt;Once it</span><span class="sh">'</span><span class="s">s running, &lt;strong&gt;return to this button&lt;/strong&gt; and click it to open the UI.&lt;/li&gt;
+            &lt;/ol&gt;
+            &lt;em style=</span><span class="sh">"</span><span class="s">font-size: 0.9em; color: #555;</span><span class="sh">"</span><span class="s">&gt;(If you click the button before running the next cell, you will get a 500 error.)&lt;/em&gt;
+        &lt;/div&gt;
+        &lt;a href=</span><span class="sh">'</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="sh">'</span><span class="s"> target=</span><span class="sh">'</span><span class="s">_blank</span><span class="sh">'</span><span class="s"> style=</span><span class="sh">"</span><span class="s">
+            display: inline-block; background-color: #1a73e8; color: white; padding: 10px 20px;
+            text-decoration: none; border-radius: 25px; font-family: sans-serif; font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.2s ease;</span><span class="sh">"</span><span class="s">&gt;
+            Open ADK Web UI (after running cell below) ↗
+        &lt;/a&gt;
+    &lt;/div&gt;
+    </span><span class="sh">"""</span>
+
+    <span class="nf">display</span><span class="p">(</span><span class="nc">HTML</span><span class="p">(</span><span class="n">styled_html</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">url_prefix</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined.
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-section-2-your-first-ai-agent-with-adk">🤖 Section 2: Your first AI Agent with ADK</h2>
+
+<h3 id="-21-what-is-an-ai-agent">🤔 2.1 What is an AI Agent?</h3>
+
+<p>You’ve probably used an LLM like Gemini before, where you give it a prompt and it gives you a text response.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Prompt -&gt; LLM -&gt; Text</code></p>
+
+<p>An AI Agent takes this one step further. An agent can think, take actions, and observe the results of those actions to give you a better answer.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Prompt -&gt; Agent -&gt; Thought -&gt; Action -&gt; Observation -&gt; Final Answer</code></p>
+
+<p>In this notebook, we’ll build an agent that can take the action of searching Google. Let’s see the difference!</p>
+
+<h3 id="22-define-your-agent">2.2 Define your agent</h3>
+
+<p>Now, let’s build our agent. We’ll configure an <code class="language-plaintext highlighter-rouge">Agent</code> by setting its key properties, which tell it what to do and how to operate.</p>
+
+<p>To learn more, check out the documentation related to <a href="https://google.github.io/adk-docs/agents/">agents in ADK</a>.</p>
+
+<p>These are the main properties we’ll set:</p>
+
+<ul>
+  <li><strong>name</strong> and <strong>description</strong>: A simple name and description to identify our agent.</li>
+  <li><strong>model</strong>: The specific LLM that will power the agent’s reasoning. We’ll use “gemini-2.5-flash-lite”.</li>
+  <li><strong>instruction</strong>: The agent’s guiding prompt. This tells the agent its goal is and how to behave.</li>
+  <li><strong>tools</strong>: A list of <a href="https://google.github.io/adk-docs/tools/">tools</a> that the agent can use. To start, we’ll give it the <code class="language-plaintext highlighter-rouge">google_search</code> tool, which lets it find up-to-date information online.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">root_agent</span> <span class="o">=</span> <span class="nc">Agent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">helpful_assistant</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="sh">"</span><span class="s">A simple agent that can answer general questions.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"</span><span class="s">You are a helpful assistant. Use Google Search for current info or if unsure.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">google_search</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Root Agent defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Root Agent defined.
+</code></pre></div></div>
+
+<h3 id="23-run-your-agent">2.3 Run your agent</h3>
+
+<p>Now it’s time to bring your agent to life and send it a query. To do this, you need a <a href="https://google.github.io/adk-docs/runtime/"><code class="language-plaintext highlighter-rouge">Runner</code></a>, which is the central component within ADK that acts as the orchestrator. It manages the conversation, sends our messages to the agent, and handles its responses.</p>
+
+<p><strong>a. Create an <code class="language-plaintext highlighter-rouge">InMemoryRunner</code> and tell it to use our <code class="language-plaintext highlighter-rouge">root_agent</code>:</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">runner</span> <span class="o">=</span> <span class="nc">InMemoryRunner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">root_agent</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Runner created.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Runner created.
+</code></pre></div></div>
+
+<p>👉 Note that we are using the Python Runner directly in this notebook. You can also run agents using ADK command-line tools such as <code class="language-plaintext highlighter-rouge">adk run</code>, <code class="language-plaintext highlighter-rouge">adk web</code>, or <code class="language-plaintext highlighter-rouge">adk api_server</code>. To learn more, check out the documentation related to <a href="https://google.github.io/adk-docs/runtime/">runtime in ADK</a>.</p>
+
+<p><strong>b. Now you can call the <code class="language-plaintext highlighter-rouge">.run_debug()</code> method to send our prompt and get an answer.</strong></p>
+
+<p>👉 This method abstracts the process of session creation and maintenance and is used in prototyping. We’ll explore “what sessions are and how to create them” on Day 3.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="p">.</span><span class="nf">run_debug</span><span class="p">(</span><span class="sh">"</span><span class="s">Tell me something about Unity Software</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Created new session: debug_session_id
+
+User &gt; Tell me something about Unity Software
+helpful_assistant &gt; Unity Software Inc., operating as Unity Technologies, is an American company that develops a popular software platform for creating and operating real-time 3D content. Founded in Denmark in 2004 as Over the Edge Entertainment, it later changed its name to Unity Technologies in 2007. The company is best known for its game engine, Unity, which is licensed for creating video games and other applications.
+
+Unity's platform is used to develop 2D, 3D, virtual reality, and augmented reality games and simulations. It is particularly popular in mobile game development, powering an estimated 50% of mobile games. Beyond gaming, Unity's real-time 3D capabilities are utilized in various industries, including film, automotive, retail, architecture, engineering, and construction.
+
+Key milestones in Unity's history include:
+*   **2004:** Founded in Copenhagen, Denmark, by David Helgason, Nicholas Francis, and Joachim Ante, with the vision of democratizing game development.
+*   **2005:** The first version of Unity was released for Mac OS X.
+*   **2007:** Support for the Windows platform was added.
+*   **2010:** The Unity Asset Store was launched, creating an online marketplace for developers to buy and sell assets.
+*   **2020:** Unity went public.
+*   **2023:** The company modified its 'Runtime Fee' policy following developer feedback.
+
+As of October 2025, Unity Software's stock price is $36.88, with a market capitalization of $15.6 billion. The company's revenue for the trailing twelve months ending September 2025 was $1.8 billion. Unity's strategic advantages include its vast developer ecosystem, cross-platform leadership, and its role as a cornerstone technology provider for interactive content creation.
+</code></pre></div></div>
+
+<p>You can see a summary of ADK and its available languages in the response.</p>
+
+<h3 id="24-how-does-it-work">2.4 How does it work?</h3>
+
+<p>The agent performed a Google Search to get the latest information about ADK, and it knew to use this tool because:</p>
+
+<ol>
+  <li>The agent inspects and is aware of which tools it has available to use.</li>
+  <li>The agent’s instructions specify the use of the search tool to get current information or if it is unsure of an answer.</li>
+</ol>
+
+<p>The best way to see the full, detailed trace of the agent’s thoughts and actions is in the <strong>ADK web UI</strong>, which we’ll set up later in this notebook.</p>
+
+<p>And we’ll cover more detailed workflows for logging and observability later in the course.</p>
+
+<h3 id="-25-your-turn">🚀 2.5 Your Turn!</h3>
+
+<p>This is your chance to see the agent in action. Ask it a question that requires current information.</p>
+
+<p>Try one of these, or make up your own:</p>
+
+<ul>
+  <li>What’s the weather in London?</li>
+  <li>Who won the last soccer world cup?</li>
+  <li>What new movies are showing in theaters now?</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="p">.</span><span class="nf">run_debug</span><span class="p">(</span><span class="sh">"</span><span class="s">What</span><span class="sh">'</span><span class="s">s the current stock price of Unity Software?</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Continue session: debug_session_id
+
+User &gt; What's the current stock price of Unity Software?
+helpful_assistant &gt; The current stock price for Unity Software (NYSE: U) is approximately $40.03 as of November 7, 2025.
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-section-3-try-the-adk-web-interface">💻 Section 3: Try the ADK Web Interface</h2>
+
+<h3 id="overview">Overview</h3>
+
+<p>ADK includes a built-in web interface for interactively chatting with, testing, and debugging your agents.</p>
+
+<p><img width="1200" src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day1/adk-web-ui.gif" alt="ADK Web UI" /></p>
+
+<p>To use the ADK web UI, you’ll need to create an agent with Python files using the <code class="language-plaintext highlighter-rouge">adk create</code> command.</p>
+
+<p>Run the command below to generate a <code class="language-plaintext highlighter-rouge">sample-agent</code> folder that contains all the necessary files, including <code class="language-plaintext highlighter-rouge">agent.py</code> for your code, an <code class="language-plaintext highlighter-rouge">.env</code> file with your API key pre-configured, and an <code class="language-plaintext highlighter-rouge">__init__.py</code> file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">!</span><span class="n">adk</span> <span class="n">create</span> <span class="n">temp</span><span class="o">-</span><span class="n">agent</span> <span class="o">--</span><span class="n">model</span> <span class="n">gemini</span><span class="o">-</span><span class="mf">2.5</span><span class="o">-</span><span class="n">flash</span><span class="o">-</span><span class="n">lite</span> <span class="o">--</span><span class="n">api_key</span> <span class="err">$</span><span class="n">GOOGLE_API_KEY</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[32m
+Agent created in /kaggle/working/temp-agent:
+- .env
+- __init__.py
+- agent.py
+[0m
+</code></pre></div></div>
+
+<p>Get your custom URL to access the ADK web UI in the Kaggle Notebooks environment:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">url_prefix</span> <span class="o">=</span> <span class="nf">get_adk_proxy_url</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>---------------------------------------------------------------------------
+
+Exception                                 Traceback (most recent call last)
+
+/tmp/ipykernel_13/3087617244.py in &lt;cell line: 0&gt;()
+----&gt; 1 url_prefix = get_adk_proxy_url()
+
+
+/tmp/ipykernel_13/1354774797.py in get_adk_proxy_url()
+     11     servers = list(list_running_servers())
+     12     if not servers:
+---&gt; 13         raise Exception("No running Jupyter servers found.")
+     14 
+     15     baseURL = servers[0]['base_url']
+
+
+Exception: No running Jupyter servers found.
+</code></pre></div></div>
+
+<p>Now we can run ADK web:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">!</span><span class="n">adk</span> <span class="n">web</span> <span class="o">--</span><span class="n">url_prefix</span> <span class="p">{</span><span class="n">url_prefix</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now you can access the ADK dev UI using the link above.</p>
+
+<p>Once you open the link, you’ll see the ADK web interface where you can ask your ADK agent questions.</p>
+
+<p>Note: This sample agent does not have any tools enabled (like Google Search). It is a basic agent designed specifically to let you explore the UI features.</p>
+
+<p>‼️ <strong>IMPORTANT: DO NOT SHARE THE PROXY LINK</strong> with anyone - treat it as sensitive data as it contains your authentication token in the URL.</p>
+
+<hr />
+
+<h2 id="-congratulations">✅ Congratulations!</h2>
+
+<p>You’ve built and run your first agent with ADK! You’ve just seen the core concept of agent development in action.</p>
+
+<p>The big takeaway is that your agent didn’t just <em>respond</em>—it <strong>reasoned</strong> that it needed more information and then <strong>acted</strong> by using a tool. This ability to take action is the foundation of all agent-based AI.</p>
+
+<p><strong>ℹ️ Note: No submission required!</strong></p>
+
+<p>This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+
+<h3 id="-learn-more">📚 Learn More</h3>
+
+<p>Refer to the following documentation to learn more:</p>
+
+<ul>
+  <li><a href="https://google.github.io/adk-docs/">ADK Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/get-started/python/">ADK Quickstart for Python</a></li>
+  <li><a href="https://google.github.io/adk-docs/agents/">ADK Agents Overview</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools/">ADK Tools Overview</a></li>
+</ul>
+
+<h3 id="-next-steps">🎯 Next Steps</h3>
+
+<p>Ready for the next challenge? Continue to the next notebook to learn how to <strong>architect multi-agent systems.</strong></p>
+
+<hr />
+
+<table>
+  <thead>
+    <tr>
+      <th>Authors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="http://linkedin.com/in/koverholt">Kristopher Overholt</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>
