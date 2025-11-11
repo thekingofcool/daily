@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-11-10-day-1a-from-prompt-to-action.md",
+                "file": "_posts/2025-11-11-day-2b-agent-tools-best-practices.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "2025-11-10-day-1a-from-prompt-to-action"
+              "title": "2025-11-11-day-2b-agent-tools-best-practices"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 283.5
+    "width": 361.5
   },
   "right": {
     "id": "219592bb846b2490",
@@ -168,23 +168,26 @@
   },
   "active": "d486640d85d466e3",
   "lastOpenFiles": [
+    "_site/thoughts/2025/11/11/macro.html",
+    "_site/thoughts/2025/11/11/day-2b-agent-tools-best-practices.html",
+    "_site/thoughts/2025/11/11/day-2a-agent-tools.html",
+    "_site/thoughts/2025/11/11",
+    "_posts/2025-11-11-day-2a-agent-tools.md",
+    "_posts/2025-11-11-day-2b-agent-tools-best-practices.md",
+    "_posts/2025-11-11-macro.md",
+    "_posts/2025-11-10-day-1a-from-prompt-to-action.md",
     "_site/thoughts/2025/11/10/day-1b-agent-architectures.html",
     "_site/thoughts/2025/11/10/day-1a-from-prompt-to-action.html",
     "_site/thoughts/2025/11/10",
     "_posts/2025-11-10-day-1b-agent-architectures.md",
-    "_posts/2025-11-10-day-1a-from-prompt-to-action.md",
     "_posts/2025-11-07-investor-and-athlete.md",
     "_site/thoughts/2025/11/07/investor-and-athlete.html",
     "_site/thoughts/2025/11/07",
     "_site/thoughts/2025/11",
     "_posts/2025-10-26-do-the-right-thing.md",
     "_site/thoughts/2025/10/26/do-the-right-thing.html",
-    "_site/thoughts/2025/10/26",
     "_posts/2025-10-13-purpose.md",
-    "_site/thoughts/2025/10/13/purpose.html",
-    "_site/thoughts/2025/10/13",
     "_posts/2025-10-12-crypto.md",
-    "_site/thoughts/2025/10/12/crypto.html",
     "_posts/2025-10-11-trade-war3.md",
     "_posts/template/temp.md",
     "_posts/2025-10-10-ai.md",

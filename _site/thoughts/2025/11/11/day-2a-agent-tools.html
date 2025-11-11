@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 2a - Agent Tools" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/11/day-2a-agent-tools.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 2a - Agent Tools</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 2a - Agent Tools</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-11 00:00:00 +0800" style="float: right;">2025-11-11</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h5 id="copyright-2025-google-llc">Copyright 2025 Google LLC.</h5>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># @title Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+</span></code></pre></div></div>
+
+<h1 id="-agent-tools">🚀 Agent Tools</h1>
+
+<p><strong>Welcome to Day-2 of the Kaggle 5-day Agents course!</strong></p>
+
+<p>In Day-1, you learned how to create agents with built-in tools like Google Search. You also learned how to orchestrate multi-agent systems. Now let’s unlock the full power of agent tools by building custom logic, delegating to specialist agents, and handling real-world complexities.</p>
+
+<h2 id="-why-do-agents-need-tools">🤔 Why do Agents need Tools?</h2>
+
+<p><strong>The Problem</strong></p>
+
+<p>Without tools, the agent’s knowledge is frozen in time — it can’t access today’s news or your company’s inventory. It has no connection to the outside world, so the agent can’t take actions for you.</p>
+
+<p><strong>The Solution:</strong> Tools are what transform your isolated LLM into a capable agent that can actually help you get things done.</p>
+
+<p>In this notebook, you’ll:</p>
+
+<ul>
+  <li>✅ Turn your Python functions into Agent tools</li>
+  <li>✅ Build an Agent and use it <strong>as a tool</strong> in another agent</li>
+  <li>✅ <strong>Build your first multi-tool agent</strong></li>
+  <li>✅ Explore the different tool types in ADK</li>
+</ul>
+
+<h2 id="️-please-read">‼️ Please Read</h2>
+
+<blockquote>
+  <p>❌ <strong>ℹ️ Note: No submission required!</strong>
+This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+</blockquote>
+
+<blockquote>
+  <p>⏸️ <strong>Note:</strong>  When you first start the notebook via running a cell you might see a banner in the notebook header that reads <strong>“Waiting for the next available notebook”</strong>. The queue should drop rapidly; however, during peak bursts you might have to wait a few minutes.</p>
+</blockquote>
+
+<blockquote>
+  <p>❌ <strong>Note:</strong> Avoid using the <strong>Run all</strong> cells command as this can trigger a QPM limit resulting in 429 errors when calling the backing model. Suggested flow is to run each cell in order - one at a time. <a href="https://www.kaggle.com/code/kaggle5daysofai/day-0-troubleshooting-and-faqs">See FAQ on 429 errors for more information.</a></p>
+</blockquote>
+
+<p><strong>For help: Ask questions on the <a href="https://discord.com/invite/kaggle">Kaggle Discord</a> server.</strong></p>
+
+<h2 id="-get-started-with-kaggle-notebooks">📖 Get started with Kaggle Notebooks</h2>
+
+<p>If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks <a href="https://www.kaggle.com/docs/notebooks">in the documentation</a>.</p>
+
+<p>Here’s how to get started:</p>
+
+<p><strong>1. Verify Your Account (Required)</strong></p>
+
+<p>To use the Kaggle Notebooks in this course, you’ll need to verify your account with a phone number.</p>
+
+<p>You can do this in your <a href="https://www.kaggle.com/settings">Kaggle settings</a>.</p>
+
+<p><strong>2. Make Your Own Copy</strong></p>
+
+<p>To run any code in this notebook, you first need your own editable copy.</p>
+
+<p>Click the <code class="language-plaintext highlighter-rouge">Copy and Edit</code> button in the top-right corner.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png" alt="Copy and Edit button" /></p>
+
+<p>This creates a private copy of the notebook just for you.</p>
+
+<p><strong>3. Run Code Cells</strong></p>
+
+<p>Once you have your copy, you can run code.</p>
+
+<p>Click the ▶️ Run button next to any code cell to execute it.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png" alt="Run cell button" /></p>
+
+<p>Run the cells in order from top to bottom.</p>
+
+<p><strong>4. If You Get Stuck</strong></p>
+
+<p>To restart: Select <code class="language-plaintext highlighter-rouge">Factory reset</code> from the <code class="language-plaintext highlighter-rouge">Run</code> menu.</p>
+
+<p>For help: Ask questions on the <a href="https://discord.com/invite/kaggle">Kaggle Discord</a> server.</p>
+
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<p>Before we go into today’s concepts, follow the steps below to set up the environment.</p>
+
+<h3 id="11-install-dependencies">1.1: Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="12-configure-your-gemini-api-key">1.2: Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/">Gemini API</a>, which requires an API key.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to access the <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> you just saved and set it as an environment variable for the notebook to use:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Setup and authentication complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Setup and authentication complete.
+</code></pre></div></div>
+
+<h3 id="13-import-adk-components">1.3: Import ADK components</h3>
+
+<p>Now, import the specific components you’ll need from the Agent Development Kit and the Generative AI library. This keeps your code organized and ensures we have access to the necessary building blocks.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">LlmAgent</span>
+<span class="kn">from</span> <span class="n">google.adk.models.google_llm</span> <span class="kn">import</span> <span class="n">Gemini</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">InMemoryRunner</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">InMemorySessionService</span>
+<span class="kn">from</span> <span class="n">google.adk.tools</span> <span class="kn">import</span> <span class="n">google_search</span><span class="p">,</span> <span class="n">AgentTool</span><span class="p">,</span> <span class="n">ToolContext</span>
+<span class="kn">from</span> <span class="n">google.adk.code_executors</span> <span class="kn">import</span> <span class="n">BuiltInCodeExecutor</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ ADK components imported successfully.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ ADK components imported successfully.
+</code></pre></div></div>
+
+<h3 id="14-helper-functions">1.4: Helper functions</h3>
+
+<p>Helper function that prints the generated Python code and results from the code execution tool:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">show_python_code_and_result</span><span class="p">(</span><span class="n">response</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">response</span><span class="p">)):</span>
+        <span class="c1"># Check if the response contains a valid function call result from the code executor
+</span>        <span class="nf">if </span><span class="p">(</span>
+            <span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">function_response</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">function_response</span><span class="p">.</span><span class="n">response</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">response_code</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">function_response</span><span class="p">.</span><span class="n">response</span>
+            <span class="k">if</span> <span class="sh">"</span><span class="s">result</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">response_code</span> <span class="ow">and</span> <span class="n">response_code</span><span class="p">[</span><span class="sh">"</span><span class="s">result</span><span class="sh">"</span><span class="p">]</span> <span class="o">!=</span> <span class="sh">"</span><span class="s">```</span><span class="sh">"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="sh">"</span><span class="s">tool_code</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">response_code</span><span class="p">[</span><span class="sh">"</span><span class="s">result</span><span class="sh">"</span><span class="p">]:</span>
+                    <span class="nf">print</span><span class="p">(</span>
+                        <span class="sh">"</span><span class="s">Generated Python Code &gt;&gt; </span><span class="sh">"</span><span class="p">,</span>
+                        <span class="n">response_code</span><span class="p">[</span><span class="sh">"</span><span class="s">result</span><span class="sh">"</span><span class="p">].</span><span class="nf">replace</span><span class="p">(</span><span class="sh">"</span><span class="s">tool_code</span><span class="sh">"</span><span class="p">,</span> <span class="sh">""</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Generated Python Response &gt;&gt; </span><span class="sh">"</span><span class="p">,</span> <span class="n">response_code</span><span class="p">[</span><span class="sh">"</span><span class="s">result</span><span class="sh">"</span><span class="p">])</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined.
+</code></pre></div></div>
+
+<h3 id="15-configure-retry-options">1.5: Configure Retry Options</h3>
+
+<p>When working with LLMs, you may encounter transient errors like rate limits or temporary service unavailability. Retry options automatically handle these failures by retrying the request with exponential backoff.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">retry_config</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">HttpRetryOptions</span><span class="p">(</span>
+    <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Maximum retry attempts
+</span>    <span class="n">exp_base</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># Delay multiplier
+</span>    <span class="n">initial_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">http_status_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">],</span>  <span class="c1"># Retry on these HTTP errors
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="-section-2-what-are-custom-tools">🤖 Section 2: What are Custom Tools?</h2>
+
+<p><strong>Custom Tools</strong> are tools you build yourself using your own code and business logic. Unlike built-in tools that come ready-made with ADK, custom tools give you complete control over functionality.</p>
+
+<p><strong>When to use Custom Tools?</strong></p>
+
+<p>Built-in tools like Google Search are powerful, but <strong>every business has unique requirements</strong> that generic tools can’t handle. Custom tools let you implement your specific business logic, connect to your systems, and solve domain-specific problems. ADK provides multiple custom tool types to handle these scenarios.</p>
+
+<h3 id="21-building-custom-function-tools">2.1: Building Custom Function Tools</h3>
+
+<h4 id="example-currency-converter-agent">Example: Currency Converter Agent</h4>
+
+<p>This agent can convert currency from one denomination to another and calculates the fees to do the conversion. The agent has two custom tools and follows the workflow:</p>
+
+<ol>
+  <li><strong>Fee Lookup Tool</strong> - Finds transaction fees for the conversion (mock)</li>
+  <li><strong>Exchange Rate Tool</strong> - Gets currency conversion rates (mock)</li>
+  <li><strong>Calculation Step</strong> - Calculates the total conversion cost including the fees</li>
+</ol>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/currency-agent.png" width="600" alt="Currency Converter Agent" /></p>
+
+<h3 id="-22-how-to-define-a-tool">🤔 2.2: How to define a Tool?</h3>
+
+<p><strong>Any Python function can become an agent tool</strong> by following these simple guidelines:</p>
+
+<ol>
+  <li>Create a Python function</li>
+  <li>Follow the best practices listed below</li>
+  <li>Add your function to the agent’s <code class="language-plaintext highlighter-rouge">tools=[]</code> list and ADK handles the rest automatically.</li>
+</ol>
+
+<h4 id="-adk-best-practices-in-action">🏆 ADK Best Practices in Action</h4>
+
+<p>Notice how our tools follow ADK best practices:</p>
+
+<p><strong>1. Dictionary Returns</strong>: Tools return <code class="language-plaintext highlighter-rouge">{"status": "success", "data": ...}</code> or <code class="language-plaintext highlighter-rouge">{"status": "error", "error_message": ...}</code><br />
+<strong>2. Clear Docstrings</strong>: LLMs use docstrings to understand when and how to use tools<br />
+<strong>3. Type Hints</strong>: Enable ADK to generate proper schemas (<code class="language-plaintext highlighter-rouge">str</code>, <code class="language-plaintext highlighter-rouge">dict</code>, etc.)<br />
+<strong>4. Error Handling</strong>: Structured error responses help LLMs handle failures gracefully</p>
+
+<p>These patterns make your tools reliable and easy for LLMs to use correctly.</p>
+
+<p>👉 Let’s see this in action with our first tool:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Pay attention to the docstring, type hints, and return value.
+</span><span class="k">def</span> <span class="nf">get_fee_for_payment_method</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Looks up the transaction fee percentage for a given payment method.
+
+    This tool simulates looking up a company</span><span class="sh">'</span><span class="s">s internal fee structure based on
+    the name of the payment method provided by the user.
+
+    Args:
+        method: The name of the payment method. It should be descriptive,
+                e.g., </span><span class="sh">"</span><span class="s">platinum credit card</span><span class="sh">"</span><span class="s"> or </span><span class="sh">"</span><span class="s">bank transfer</span><span class="sh">"</span><span class="s">.
+
+    Returns:
+        Dictionary with status and fee information.
+        Success: {</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">fee_percentage</span><span class="sh">"</span><span class="s">: 0.02}
+        Error: {</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">error_message</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">Payment method not found</span><span class="sh">"</span><span class="s">}
+    </span><span class="sh">"""</span>
+    <span class="c1"># This simulates looking up a company's internal fee structure.
+</span>    <span class="n">fee_database</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">platinum credit card</span><span class="sh">"</span><span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span>  <span class="c1"># 2%
+</span>        <span class="sh">"</span><span class="s">gold debit card</span><span class="sh">"</span><span class="p">:</span> <span class="mf">0.035</span><span class="p">,</span>  <span class="c1"># 3.5%
+</span>        <span class="sh">"</span><span class="s">bank transfer</span><span class="sh">"</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>  <span class="c1"># 1%
+</span>    <span class="p">}</span>
+
+    <span class="n">fee</span> <span class="o">=</span> <span class="n">fee_database</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">method</span><span class="p">.</span><span class="nf">lower</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">fee</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">fee_percentage</span><span class="sh">"</span><span class="p">:</span> <span class="n">fee</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">error_message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Payment method </span><span class="sh">'</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="sh">'</span><span class="s"> not found</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Fee lookup function created</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">💳 Test: </span><span class="si">{</span><span class="nf">get_fee_for_payment_method</span><span class="p">(</span><span class="sh">'</span><span class="s">platinum credit card</span><span class="sh">'</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Fee lookup function created
+💳 Test: {'status': 'success', 'fee_percentage': 0.02}
+</code></pre></div></div>
+
+<p>Let’s follow the same best practices to define our second tool <code class="language-plaintext highlighter-rouge">get_exchange_rate</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">get_exchange_rate</span><span class="p">(</span><span class="n">base_currency</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_currency</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Looks up and returns the exchange rate between two currencies.
+
+    Args:
+        base_currency: The ISO 4217 currency code of the currency you
+                       are converting from (e.g., </span><span class="sh">"</span><span class="s">USD</span><span class="sh">"</span><span class="s">).
+        target_currency: The ISO 4217 currency code of the currency you
+                         are converting to (e.g., </span><span class="sh">"</span><span class="s">EUR</span><span class="sh">"</span><span class="s">).
+
+    Returns:
+        Dictionary with status and rate information.
+        Success: {</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">rate</span><span class="sh">"</span><span class="s">: 0.93}
+        Error: {</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="s">, </span><span class="sh">"</span><span class="s">error_message</span><span class="sh">"</span><span class="s">: </span><span class="sh">"</span><span class="s">Unsupported currency pair</span><span class="sh">"</span><span class="s">}
+    </span><span class="sh">"""</span>
+
+    <span class="c1"># Static data simulating a live exchange rate API
+</span>    <span class="c1"># In production, this would call something like: requests.get("api.exchangerates.com")
+</span>    <span class="n">rate_database</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">usd</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">eur</span><span class="sh">"</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span>  <span class="c1"># Euro
+</span>            <span class="sh">"</span><span class="s">jpy</span><span class="sh">"</span><span class="p">:</span> <span class="mf">157.50</span><span class="p">,</span>  <span class="c1"># Japanese Yen
+</span>            <span class="sh">"</span><span class="s">inr</span><span class="sh">"</span><span class="p">:</span> <span class="mf">83.58</span><span class="p">,</span>  <span class="c1"># Indian Rupee
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Input validation and processing
+</span>    <span class="n">base</span> <span class="o">=</span> <span class="n">base_currency</span><span class="p">.</span><span class="nf">lower</span><span class="p">()</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">target_currency</span><span class="p">.</span><span class="nf">lower</span><span class="p">()</span>
+
+    <span class="c1"># Return structured result with status
+</span>    <span class="n">rate</span> <span class="o">=</span> <span class="n">rate_database</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="p">{}).</span><span class="nf">get</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">rate</span><span class="sh">"</span><span class="p">:</span> <span class="n">rate</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">error_message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Unsupported currency pair: </span><span class="si">{</span><span class="n">base_currency</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">target_currency</span><span class="si">}</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Exchange rate function created</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">💱 Test: </span><span class="si">{</span><span class="nf">get_exchange_rate</span><span class="p">(</span><span class="sh">'</span><span class="s">USD</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">EUR</span><span class="sh">'</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Exchange rate function created
+💱 Test: {'status': 'success', 'rate': 0.93}
+</code></pre></div></div>
+
+<p>Now let’s create our currency agent. Pay attention to how the agent’s instructions reference the tools:</p>
+
+<p><strong>Key Points:</strong></p>
+<ul>
+  <li>The <code class="language-plaintext highlighter-rouge">tools=[]</code> list tells the agent which functions it can use</li>
+  <li>Instructions reference tools by their exact function names (e.g.,
+<code class="language-plaintext highlighter-rouge">get_fee_for_payment_method()</code>)</li>
+  <li>The agent uses these names to decide when and how to call each tool</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Currency agent with custom function tools
+</span><span class="n">currency_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">currency_agent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"""</span><span class="s">You are a smart currency conversion assistant.
+
+    For currency conversion requests:
+    1. Use `get_fee_for_payment_method()` to find transaction fees
+    2. Use `get_exchange_rate()` to get currency conversion rates
+    3. Check the </span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s"> field in each tool</span><span class="sh">'</span><span class="s">s response for errors
+    4. Calculate the final amount after fees based on the output from `get_fee_for_payment_method` and `get_exchange_rate` methods and provide a clear breakdown.
+    5. First, state the final converted amount.
+        Then, explain how you got that result by showing the intermediate amounts. Your explanation must include: the fee percentage and its
+        value in the original currency, the amount remaining after the fee, and the exchange rate used for the final conversion.
+
+    If any tool returns status </span><span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="s">, explain the issue to the user clearly.
+    </span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_fee_for_payment_method</span><span class="p">,</span> <span class="n">get_exchange_rate</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Currency agent created with custom function tools</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🔧 Available tools:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  • get_fee_for_payment_method - Looks up company fee structure</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  • get_exchange_rate - Gets current exchange rates</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Currency agent created with custom function tools
+🔧 Available tools:
+  • get_fee_for_payment_method - Looks up company fee structure
+  • get_exchange_rate - Gets current exchange rates
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Test the currency agent
+</span><span class="n">currency_runner</span> <span class="o">=</span> <span class="nc">InMemoryRunner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">currency_agent</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="n">currency_runner</span><span class="p">.</span><span class="nf">run_debug</span><span class="p">(</span>
+    <span class="sh">"</span><span class="s">I want to convert 500 US Dollars to Euros using my Platinum Credit Card. How much will I receive?</span><span class="sh">"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Created new session: debug_session_id
+
+User &gt; I want to convert 500 US Dollars to Euros using my Platinum Credit Card. How much will I receive?
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call', 'function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+currency_agent &gt; The exchange rate from USD to EUR is 0.93. The transaction fee for using a Platinum Credit Card is 2%.
+
+Here's the breakdown of your conversion:
+
+1. **Fee amount:** 2% of 500 USD = 10 USD
+2. **Amount after fee:** 500 USD - 10 USD = 490 USD
+3. **Converted amount:** 490 USD * 0.93 EUR/USD = 455.7 EUR
+
+You will receive 455.7 Euros.
+</code></pre></div></div>
+
+<p><strong>Excellent!</strong> Our agent now uses custom business logic with structured responses.</p>
+
+<h2 id="-section-3-improving-agent-reliability-with-code">💻 Section 3: Improving Agent Reliability with Code</h2>
+
+<p>The agent’s instruction says <em>“calculate the final amount after fees”</em> but LLMs aren’t always reliable at math. They might make calculation errors or use inconsistent formulas.</p>
+
+<h5 id="-solution-lets-ask-our-agent-to-generate-a-python-code-to-do-the-math-and-run-it-to-give-us-the-final-result-code-execution-is-much-more-reliable-than-having-the-llm-try-to-do-math-in-its-head">💡 <strong>Solution:</strong> Let’s ask our agent to generate a Python code to do the math, and run it to give us the final result! Code execution is much more reliable than having the LLM try to do math in its head!</h5>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/enhanced-currency-agent.png" width="800" alt="Enhanced Currency Converter Agent" /></p>
+
+<h3 id="31-built-in-code-executor">3.1 Built-in Code Executor</h3>
+
+<p>ADK has a built-in Code Executor capable of running code in a sandbox. <strong>Note:</strong> This uses Gemini’s Code Execution capability.</p>
+
+<p>Let’s create a <code class="language-plaintext highlighter-rouge">calculation_agent</code> which takes in a Python code and uses the <code class="language-plaintext highlighter-rouge">BuiltInCodeExecutor</code> to run it.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">calculation_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">CalculationAgent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"""</span><span class="s">You are a specialized calculator that ONLY responds with Python code. You are forbidden from providing any text, explanations, or conversational responses.
+ 
+     Your task is to take a request for a calculation and translate it into a single block of Python code that calculates the answer.
+     
+     **RULES:**
+    1.  Your output MUST be ONLY a Python code block.
+    2.  Do NOT write any text before or after the code block.
+    3.  The Python code MUST calculate the result.
+    4.  The Python code MUST print the final result to stdout.
+    5.  You are PROHIBITED from performing the calculation yourself. Your only job is to generate the code that will perform the calculation.
+   
+    Failure to follow these rules will result in an error.
+       </span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">code_executor</span><span class="o">=</span><span class="nc">BuiltInCodeExecutor</span><span class="p">(),</span>  <span class="c1"># Use the built-in Code Executor Tool. This gives the agent code execution capabilities
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="32-update-the-agents-instruction-and-toolset">3.2: Update the Agent’s instruction and toolset</h3>
+
+<p>We’ll do two key actions:</p>
+
+<ol>
+  <li><strong>Update the <code class="language-plaintext highlighter-rouge">currency_agent</code>’s instructions to generate Python code</strong>
+    <ul>
+      <li>Original: “<em>Calculate the final amount after fees</em>” (vague math instructions)</li>
+      <li>Enhanced: “<em>Generate a Python code to calculate the final amount .. and use the <code class="language-plaintext highlighter-rouge">calculation_agent</code> to run the code and compute final amount</em>”</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>Add the <code class="language-plaintext highlighter-rouge">calculation_agent</code> to the toolset</strong></p>
+
+    <p>ADK lets you use any agent as a tool using <code class="language-plaintext highlighter-rouge">AgentTool</code>.</p>
+  </li>
+</ol>
+
+<ul>
+  <li>Add <code class="language-plaintext highlighter-rouge">AgentTool(agent=calculation_agent)</code> to the tools list</li>
+  <li>The specialist agent appears as a callable tool to the root agent</li>
+</ul>
+
+<p>Let’s see this in action:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">enhanced_currency_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">enhanced_currency_agent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="c1"># Updated instruction
+</span>    <span class="n">instruction</span><span class="o">=</span><span class="sh">"""</span><span class="s">You are a smart currency conversion assistant. You must strictly follow these steps and use the available tools.
+
+  For any currency conversion request:
+
+   1. Get Transaction Fee: Use the get_fee_for_payment_method() tool to determine the transaction fee.
+   2. Get Exchange Rate: Use the get_exchange_rate() tool to get the currency conversion rate.
+   3. Error Check: After each tool call, you must check the </span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="s"> field in the response. If the status is </span><span class="sh">"</span><span class="s">error</span><span class="sh">"</span><span class="s">, you must stop and clearly explain the issue to the user.
+   4. Calculate Final Amount (CRITICAL): You are strictly prohibited from performing any arithmetic calculations yourself. You must use the calculation_agent tool to generate Python code that calculates the final converted amount. This 
+      code will use the fee information from step 1 and the exchange rate from step 2.
+   5. Provide Detailed Breakdown: In your summary, you must:
+       * State the final converted amount.
+       * Explain how the result was calculated, including:
+           * The fee percentage and the fee amount in the original currency.
+           * The amount remaining after deducting the fee.
+           * The exchange rate applied.
+    </span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">get_fee_for_payment_method</span><span class="p">,</span>
+        <span class="n">get_exchange_rate</span><span class="p">,</span>
+        <span class="nc">AgentTool</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">calculation_agent</span><span class="p">),</span>  <span class="c1"># Using another agent as a tool!
+</span>    <span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Enhanced currency agent created</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🎯 New capability: Delegates calculations to specialist agent</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🔧 Tool types used:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  • Function Tools (fees, rates)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  • Agent Tool (calculation specialist)</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Enhanced currency agent created
+🎯 New capability: Delegates calculations to specialist agent
+🔧 Tool types used:
+  • Function Tools (fees, rates)
+  • Agent Tool (calculation specialist)
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define a runner
+</span><span class="n">enhanced_runner</span> <span class="o">=</span> <span class="nc">InMemoryRunner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">enhanced_currency_agent</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Test the enhanced agent
+</span><span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">enhanced_runner</span><span class="p">.</span><span class="nf">run_debug</span><span class="p">(</span>
+    <span class="sh">"</span><span class="s">Convert 1,250 USD to INR using a Bank Transfer. Show me the precise calculation.</span><span class="sh">"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Created new session: debug_session_id
+
+User &gt; Convert 1,250 USD to INR using a Bank Transfer. Show me the precise calculation.
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+enhanced_currency_agent &gt; To convert 1,250 USD to INR using a Bank Transfer, the final amount is 103,159.5 INR.
+
+Here's the breakdown of the calculation:
+*   The transaction fee for a Bank Transfer is 1.0%, which amounts to 12.5 USD.
+*   After deducting the fee, the amount to be converted is 1,237.5 USD.
+*   Using an exchange rate of 83.58 INR per USD, the final converted amount is 103,159.5 INR.
+</code></pre></div></div>
+
+<p><strong>Excellent!</strong> Notice what happened:</p>
+
+<ul>
+  <li>When the Currency agent calls the <code class="language-plaintext highlighter-rouge">CalculationAgent</code>, it passes in the generated Python code</li>
+  <li>The <code class="language-plaintext highlighter-rouge">CalculationAgent</code> in turn used the <code class="language-plaintext highlighter-rouge">BuiltInCodeExecutor</code> to run the code and gave us precise calculations instead of LLM guesswork!</li>
+</ul>
+
+<p>Now you can inspect the parts of the response that either generated Python code or that contain the Python code results, using the helper function that was defined near the beginning of this notebook:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">show_python_code_and_result</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Generated Python Response &gt;&gt;  ```python
+initial_amount_usd = 1250
+fee_percentage = 0.01
+exchange_rate = 83.58
+
+# Calculate the fee amount in USD
+fee_amount_usd = initial_amount_usd * fee_percentage
+print(f"Fee Amount (USD): {fee_amount_usd}")
+
+# Calculate the amount to be converted after deducting the fee
+amount_to_convert_usd = initial_amount_usd - fee_amount_usd
+print(f"Amount to Convert (USD): {amount_to_convert_usd}")
+
+# Calculate the final amount in INR
+final_amount_inr = amount_to_convert_usd * exchange_rate
+print(f"Final Amount (INR): {final_amount_inr}")
+
+print(f"\nDetailed Breakdown:")
+print(f"Initial Amount in USD: {initial_amount_usd}")
+print(f"Fee Percentage: {fee_percentage*100}%")
+print(f"Fee Amount Deducted (USD): {fee_amount_usd}")
+print(f"Amount Converted (USD): {amount_to_convert_usd}")
+print(f"Exchange Rate (INR per USD): {exchange_rate}")
+print(f"Final Amount in INR: {final_amount_inr}")
+```
+</code></pre></div></div>
+
+<h3 id="-33-agent-tools-vs-sub-agents-whats-the-difference">🤔 3.3: Agent Tools vs Sub-Agents: What’s the Difference?</h3>
+
+<p>This is a common question! Both involve using multiple agents, but they work very differently:</p>
+
+<p><strong>Agent Tools (what we’re using):</strong></p>
+<ul>
+  <li>Agent A calls Agent B as a tool</li>
+  <li>Agent B’s response goes <strong>back to Agent A</strong></li>
+  <li>Agent A stays in control and continues the conversation</li>
+  <li><strong>Use case</strong>: Delegation for specific tasks (like calculations)</li>
+</ul>
+
+<p><strong>Sub-Agents (different pattern):</strong></p>
+<ul>
+  <li>Agent A transfers control <strong>completely to Agent B</strong></li>
+  <li>Agent B takes over and handles all future user input</li>
+  <li>Agent A is out of the loop</li>
+  <li><strong>Use case</strong>: Handoff to specialists (like customer support tiers)</li>
+</ul>
+
+<p><strong>In our currency example:</strong> We want the currency agent to get calculation results and continue working with them, so we use <strong>Agent Tools</strong>, not sub-agents.</p>
+
+<h2 id="-section-4-complete-guide-to-adk-tool-types">🧰 Section 4: Complete Guide to ADK Tool Types</h2>
+
+<p>Now that you’ve seen tools in action, let’s understand the complete ADK toolkit:</p>
+
+<p>It’s broadly divided into two categories: <strong>Custom tools</strong> and <strong>Built-in tools</strong></p>
+
+<h3 id="1-custom-tools"><strong>1. Custom Tools</strong></h3>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/custom-tools.png" width="800" alt="Custom Tools" /></p>
+
+<p><strong>What</strong>: Tools you build yourself for specific needs</p>
+
+<p><strong>Advantage</strong>: Complete control over functionality — you build exactly what your agent needs</p>
+
+<h4 id="function-tools--youve-used-these"><strong>Function Tools</strong> ✅ (You’ve used these!)</h4>
+<ul>
+  <li><strong>What</strong>: Python functions converted to agent tools</li>
+  <li><strong>Examples</strong>: <code class="language-plaintext highlighter-rouge">get_fee_for_payment_method</code>, <code class="language-plaintext highlighter-rouge">get_exchange_rate</code></li>
+  <li><strong>Advantage</strong>: Turn any Python function into an agent tool instantly</li>
+</ul>
+
+<h4 id="long-running-function-tools"><strong>Long Running Function Tools</strong></h4>
+<ul>
+  <li><strong>What</strong>: Functions for operations that take significant time</li>
+  <li><strong>Examples</strong>: Human-in-the-loop approvals, file processing</li>
+  <li><strong>Advantage</strong>: Agents can start tasks and continue with other work while waiting</li>
+</ul>
+
+<h4 id="agent-tools--youve-used-these"><strong>Agent Tools</strong> ✅ (You’ve used these!)</h4>
+<ul>
+  <li><strong>What</strong>: Other agents used as tools</li>
+  <li><strong>Examples</strong>: <code class="language-plaintext highlighter-rouge">AgentTool(agent=calculation_agent)</code></li>
+  <li><strong>Advantage</strong>: Build specialist agents and reuse them across different systems</li>
+</ul>
+
+<h4 id="mcp-tools"><strong>MCP Tools</strong></h4>
+<ul>
+  <li><strong>What</strong>: Tools from Model Context Protocol servers</li>
+  <li><strong>Examples</strong>: Filesystem access, Google Maps, databases</li>
+  <li><strong>Advantage</strong>: Connect to any MCP-compatible service without custom integration</li>
+</ul>
+
+<h4 id="openapi-tools"><strong>OpenAPI Tools</strong></h4>
+<ul>
+  <li><strong>What</strong>: Tools automatically generated from API specifications</li>
+  <li><strong>Examples</strong>: REST API endpoints become callable tools</li>
+  <li><strong>Advantage</strong>: No manual coding — just provide an API spec and get working tools</li>
+</ul>
+
+<h3 id="2-built-in-tools"><strong>2. Built-in Tools</strong></h3>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/built-in-tools.png" width="1200" alt="Built-in Tools" /></p>
+
+<p><strong>What</strong>: Pre-built tools provided by ADK</p>
+
+<p><strong>Advantage</strong>: No development time — use immediately with zero setup</p>
+
+<h4 id="gemini-tools--youve-used-these"><strong>Gemini Tools</strong> ✅ (You’ve used these!)</h4>
+<ul>
+  <li><strong>What</strong>: Tools that leverage Gemini’s capabilities</li>
+  <li><strong>Examples</strong>: <code class="language-plaintext highlighter-rouge">google_search</code>, <code class="language-plaintext highlighter-rouge">BuiltInCodeExecutor</code></li>
+  <li><strong>Advantage</strong>: Reliable, tested tools that work out of the box</li>
+</ul>
+
+<h4 id="google-cloud-tools-needs-google-cloud-access"><strong>Google Cloud Tools</strong> [needs Google Cloud access]</h4>
+<ul>
+  <li><strong>What</strong>: Tools for Google Cloud services and enterprise integration</li>
+  <li><strong>Examples</strong>: <code class="language-plaintext highlighter-rouge">BigQueryToolset</code>, <code class="language-plaintext highlighter-rouge">SpannerToolset</code>, <code class="language-plaintext highlighter-rouge">APIHubToolset</code></li>
+  <li><strong>Advantage</strong>: Enterprise-grade database and API access with built-in security</li>
+</ul>
+
+<h4 id="third-party-tools"><strong>Third-party Tools</strong></h4>
+<ul>
+  <li><strong>What</strong>: Wrappers for existing tool ecosystems</li>
+  <li><strong>Examples</strong>: Hugging Face, Firecrawl, GitHub Tools</li>
+  <li><strong>Advantage</strong>: Reuse existing tool investments — no need to rebuild what already exists</li>
+</ul>
+
+<h2 id="-congratulations">✅ Congratulations!</h2>
+
+<p>You’ve successfully learned how to build agents that go beyond simple responses to take
+intelligent actions with custom tools. In this notebook, you learned:</p>
+
+<ol>
+  <li>🔧 <strong>Function Tools</strong> - Converted Python functions into agent tools</li>
+  <li>🤖 <strong>Agent Tools</strong> - Created specialist agents and used them as tools</li>
+  <li>🧰 <strong>Complete Toolkit</strong> - Explored all ADK tool types and when to use them</li>
+</ol>
+
+<p><strong>ℹ️ Note: No submission required!</strong></p>
+
+<p>This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+
+<h3 id="-learn-more">📚 Learn More</h3>
+
+<p>Refer to the following documentation to learn more:</p>
+
+<ul>
+  <li><a href="https://google.github.io/adk-docs/">ADK Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools/">ADK Tools Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools-custom/">ADK Custom Tools Guide</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools/function-tools/">ADK Function Tools</a></li>
+  <li><a href="https://google.github.io/adk-docs/plugins/">ADK Plugins Overview</a></li>
+</ul>
+
+<h3 id="-next-steps">🎯 Next Steps</h3>
+
+<p>You’ve built the foundation of agent tool mastery.</p>
+
+<p>Ready for the next challenge? Continue to the next notebook to learn about <strong>tool patterns</strong>!</p>
+
+<div align="center">
+  <table>
+    <tr>
+      <th style="text-align:center">Authors</th>
+    </tr>
+    <tr>
+      <td style="text-align:center"><a href="https://www.linkedin.com/in/laxmi-harikumar/">Laxmi Harikumar</a></td>
+    </tr>
+  </table>
+</div>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 2b - Agent Tools Best Practices" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/11/day-2b-agent-tools-best-practices.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 2b - Agent Tools Best Practices</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 2b - Agent Tools Best Practices</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-11 00:00:00 +0800" style="float: right;">2025-11-11</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h5 id="copyright-2025-google-llc">Copyright 2025 Google LLC.</h5>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># @title Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+</span></code></pre></div></div>
+
+<h1 id="-agent-tool-patterns-and-best-practices">🚀 Agent Tool Patterns and Best Practices</h1>
+
+<p><strong>Welcome to Day-2 of the Kaggle 5-day Agents course!</strong></p>
+
+<p>In the previous notebook, you learned how to add custom Python functions as tools to your agent. In this notebook, we’ll take the next step: <strong>consuming external MCP services</strong> and handling <strong>long-running operations</strong>.</p>
+
+<p>In this notebook, you’ll learn how to:</p>
+
+<ul>
+  <li>✅ <strong>Connect to external MCP servers</strong></li>
+  <li>✅ <strong>Implement long-running operations</strong> that can pause agent execution for external input</li>
+  <li>✅ <strong>Build resumable workflows</strong> that maintain state across conversation breaks</li>
+  <li>✅ Understand when and how to use these patterns</li>
+</ul>
+
+<h2 id="️-please-read">‼️ Please Read</h2>
+
+<blockquote>
+  <p>❌ <strong>ℹ️ Note: No submission required!</strong>
+This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+</blockquote>
+
+<blockquote>
+  <p>⏸️ <strong>Note:</strong>  When you first start the notebook via running a cell you might see a banner in the notebook header that reads <strong>“Waiting for the next available notebook”</strong>. The queue should drop rapidly; however, during peak bursts you might have to wait a few minutes.</p>
+</blockquote>
+
+<blockquote>
+  <p>❌ <strong>Note:</strong> Avoid using the <strong>Run all</strong> cells command as this can trigger a QPM limit resulting in 429 errors when calling the backing model. Suggested flow is to run each cell in order - one at a time. <a href="https://www.kaggle.com/code/kaggle5daysofai/day-0-troubleshooting-and-faqs">See FAQ on 429 errors for more information.</a></p>
+</blockquote>
+
+<p><strong>For help: Ask questions on the <a href="https://discord.com/invite/kaggle">Kaggle Discord</a> server.</strong></p>
+
+<h2 id="-get-started-with-kaggle-notebooks">📖 Get started with Kaggle Notebooks</h2>
+
+<p>If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks <a href="https://www.kaggle.com/docs/notebooks">in the documentation</a>.</p>
+
+<p>Here’s how to get started:</p>
+
+<p><strong>1. Verify Your Account (Required)</strong></p>
+
+<p>To use the Kaggle Notebooks in this course, you’ll need to verify your account with a phone number.</p>
+
+<p>You can do this in your <a href="https://www.kaggle.com/settings">Kaggle settings</a>.</p>
+
+<p><strong>2. Make Your Own Copy</strong></p>
+
+<p>To run any code in this notebook, you first need your own editable copy.</p>
+
+<p>Click the <code class="language-plaintext highlighter-rouge">Copy and Edit</code> button in the top-right corner.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png" alt="Copy and Edit button" /></p>
+
+<p>This creates a private copy of the notebook just for you.</p>
+
+<p><strong>3. Run Code Cells</strong></p>
+
+<p>Once you have your copy, you can run code.</p>
+
+<p>Click the ▶️ Run button next to any code cell to execute it.</p>
+
+<p><img src="https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png" alt="Run cell button" /></p>
+
+<p>Run the cells in order from top to bottom.</p>
+
+<p><strong>4. If You Get Stuck</strong></p>
+
+<p>To restart: Select <code class="language-plaintext highlighter-rouge">Factory reset</code> from the <code class="language-plaintext highlighter-rouge">Run</code> menu.</p>
+
+<p>For help: Ask questions on the <a href="https://discord.com/invite/kaggle">Kaggle Discord</a> server.</p>
+
+<hr />
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<h3 id="11-install-dependencies">1.1: Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="12-configure-your-gemini-api-key">1.2: Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/">Gemini API</a>, which requires an API key.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to access the <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> you just saved and set it as an environment variable for the notebook to use:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Setup and authentication complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Setup and authentication complete.
+</code></pre></div></div>
+
+<h3 id="13-import-adk-components">1.3: Import ADK components</h3>
+
+<p>Now, import the specific components you’ll need from the Agent Development Kit. This keeps your code organized and ensures we have access to the necessary building blocks.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">uuid</span>
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">LlmAgent</span>
+<span class="kn">from</span> <span class="n">google.adk.models.google_llm</span> <span class="kn">import</span> <span class="n">Gemini</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">InMemorySessionService</span>
+
+<span class="kn">from</span> <span class="n">google.adk.tools.mcp_tool.mcp_toolset</span> <span class="kn">import</span> <span class="n">McpToolset</span>
+<span class="kn">from</span> <span class="n">google.adk.tools.tool_context</span> <span class="kn">import</span> <span class="n">ToolContext</span>
+<span class="kn">from</span> <span class="n">google.adk.tools.mcp_tool.mcp_session_manager</span> <span class="kn">import</span> <span class="n">StdioConnectionParams</span>
+<span class="kn">from</span> <span class="n">mcp</span> <span class="kn">import</span> <span class="n">StdioServerParameters</span>
+
+<span class="kn">from</span> <span class="n">google.adk.apps.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ResumabilityConfig</span>
+<span class="kn">from</span> <span class="n">google.adk.tools.function_tool</span> <span class="kn">import</span> <span class="n">FunctionTool</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ ADK components imported successfully.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ ADK components imported successfully.
+</code></pre></div></div>
+
+<h3 id="14-configure-retry-options">1.4: Configure Retry Options</h3>
+
+<p>When working with LLMs, you may encounter transient errors like rate limits or temporary service unavailability. Retry options automatically handle these failures by retrying the request with exponential backoff.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">retry_config</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">HttpRetryOptions</span><span class="p">(</span>
+    <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Maximum retry attempts
+</span>    <span class="n">exp_base</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># Delay multiplier
+</span>    <span class="n">initial_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">http_status_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">],</span>  <span class="c1"># Retry on these HTTP errors
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-2-model-context-protocol">🧰 Section 2: Model Context Protocol</h2>
+
+<p>So far, you have learned how to create custom functions for your agents. But connecting to external systems (GitHub, databases, Slack) requires writing and maintaining API clients.</p>
+
+<p><strong>Model Context Protocol (MCP)</strong> is an open standard that lets agents use community-built integrations. Instead of writing your own integrations and API clients, just connect to an existing MCP server.</p>
+
+<p>MCP enables agents to:</p>
+
+<p>✅ <strong>Access live, external data</strong> from databases, APIs, and services without custom integration code<br />
+✅ <strong>Leverage community-built tools</strong> with standardized interfaces<br />
+✅ <strong>Scale capabilities</strong> by connecting to multiple specialized servers</p>
+
+<h3 id="21-how-mcp-works">2.1: How MCP Works</h3>
+
+<p>MCP connects your agent (the <strong>client</strong>) to external <strong>MCP servers</strong> that provide tools:</p>
+
+<ul>
+  <li><strong>MCP Server</strong>: Provides specific tools (like image generation, database access)</li>
+  <li><strong>MCP Client</strong>: Your agent that uses those tools</li>
+  <li><strong>All servers work the same way</strong> - standardized interface</li>
+</ul>
+
+<p><strong>Architecture:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌──────────────────┐
+│   Your Agent     │
+│   (MCP Client)   │
+└────────┬─────────┘
+         │
+         │ Standard MCP Protocol
+         │
+    ┌────┴────┬────────┬────────┐
+    │         │        │        │
+    ▼         ▼        ▼        ▼
+┌────────┐ ┌─────┐ ┌──────┐ ┌─────┐
+│ GitHub │ │Slack│ │ Maps │ │ ... │
+│ Server │ │ MCP │ │ MCP  │ │     │
+└────────┘ └─────┘ └──────┘ └─────┘
+</code></pre></div></div>
+
+<h3 id="22-using-mcp-with-your-agent">2.2: Using MCP with Your Agent</h3>
+
+<p>The workflow is simple:</p>
+
+<ol>
+  <li>Choose an MCP Server and tool</li>
+  <li>Create the MCP Toolset (configure connection)</li>
+  <li>Add it to your agent</li>
+  <li>Run and test the agent</li>
+</ol>
+
+<p><strong>Step 1: Choose MCP Server</strong></p>
+
+<p>For this demo, we’ll use the <strong><a href="https://github.com/modelcontextprotocol/servers/tree/main/src/everything">Everything MCP Server</a></strong> - an npm package (<code class="language-plaintext highlighter-rouge">@modelcontextprotocol/server-everything</code>) designed for testing MCP integrations.</p>
+
+<p>It provides a <code class="language-plaintext highlighter-rouge">getTinyImage</code> tool that returns a simple test image (16x16 pixels, Base64-encoded). <strong>Find more servers:</strong> <a href="https://modelcontextprotocol.io/examples">modelcontextprotocol.io/examples</a></p>
+
+<p><strong>‼️ NOTE: This is a demo server to learn MCP.</strong> In production, you’ll use servers for Google Maps, Slack, Discord, etc.</p>
+
+<p><strong>Step 2: Create the MCP Toolset</strong></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">McpToolset</code> is used to integrate an ADK Agent with an MCP Server.</p>
+
+<p><strong>What the code does:</strong></p>
+<ul>
+  <li>Uses <code class="language-plaintext highlighter-rouge">npx</code> (Node package runner) to run the MCP server</li>
+  <li>Connects to <code class="language-plaintext highlighter-rouge">@modelcontextprotocol/server-everything</code></li>
+  <li>Filters to only use the <code class="language-plaintext highlighter-rouge">getTinyImage</code> tool (the server has others, but we only need this one)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># MCP integration with Everything Server
+</span><span class="n">mcp_image_server</span> <span class="o">=</span> <span class="nc">McpToolset</span><span class="p">(</span>
+    <span class="n">connection_params</span><span class="o">=</span><span class="nc">StdioConnectionParams</span><span class="p">(</span>
+        <span class="n">server_params</span><span class="o">=</span><span class="nc">StdioServerParameters</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="sh">"</span><span class="s">npx</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Run MCP server via npx
+</span>            <span class="n">args</span><span class="o">=</span><span class="p">[</span>
+                <span class="sh">"</span><span class="s">-y</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Argument for npx to auto-confirm install
+</span>                <span class="sh">"</span><span class="s">@modelcontextprotocol/server-everything</span><span class="sh">"</span><span class="p">,</span>
+            <span class="p">],</span>
+            <span class="n">tool_filter</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="s">getTinyImage</span><span class="sh">"</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ MCP Tool created</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ MCP Tool created
+</code></pre></div></div>
+
+<h4 id="behind-the-scenes"><strong>Behind the scenes:</strong></h4>
+<ol>
+  <li><strong>Server Launch</strong>: ADK runs <code class="language-plaintext highlighter-rouge">npx -y @modelcontextprotocol/server-everything</code></li>
+  <li><strong>Handshake</strong>: Establishes stdio communication channel</li>
+  <li><strong>Tool Discovery</strong>: Server tells ADK: “I provide getTinyImage” functionality</li>
+  <li><strong>Integration</strong>: Tools appear in agent’s tool list automatically</li>
+  <li><strong>Execution</strong>: When agent calls <code class="language-plaintext highlighter-rouge">getTinyImage()</code>, ADK forwards to MCP server</li>
+  <li><strong>Response</strong>: Server result is returned to agent seamlessly</li>
+</ol>
+
+<p><strong>Why This Matters</strong>: You get instant access to tools without writing integration code!</p>
+
+<p><strong>Step 3: Add MCP tool to agent</strong></p>
+
+<p>Let’s add the <code class="language-plaintext highlighter-rouge">mcp_server</code> to the agent’s tool array and update the agent’s instructions to handle requests to generate tiny images.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create image agent with MCP integration
+</span><span class="n">image_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">image_agent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"</span><span class="s">Use the MCP Tool to generate images for user queries</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">mcp_image_server</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Create the runner:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">InMemoryRunner</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="nc">InMemoryRunner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">image_agent</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>Step 4: Test the agent</strong></p>
+
+<p>Ask the agent to generate an image. Watch it use the MCP tool:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="p">.</span><span class="nf">run_debug</span><span class="p">(</span><span class="sh">"</span><span class="s">Provide a sample tiny image</span><span class="sh">"</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Created new session: debug_session_id
+
+User &gt; Provide a sample tiny image
+
+
+/usr/local/lib/python3.11/dist-packages/google/adk/tools/mcp_tool/mcp_tool.py:101: UserWarning: [EXPERIMENTAL] BaseAuthenticatedTool: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__(
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+image_agent &gt; [Calling tool: getTinyImage({})]
+image_agent &gt; [Tool result: {'content': [{'type': 'text', 'text': 'This is a tiny image:'}, {'type': 'image', 'data': 'iVBORw0KG...]
+image_agent &gt; This is a tiny image:
+</code></pre></div></div>
+
+<p><strong>Display the image:</strong></p>
+
+<p>The server returns base64-encoded image data. Let’s decode and display it:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">IPImage</span>
+<span class="kn">import</span> <span class="n">base64</span>
+
+<span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nf">hasattr</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="sh">"</span><span class="s">function_response</span><span class="sh">"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">part</span><span class="p">.</span><span class="n">function_response</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">part</span><span class="p">.</span><span class="n">function_response</span><span class="p">.</span><span class="n">response</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="k">if</span> <span class="n">item</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">)</span> <span class="o">==</span> <span class="sh">"</span><span class="s">image</span><span class="sh">"</span><span class="p">:</span>
+                        <span class="nf">display</span><span class="p">(</span><span class="nc">IPImage</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">base64</span><span class="p">.</span><span class="nf">b64decode</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="sh">"</span><span class="s">data</span><span class="sh">"</span><span class="p">])))</span>
+</code></pre></div></div>
+
+<p><img src="day-2b-agent-tools-best-practices_files/day-2b-agent-tools-best-practices_26_0.png" alt="png" /></p>
+
+<h3 id="23-extending-to-other-mcp-servers">2.3: Extending to Other MCP Servers</h3>
+
+<p>The same pattern works for any MCP server - only the <code class="language-plaintext highlighter-rouge">connection_params</code> change. Here are some examples:</p>
+
+<h4 id="-kaggle-mcp-server---for-dataset-and-notebook-operations"><strong>👉 Kaggle MCP Server</strong> - For dataset and notebook operations</h4>
+
+<p>Kaggle provides an MCP server that lets your agents interact with Kaggle datasets, notebooks, and competitions.</p>
+
+<p><strong>Connection example:</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">McpToolset</span><span class="p">(</span>
+    <span class="n">connection_params</span><span class="o">=</span><span class="nc">StdioConnectionParams</span><span class="p">(</span>
+        <span class="n">server_params</span><span class="o">=</span><span class="nc">StdioServerParameters</span><span class="p">(</span>
+            <span class="n">command</span><span class="o">=</span><span class="sh">'</span><span class="s">npx</span><span class="sh">'</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">[</span>
+                <span class="sh">'</span><span class="s">-y</span><span class="sh">'</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">mcp-remote</span><span class="sh">'</span><span class="p">,</span>
+                <span class="sh">'</span><span class="s">https://www.kaggle.com/mcp</span><span class="sh">'</span>
+            <span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>What it provides:</strong></p>
+<ul>
+  <li>📊 Search and download Kaggle datasets</li>
+  <li>📓 Access notebook metadata</li>
+  <li>🏆 Query competition information etc.,</li>
+</ul>
+
+<p><strong>Learn more:</strong> <a href="https://www.kaggle.com/docs/mcp">Kaggle MCP Documentation</a></p>
+
+<h4 id="-github-mcp-server---for-prissue-analysis"><strong>👉 GitHub MCP Server</strong> - For PR/Issue analysis</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">McpToolset</span><span class="p">(</span>
+    <span class="n">connection_params</span><span class="o">=</span><span class="nc">StreamableHTTPServerParams</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="sh">"</span><span class="s">https://api.githubcopilot.com/mcp/</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+            <span class="sh">"</span><span class="s">Authorization</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Bearer </span><span class="si">{</span><span class="n">GITHUB_TOKEN</span><span class="si">}</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">X-MCP-Toolsets</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">all</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">X-MCP-Readonly</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">true</span><span class="sh">"</span>
+        <span class="p">},</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>More resources:</strong> <a href="https://google.github.io/adk-docs/tools/third-party/">ADK Third-party Tools Documentation</a></p>
+
+<hr />
+<h2 id="-section-3-long-running-operations-human-in-the-loop">🔄 Section 3: Long-Running Operations (Human-in-the-Loop)</h2>
+
+<p>So far, all tools execute and return immediately:</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">User asks → Agent calls tool → Tool returns result → Agent responds</code></p>
+</blockquote>
+
+<p><strong>But what if your tools are long-running or you need human approval before completing an action?</strong></p>
+
+<p>Example: A shipping agent should ask for approval before placing a large order.</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">User asks → Agent calls tool → Tool PAUSES and asks human → Human approves → Tool completes → Agent responds</code></p>
+</blockquote>
+
+<p>This is called a <strong>Long-Running Operation (LRO)</strong> - the tool needs to pause, wait for external input (human approval), then resume.</p>
+
+<p><strong>When to use Long-Running Operations:</strong></p>
+
+<ul>
+  <li>💰 <strong>Financial transactions</strong> requiring approval (transfers, purchases)</li>
+  <li>🗑️ <strong>Bulk operations</strong> (delete 1000 records - confirm first!)</li>
+  <li>📋 <strong>Compliance checkpoints</strong> (regulatory approval needed)</li>
+  <li>💸 <strong>High-cost actions</strong> (spin up 50 servers - are you sure?)</li>
+  <li>⚠️ <strong>Irreversible operations</strong> (permanently delete account)</li>
+</ul>
+
+<h3 id="31-what-were-building-today">3.1: What We’re Building Today</h3>
+
+<p>Let’s build a <strong>shipping coordinator agent with one tool</strong> that:</p>
+<ul>
+  <li>Auto-approves small orders (≤5 containers)</li>
+  <li><strong>Pauses and asks for approval</strong> on large orders (&gt;5 containers)</li>
+  <li>Completes or cancels based on the approval decision</li>
+</ul>
+
+<p>This demonstrates the core long-running operation pattern: <strong>pause → wait for human input → resume</strong>.</p>
+
+<h3 id="32-the-shipping-tool-with-approval-logic">3.2: The Shipping Tool with Approval Logic</h3>
+
+<p>Here’s the complete function.</p>
+
+<h4 id="the-toolcontext-parameter">The <code class="language-plaintext highlighter-rouge">ToolContext</code> Parameter</h4>
+
+<p>Notice the function signature includes <code class="language-plaintext highlighter-rouge">tool_context: ToolContext</code>. ADK automatically provides this object when your tool runs. It gives you two key capabilities:</p>
+
+<ol>
+  <li><strong>Request approval:</strong> Call <code class="language-plaintext highlighter-rouge">tool_context.request_confirmation()</code></li>
+  <li><strong>Check approval status:</strong> Read <code class="language-plaintext highlighter-rouge">tool_context.tool_confirmation</code></li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">LARGE_ORDER_THRESHOLD</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="k">def</span> <span class="nf">place_shipping_order</span><span class="p">(</span>
+    <span class="n">num_containers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tool_context</span><span class="p">:</span> <span class="n">ToolContext</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Places a shipping order. Requires approval if ordering more than 5 containers (LARGE_ORDER_THRESHOLD).
+
+    Args:
+        num_containers: Number of containers to ship
+        destination: Shipping destination
+
+    Returns:
+        Dictionary with order status
+    </span><span class="sh">"""</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># SCENARIO 1: Small orders (≤5 containers) auto-approve
+</span>    <span class="k">if</span> <span class="n">num_containers</span> <span class="o">&lt;=</span> <span class="n">LARGE_ORDER_THRESHOLD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">approved</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">order_id</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">ORD-</span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s">-AUTO</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">num_containers</span><span class="sh">"</span><span class="p">:</span> <span class="n">num_containers</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">destination</span><span class="sh">"</span><span class="p">:</span> <span class="n">destination</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Order auto-approved: </span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s"> containers to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># SCENARIO 2: This is the first time this tool is called. Large orders need human approval - PAUSE here.
+</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">tool_context</span><span class="p">.</span><span class="n">tool_confirmation</span><span class="p">:</span>
+        <span class="n">tool_context</span><span class="p">.</span><span class="nf">request_confirmation</span><span class="p">(</span>
+            <span class="n">hint</span><span class="o">=</span><span class="sa">f</span><span class="sh">"</span><span class="s">⚠️ Large order: </span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s"> containers to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s">. Do you want to approve?</span><span class="sh">"</span><span class="p">,</span>
+            <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="sh">"</span><span class="s">num_containers</span><span class="sh">"</span><span class="p">:</span> <span class="n">num_containers</span><span class="p">,</span> <span class="sh">"</span><span class="s">destination</span><span class="sh">"</span><span class="p">:</span> <span class="n">destination</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>  <span class="c1"># This is sent to the Agent
+</span>            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">pending</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Order for </span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s"> containers requires approval</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># SCENARIO 3: The tool is called AGAIN and is now resuming. Handle approval response - RESUME here.
+</span>    <span class="k">if</span> <span class="n">tool_context</span><span class="p">.</span><span class="n">tool_confirmation</span><span class="p">.</span><span class="n">confirmed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">approved</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">order_id</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">ORD-</span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s">-HUMAN</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">num_containers</span><span class="sh">"</span><span class="p">:</span> <span class="n">num_containers</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">destination</span><span class="sh">"</span><span class="p">:</span> <span class="n">destination</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Order approved: </span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s"> containers to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">rejected</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Order rejected: </span><span class="si">{</span><span class="n">num_containers</span><span class="si">}</span><span class="s"> containers to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="sh">"</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Long-running functions created!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Long-running functions created!
+</code></pre></div></div>
+
+<h3 id="33-understanding-the-code">3.3: Understanding the Code</h3>
+
+<p>Now that you’ve seen the complete function, let’s break down how it works.</p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/lro-tool.png" width="1000" alt="Long-running operation tool" /></p>
+
+<h4 id="how-the-three-scenarios-work">How the Three Scenarios Work</h4>
+
+<p>The tool handles three scenarios by checking <code class="language-plaintext highlighter-rouge">tool_context.tool_confirmation</code>:</p>
+
+<p><strong>Scenario 1: Small order (≤5 containers)</strong>: Returns immediately with auto-approved status.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">tool_context.tool_confirmation</code> is never checked</li>
+</ul>
+
+<p><strong>Scenario 2: Large order - FIRST CALL</strong></p>
+<ul>
+  <li>Tool detects it’s a first call: <code class="language-plaintext highlighter-rouge">if not tool_context.tool_confirmation:</code></li>
+  <li>Calls <code class="language-plaintext highlighter-rouge">request_confirmation()</code> to request human approval</li>
+  <li>Returns <code class="language-plaintext highlighter-rouge">{'status': 'pending', ...}</code> immediately</li>
+  <li><strong>ADK automatically creates <code class="language-plaintext highlighter-rouge">adk_request_confirmation</code> event</strong></li>
+  <li>Agent execution pauses - waiting for human decision</li>
+</ul>
+
+<p><strong>Scenario 3: Large order - RESUMED CALL</strong></p>
+<ul>
+  <li>Tool detects it’s resuming: <code class="language-plaintext highlighter-rouge">if not tool_context.tool_confirmation:</code> is now False</li>
+  <li>Checks human decision: <code class="language-plaintext highlighter-rouge">tool_context.tool_confirmation.confirmed</code></li>
+  <li>If True → Returns approved status</li>
+  <li>If False → Returns rejected status</li>
+</ul>
+
+<p><strong>Key insight:</strong> Between the two calls, your workflow code (in Section 4) must detect the <code class="language-plaintext highlighter-rouge">adk_request_confirmation</code> event and resume with the approval decision.</p>
+
+<h3 id="34-create-the-agent-app-and-runner">3.4: Create the Agent, App and Runner</h3>
+
+<p><strong>Step 1: Create the agent</strong></p>
+
+<p>Add the tool to the Agent. The tool decides internally when to request approval based on the order size.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create shipping agent with pausable tool
+</span><span class="n">shipping_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">shipping_agent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"""</span><span class="s">You are a shipping coordinator assistant.
+  
+  When users request to ship containers:
+   1. Use the place_shipping_order tool with the number of containers and destination
+   2. If the order status is </span><span class="sh">'</span><span class="s">pending</span><span class="sh">'</span><span class="s">, inform the user that approval is required
+   3. After receiving the final result, provide a clear summary including:
+      - Order status (approved/rejected)
+      - Order ID (if available)
+      - Number of containers and destination
+   4. Keep responses concise but informative
+  </span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="nc">FunctionTool</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">place_shipping_order</span><span class="p">)],</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Shipping Agent created!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Shipping Agent created!
+</code></pre></div></div>
+
+<p><strong>Step 2: Wrap in resumable App</strong></p>
+
+<p><strong>The problem:</strong> A regular <code class="language-plaintext highlighter-rouge">LlmAgent</code> is stateless - each call is independent with no memory of previous interactions. If a tool requests approval, the agent can’t remember what it was doing.</p>
+
+<p><strong>The solution:</strong> Wrap your agent in an <strong><code class="language-plaintext highlighter-rouge">App</code></strong> with <strong>resumability enabled</strong>. The App adds a persistence layer that saves and restores state.</p>
+
+<p><strong>What gets saved when a tool pauses:</strong></p>
+<ul>
+  <li>All conversation messages so far</li>
+  <li>Which tool was called (<code class="language-plaintext highlighter-rouge">place_shipping_order</code>)</li>
+  <li>Tool parameters (10 containers, Rotterdam)</li>
+  <li>Where exactly it paused (waiting for approval)</li>
+</ul>
+
+<p>When you resume, the App loads this saved state so the agent continues exactly where it left off - as if no time passed.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Wrap the agent in a resumable app - THIS IS THE KEY FOR LONG-RUNNING OPERATIONS!
+</span><span class="n">shipping_app</span> <span class="o">=</span> <span class="nc">App</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">shipping_coordinator</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">root_agent</span><span class="o">=</span><span class="n">shipping_agent</span><span class="p">,</span>
+    <span class="n">resumability_config</span><span class="o">=</span><span class="nc">ResumabilityConfig</span><span class="p">(</span><span class="n">is_resumable</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Resumable app created!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Resumable app created!
+
+
+/tmp/ipykernel_48/3673777575.py:5: UserWarning: [EXPERIMENTAL] ResumabilityConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  resumability_config=ResumabilityConfig(is_resumable=True),
+</code></pre></div></div>
+
+<p><strong>Step 3: Create Session and Runner with the App</strong></p>
+
+<p>Pass <code class="language-plaintext highlighter-rouge">app=shipping_app</code> instead of <code class="language-plaintext highlighter-rouge">agent=...</code> so the runner knows about resumability.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session_service</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>
+
+<span class="c1"># Create runner with the resumable app
+</span><span class="n">shipping_runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span>
+    <span class="n">app</span><span class="o">=</span><span class="n">shipping_app</span><span class="p">,</span>  <span class="c1"># Pass the app instead of the agent
+</span>    <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Runner created!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Runner created!
+</code></pre></div></div>
+
+<hr />
+
+<p><strong>✅ Recap: Your pausable shipping agent is now complete!</strong></p>
+
+<p>You’ve created:</p>
+<ol>
+  <li>✅ A tool that can pause for approval (<code class="language-plaintext highlighter-rouge">place_shipping_order</code>)</li>
+  <li>✅ An agent that uses this tool (<code class="language-plaintext highlighter-rouge">shipping_agent</code>)</li>
+  <li>✅ A resumable app that saves state (<code class="language-plaintext highlighter-rouge">shipping_app</code>)</li>
+  <li>✅ A runner that can handle pause/resume (<code class="language-plaintext highlighter-rouge">shipping_runner</code>)</li>
+</ol>
+
+<p><strong>Next step:</strong> Build the workflow code and test that our Agent detects pauses and handles approvals.</p>
+
+<hr />
+
+<h2 id="️-section-4-building-the-workflow">🏗️ Section 4: Building the Workflow</h2>
+
+<p>‼️ <strong>Important:</strong> The workflow code uses ADK concepts like Sessions, Runners, and Events. <strong>We’ll cover what you need to know for long-running operations</strong> in this notebook. For deeper understanding, we will cover these topics in Day 3, or you can check out the <a href="https://google.github.io/adk-docs/runtime/">ADK docs</a> and this <a href="https://www.youtube.com/watch?v=44C8u0CDtSo&amp;list=PLOU2XLYxmsIIAPgM8FmtEcFTXLLzmh4DK&amp;index=2&amp;t=1s">video</a>.</p>
+
+<h3 id="41-️-the-critical-part---handling-events-in-your-workflow">4.1: ⚠️ The Critical Part - Handling Events in Your Workflow</h3>
+
+<p>The agent won’t automatically handle pause/resume. <strong>Every long-running operation workflow requires you to:</strong></p>
+
+<ol>
+  <li><strong>Detect the pause:</strong> Check if events contain <code class="language-plaintext highlighter-rouge">adk_request_confirmation</code></li>
+  <li><strong>Get human decision:</strong> In production, show UI and wait for user click. Here, we simulate it.</li>
+  <li><strong>Resume the agent:</strong> Send the decision back with the saved <code class="language-plaintext highlighter-rouge">invocation_id</code></li>
+</ol>
+
+<h3 id="42-understand-key-technical-concepts">4.2 Understand Key Technical Concepts</h3>
+
+<p>👉 <strong><code class="language-plaintext highlighter-rouge">events</code></strong> - ADK creates events as the agent executes. Tool calls, model responses, function results - all become events</p>
+
+<p>👉 <strong><code class="language-plaintext highlighter-rouge">adk_request_confirmation</code> event</strong> - This event is special - it signals “pause here!”</p>
+<ul>
+  <li>Automatically created by ADK when your tool calls <code class="language-plaintext highlighter-rouge">request_confirmation()</code></li>
+  <li>Contains the <code class="language-plaintext highlighter-rouge">invocation_id</code></li>
+  <li>Your workflow must detect this event to know the agent paused</li>
+</ul>
+
+<p>👉 <strong><code class="language-plaintext highlighter-rouge">invocation_id</code></strong> - Every call to <code class="language-plaintext highlighter-rouge">run_async()</code> gets a unique <code class="language-plaintext highlighter-rouge">invocation_id</code> (like “abc123”)</p>
+<ul>
+  <li>When a tool pauses, you save this ID</li>
+  <li>When resuming, pass the same ID so ADK knows which execution to continue</li>
+  <li>Without it, ADK would start a NEW execution instead of resuming the paused one</li>
+</ul>
+
+<h3 id="43-helper-functions-to-process-events">4.3: Helper Functions to Process Events</h3>
+
+<p>These handle the event iteration logic for you.</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">check_for_approval()</code></strong> - Detects if the agent paused</p>
+<ul>
+  <li>Loops through all events and looks for the special <code class="language-plaintext highlighter-rouge">adk_request_confirmation</code> event</li>
+  <li>Returns <code class="language-plaintext highlighter-rouge">approval_id</code> (identifies this specific request) and <code class="language-plaintext highlighter-rouge">invocation_id</code> (identifies which execution to resume)</li>
+  <li>Returns <code class="language-plaintext highlighter-rouge">None</code> if no pause detected</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">check_for_approval</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Check if events contain an approval request.
+
+    Returns:
+        dict with approval details or None
+    </span><span class="sh">"""</span>
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="nf">if </span><span class="p">(</span>
+                    <span class="n">part</span><span class="p">.</span><span class="n">function_call</span>
+                    <span class="ow">and</span> <span class="n">part</span><span class="p">.</span><span class="n">function_call</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="sh">"</span><span class="s">adk_request_confirmation</span><span class="sh">"</span>
+                <span class="p">):</span>
+                    <span class="k">return</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">approval_id</span><span class="sh">"</span><span class="p">:</span> <span class="n">part</span><span class="p">.</span><span class="n">function_call</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span>
+                        <span class="sh">"</span><span class="s">invocation_id</span><span class="sh">"</span><span class="p">:</span> <span class="n">event</span><span class="p">.</span><span class="n">invocation_id</span><span class="p">,</span>
+                    <span class="p">}</span>
+    <span class="k">return</span> <span class="bp">None</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">print_agent_response()</code></strong> - Displays agent text</p>
+<ul>
+  <li>Simple helper to extract and print text from events</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">print_agent_response</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Print agent</span><span class="sh">'</span><span class="s">s text responses from events.</span><span class="sh">"""</span>
+    <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">part</span><span class="p">.</span><span class="n">text</span><span class="p">:</span>
+                    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Agent &gt; </span><span class="si">{</span><span class="n">part</span><span class="p">.</span><span class="n">text</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong><code class="language-plaintext highlighter-rouge">create_approval_response()</code></strong> - Formats the human decision</p>
+<ul>
+  <li>Takes the approval info and boolean decision (True/False) from the human</li>
+  <li>Creates a <code class="language-plaintext highlighter-rouge">FunctionResponse</code> that ADK understands</li>
+  <li>Wraps it in a <code class="language-plaintext highlighter-rouge">Content</code> object to send back to the agent</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">create_approval_response</span><span class="p">(</span><span class="n">approval_info</span><span class="p">,</span> <span class="n">approved</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Create approval response message.</span><span class="sh">"""</span>
+    <span class="n">confirmation_response</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">FunctionResponse</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="n">approval_info</span><span class="p">[</span><span class="sh">"</span><span class="s">approval_id</span><span class="sh">"</span><span class="p">],</span>
+        <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">adk_request_confirmation</span><span class="sh">"</span><span class="p">,</span>
+        <span class="n">response</span><span class="o">=</span><span class="p">{</span><span class="sh">"</span><span class="s">confirmed</span><span class="sh">"</span><span class="p">:</span> <span class="n">approved</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">types</span><span class="p">.</span><span class="nc">Content</span><span class="p">(</span>
+        <span class="n">role</span><span class="o">=</span><span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">types</span><span class="p">.</span><span class="nc">Part</span><span class="p">(</span><span class="n">function_response</span><span class="o">=</span><span class="n">confirmation_response</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined
+</code></pre></div></div>
+
+<h3 id="44-the-workflow-function---lets-tie-it-all-together">4.4: The Workflow Function - Let’s tie it all together!</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">run_shipping_workflow()</code> function orchestrates the entire approval flow.</p>
+
+<p>Look for the code explanation in the cell below.</p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day2/lro-workflow.png" width="1000" alt="Long-running operation workflow" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">run_shipping_workflow</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">auto_approve</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Runs a shipping workflow with approval handling.
+
+    Args:
+        query: User</span><span class="sh">'</span><span class="s">s shipping request
+        auto_approve: Whether to auto-approve large orders (simulates human decision)
+    </span><span class="sh">"""</span>
+
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="si">{</span><span class="sh">'</span><span class="s">=</span><span class="sh">'</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">User &gt; </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="c1"># Generate unique session ID
+</span>    <span class="n">session_id</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="s">order_</span><span class="si">{</span><span class="n">uuid</span><span class="p">.</span><span class="nf">uuid4</span><span class="p">().</span><span class="nb">hex</span><span class="p">[</span><span class="si">:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="sh">"</span>
+
+    <span class="c1"># Create session
+</span>    <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">create_session</span><span class="p">(</span>
+        <span class="n">app_name</span><span class="o">=</span><span class="sh">"</span><span class="s">shipping_coordinator</span><span class="sh">"</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="sh">"</span><span class="s">test_user</span><span class="sh">"</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span>
+    <span class="p">)</span>
+
+    <span class="n">query_content</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">Content</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">types</span><span class="p">.</span><span class="nc">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">query</span><span class="p">)])</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># STEP 1: Send initial request to the Agent. If num_containers &gt; 5, the Agent returns the special `adk_request_confirmation` event
+</span>    <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">shipping_runner</span><span class="p">.</span><span class="nf">run_async</span><span class="p">(</span>
+        <span class="n">user_id</span><span class="o">=</span><span class="sh">"</span><span class="s">test_user</span><span class="sh">"</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span> <span class="n">new_message</span><span class="o">=</span><span class="n">query_content</span>
+    <span class="p">):</span>
+        <span class="n">events</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># STEP 2: Loop through all the events generated and check if `adk_request_confirmation` is present.
+</span>    <span class="n">approval_info</span> <span class="o">=</span> <span class="nf">check_for_approval</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># STEP 3: If the event is present, it's a large order - HANDLE APPROVAL WORKFLOW
+</span>    <span class="k">if</span> <span class="n">approval_info</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">⏸️  Pausing for approval...</span><span class="sh">"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">🤔 Human Decision: </span><span class="si">{</span><span class="sh">'</span><span class="s">APPROVE ✅</span><span class="sh">'</span> <span class="k">if</span> <span class="n">auto_approve</span> <span class="k">else</span> <span class="sh">'</span><span class="s">REJECT ❌</span><span class="sh">'</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+
+        <span class="c1"># PATH A: Resume the agent by calling run_async() again with the approval decision
+</span>        <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">shipping_runner</span><span class="p">.</span><span class="nf">run_async</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="sh">"</span><span class="s">test_user</span><span class="sh">"</span><span class="p">,</span>
+            <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span><span class="p">,</span>
+            <span class="n">new_message</span><span class="o">=</span><span class="nf">create_approval_response</span><span class="p">(</span>
+                <span class="n">approval_info</span><span class="p">,</span> <span class="n">auto_approve</span>
+            <span class="p">),</span>  <span class="c1"># Send human decision here
+</span>            <span class="n">invocation_id</span><span class="o">=</span><span class="n">approval_info</span><span class="p">[</span>
+                <span class="sh">"</span><span class="s">invocation_id</span><span class="sh">"</span>
+            <span class="p">],</span>  <span class="c1"># Critical: same invocation_id tells ADK to RESUME
+</span>        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">part</span><span class="p">.</span><span class="n">text</span><span class="p">:</span>
+                        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Agent &gt; </span><span class="si">{</span><span class="n">part</span><span class="p">.</span><span class="n">text</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="c1"># -----------------------------------------------------------------------------------------------
+</span>    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># PATH B: If the `adk_request_confirmation` is not present - no approval needed - order completed immediately.
+</span>        <span class="nf">print_agent_response</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="sh">'</span><span class="s">=</span><span class="sh">'</span><span class="o">*</span><span class="mi">60</span><span class="si">}</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Workflow function ready</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Workflow function ready
+</code></pre></div></div>
+
+<h4 id="code-breakdown"><strong>Code breakdown</strong></h4>
+
+<p><strong>Step 1: Send initial request to the Agent</strong></p>
+<ul>
+  <li>Call <code class="language-plaintext highlighter-rouge">run_async()</code> to start agent execution</li>
+  <li>Collect all events in a list for inspection</li>
+</ul>
+
+<p><strong>Step 2: Detect Pause</strong></p>
+<ul>
+  <li>Call <code class="language-plaintext highlighter-rouge">check_for_approval(events)</code> to look for the special event: <code class="language-plaintext highlighter-rouge">adk_request_confirmation</code></li>
+  <li>Returns approval info (with <code class="language-plaintext highlighter-rouge">invocation_id</code>) if the special event is present; <code class="language-plaintext highlighter-rouge">None</code> if completed</li>
+</ul>
+
+<p><strong>Step 3: Resume execution</strong></p>
+
+<p>PATH A:</p>
+<ul>
+  <li>If the approval info is present, at this point the Agent <em>pauses</em> for human input.</li>
+  <li>Once the Human input is available, call the agent again using <code class="language-plaintext highlighter-rouge">run_async()</code> and pass in the Human input.</li>
+  <li><strong>Critical:</strong> Same <code class="language-plaintext highlighter-rouge">invocation_id</code> (tells ADK to RESUME, not restart)</li>
+  <li>Display agent’s final response after resuming</li>
+</ul>
+
+<p>PATH B:</p>
+<ul>
+  <li>If the approval info is not present, then approval is not needed and the agent completes execution.</li>
+</ul>
+
+<h3 id="-45-demo-testing-the-workflow">🎬 4.5: Demo: Testing the Workflow</h3>
+
+<p>Now, let’s run our demos. Notice how much cleaner and easier to read they are. All the complex logic for pausing and resuming is now hidden away in our <code class="language-plaintext highlighter-rouge">run_workflow</code> helper function, allowing us to focus on the tasks we want the agent to perform.</p>
+
+<p><strong>Note:</strong> You may see warnings like <code class="language-plaintext highlighter-rouge">Warning: there are non-text parts in the response: ['function_call']</code> - this is normal and can be ignored. It just means the agent is calling tools in addition to generating text.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Demo 1: It's a small order. Agent receives auto-approved status from tool
+</span><span class="k">await</span> <span class="nf">run_shipping_workflow</span><span class="p">(</span><span class="sh">"</span><span class="s">Ship 3 containers to Singapore</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="c1"># Demo 2: Workflow simulates human decision: APPROVE ✅
+</span><span class="k">await</span> <span class="nf">run_shipping_workflow</span><span class="p">(</span><span class="sh">"</span><span class="s">Ship 10 containers to Rotterdam</span><span class="sh">"</span><span class="p">,</span> <span class="n">auto_approve</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># Demo 3: Workflow simulates human decision: REJECT ❌
+</span><span class="k">await</span> <span class="nf">run_shipping_workflow</span><span class="p">(</span><span class="sh">"</span><span class="s">Ship 8 containers to Los Angeles</span><span class="sh">"</span><span class="p">,</span> <span class="n">auto_approve</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>============================================================
+User &gt; Ship 3 containers to Singapore
+
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+Agent &gt; Shipping order approved. Order ID: ORD-3-AUTO. 3 containers will be shipped to Singapore.
+============================================================
+
+
+============================================================
+User &gt; Ship 10 containers to Rotterdam
+
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+/usr/local/lib/python3.11/dist-packages/google/adk/tools/tool_context.py:92: UserWarning: [EXPERIMENTAL] ToolConfirmation: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  ToolConfirmation(
+/usr/local/lib/python3.11/dist-packages/google/adk/agents/invocation_context.py:298: UserWarning: [EXPERIMENTAL] BaseAgentState: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  self.agent_states[event.author] = BaseAgentState()
+
+
+⏸️  Pausing for approval...
+🤔 Human Decision: APPROVE ✅
+
+Agent &gt; Shipping order approved. Order ID: ORD-10-HUMAN. 10 containers will be shipped to Rotterdam.
+============================================================
+
+
+============================================================
+User &gt; Ship 8 containers to Los Angeles
+
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+⏸️  Pausing for approval...
+🤔 Human Decision: REJECT ❌
+
+Agent &gt; The shipping order for 8 containers to Los Angeles has been rejected.
+============================================================
+</code></pre></div></div>
+
+<h3 id="46-optional-complete-execution-flow">4.6: (Optional) Complete execution flow</h3>
+
+<p>Here’s an example trace of the whole workflow.</p>
+
+<p><strong>TL;DR:</strong> Tool pauses at TIME 6, workflow detects it at TIME 8, resumes at TIME 10 with same <code class="language-plaintext highlighter-rouge">invocation_id="abc123"</code>.</p>
+
+<p><strong>Detailed timeline:</strong></p>
+
+<p>Here’s what happens step-by-step when you run <code class="language-plaintext highlighter-rouge">run_shipping_workflow("Ship 10 containers to Rotterdam", auto_approve=True)</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TIME 1: User sends "Ship 10 containers to Rotterdam"
+        ↓
+TIME 2: Workflow calls shipping_runner.run_async(...)
+        ADK assigns a unique invocation_id = "abc123"
+        ↓
+TIME 3: Agent receives user message, decides to use place_shipping_order tool
+        ↓
+TIME 4: ADK calls place_shipping_order(10, "Rotterdam", tool_context)
+        ↓
+TIME 5: Tool checks: num_containers (10) &gt; 5
+        Tool calls tool_context.request_confirmation(...)
+        ↓
+TIME 6: Tool returns {'status': 'pending', ...}
+        ↓
+TIME 7: ADK creates adk_request_confirmation event with invocation_id="abc123"
+        ↓
+TIME 8: Workflow detects the event via check_for_approval()
+        Saves approval_id and invocation_id="abc123"
+        ↓
+TIME 9: Workflow gets human decision → True (approve)
+        ↓
+TIME 10: Workflow calls shipping_runner.run_async(..., invocation_id="abc123")
+         Passes approval decision as FunctionResponse
+         ↓
+TIME 11: ADK sees invocation_id="abc123" - knows to RESUME (instead of starting new)
+         Loads saved state from TIME 7
+         ↓
+TIME 12: ADK calls place_shipping_order again with same parameters
+         But now tool_context.tool_confirmation.confirmed = True
+         ↓
+TIME 13: Tool returns {'status': 'approved', 'order_id': 'ORD-10-HUMAN', ...}
+         ↓
+TIME 14: Agent receives result and responds to user
+</code></pre></div></div>
+
+<p><strong>Key point:</strong> The <code class="language-plaintext highlighter-rouge">invocation_id</code> is how ADK knows to resume the paused execution instead of starting a new one.</p>
+
+<hr />
+
+<h2 id="-section-5-summary---key-patterns-for-advanced-tools">📊 Section 5: Summary - Key Patterns for Advanced Tools</h2>
+
+<p>In this notebook, you implemented two powerful, production-ready patterns for extending your agent’s capabilities beyond simple functions.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Pattern</th>
+      <th style="text-align: left">When to Use It</th>
+      <th style="text-align: left">Key ADK Components</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>MCP Integration</strong></td>
+      <td style="text-align: left">You need to connect to <strong>external, standardized services</strong> (like time, databases, or file systems) without writing custom integration code.</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">McpToolset</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Long-Running Operations</strong></td>
+      <td style="text-align: left">You need to <strong>pause a workflow</strong> to wait for an external event, most commonly for <strong>human-in-the-loop</strong> approvals or long background tasks or for compliance/security checkpoints.</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">ToolContext</code>, <code class="language-plaintext highlighter-rouge">request_confirmation</code>, <code class="language-plaintext highlighter-rouge">App</code>, <code class="language-plaintext highlighter-rouge">ResumabilityConfig</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="-production-ready-concepts">🚀 Production Ready Concepts</h3>
+
+<p>You now understand how to build agents that:</p>
+<ul>
+  <li>🌐 <strong>Scale</strong>: Leverage community tools instead of building everything</li>
+  <li>⏳ <strong>Handle Time</strong>: Manage operations that span minutes, hours, or days</li>
+  <li>🔒 <strong>Ensure Compliance</strong>: Add human oversight to critical operations</li>
+  <li>🔄 <strong>Maintain State</strong>: Resume conversations exactly where they paused</li>
+</ul>
+
+<p><strong>Start Simple</strong>: Begin with custom tools → Add MCP services → Add long-running as needed</p>
+
+<h2 id="-exercise-build-an-image-generation-agent-with-cost-approval">🎯 Exercise: Build an Image Generation Agent with Cost Approval</h2>
+
+<p><strong>The scenario:</strong></p>
+
+<p>Build an agent that generates images using the MCP server, but requires approval for “bulk” image generation:</p>
+<ul>
+  <li>Single image request (1 image): Auto-approve, generate immediately</li>
+  <li>Bulk request (&gt;1 image): Pause and ask for approval before generating multiple images</li>
+  <li>Explore different publicly available Image Generation MCP Servers</li>
+</ul>
+
+<hr />
+
+<h2 id="-congratulations-youve-learned-agent-patterns-and-best-practices">🎉 Congratulations! You’ve Learned Agent Patterns and Best Practices</h2>
+
+<p>You’ve successfully learned how to build agents that handle complex, real-world workflows integrating external systems and spanning time.</p>
+
+<p><strong>ℹ️ Note: No submission required!</strong></p>
+
+<p>This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+
+<h3 id="-learn-more">📚 Learn More</h3>
+
+<ul>
+  <li><a href="https://google.github.io/adk-docs/">ADK Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools/mcp-tools/">MCP Tools Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/tools/function-tools/">Long-Running Operations Guide</a></li>
+  <li><a href="https://spec.modelcontextprotocol.io/">Model Context Protocol Specification</a></li>
+  <li><a href="https://google.github.io/adk-docs/runtime/">The <code class="language-plaintext highlighter-rouge">App</code> and <code class="language-plaintext highlighter-rouge">Runner</code></a></li>
+</ul>
+
+<h3 id="-next-steps">🎯 Next Steps</h3>
+
+<p>You’ve built the foundation for production-ready agent systems. Ready for the next challenge?</p>
+
+<p>Continue to <strong>Day 3</strong> to learn about <strong>State and Memory Management</strong>!</p>
+
+<hr />
+
+<div align="center">
+  <table>
+    <tr>
+      <th style="text-align:center">Authors</th>
+    </tr>
+    <tr>
+      <td style="text-align:center"><a href="https://www.linkedin.com/in/laxmi-harikumar/">Laxmi Harikumar</a></td>
+    </tr>
+  </table>
+</div>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>
