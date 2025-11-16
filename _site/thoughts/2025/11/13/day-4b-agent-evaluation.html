@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 4b - Agent Evaluation" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/13/day-4b-agent-evaluation.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 4b - Agent Evaluation</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 4b - Agent Evaluation</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-13 00:00:00 +0800" style="float: right;">2025-11-13</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h1 id="-agent-evaluation">📝 Agent Evaluation</h1>
+
+<p><strong>Welcome to Day 4 of the Kaggle 5-day Agents course!</strong></p>
+
+<p>In the previous notebook, we explored how to implement Observability in AI agents. This approach is primarily <strong>reactive</strong>; it comes into play after an issue has surfaced, providing the necessary data to debug and understand the root cause.</p>
+
+<p>In this notebook, we’ll complement those observability practices with a <strong>proactive</strong> approach using <strong>Agent Evaluation.</strong> By continuously evaluating our agent’s performance, we can catch any quality degradations much earlier!</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                            Observability + Agent Evaluation
+                            (reactive)      (proactive)
+</code></pre></div></div>
+
+<h2 id="what-is-agent-evaluation"><strong>What is Agent Evaluation?</strong></h2>
+
+<p>It is the systematic process of testing and measuring how well an AI agent performs across different scenarios and quality dimensions.</p>
+
+<h2 id="-the-story"><strong>🤖 The story</strong></h2>
+
+<p>You’ve built a home automation agent. It works perfectly in your tests, so you launch it confidently…</p>
+
+<ul>
+  <li><strong>Week 1:</strong> 🚨 “Agent turned on the fireplace when I asked for lights!”</li>
+  <li><strong>Week 2:</strong> 🚨 “Agent won’t respond to commands in the guest room!”</li>
+  <li><strong>Week 3:</strong> 🚨 “Agent gives rude responses when devices are unavailable!”</li>
+</ul>
+
+<p><strong>The Problem:</strong> <code class="language-plaintext highlighter-rouge">Standard testing ≠ Evaluation</code></p>
+
+<p>Agents are different from traditional software:</p>
+<ul>
+  <li>They are non-deterministic</li>
+  <li>Users give unpredictable, ambiguous commands</li>
+  <li>Small prompt changes cause dramatic behavior shifts and different tool calls</li>
+</ul>
+
+<p>To accommodate all these differences, agents need systematic evaluation, not just “happy path” testing. <strong>Which means assessing the agent’s entire decision-making process - including the final response and the path it took to get the response (trajectory)!</strong></p>
+
+<p>By the end of this notebook, you will be able to:</p>
+
+<ul>
+  <li>✅ Understand what agent evaluation is and how to use it</li>
+  <li>✅ Run evaluations and analyze results directly in the ADK web UI</li>
+  <li>✅ Detect regression in the agent’s performance over a period of time</li>
+  <li>✅ Understand and create the necessary evaluation files (<code class="language-plaintext highlighter-rouge">*.test.json</code>, <code class="language-plaintext highlighter-rouge">*.evalset.json</code>, <code class="language-plaintext highlighter-rouge">test_config.json</code>).</li>
+</ul>
+
+<hr />
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<p>Before we begin our evaluation journey, let’s set up our environment.</p>
+
+<h3 id="11-install-dependencies">1.1: Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies, so you don’t need to install additional packages in this notebook.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="-12-configure-your-gemini-api-key">🔑 1.2: Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/">Gemini API</a>, which requires an API key.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to access the <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> you just saved and set it as an environment variable for the notebook to use:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Setup and authentication complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Setup and authentication complete.
+</code></pre></div></div>
+
+<h3 id="-13-set-up-proxy-and-tunneling">💻 1.3: Set up proxy and tunneling</h3>
+
+<p>We’ll use a proxy to access the ADK web UI from within the Kaggle Notebooks environment. If you are running this outside the Kaggle environment, you don’t need to do this.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="n">jupyter_server.serverapp</span> <span class="kn">import</span> <span class="n">list_running_servers</span>
+
+
+<span class="c1"># Gets the proxied URL in the Kaggle Notebooks environment
+</span><span class="k">def</span> <span class="nf">get_adk_proxy_url</span><span class="p">():</span>
+    <span class="n">PROXY_HOST</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://kkb-production.jupyter-proxy.kaggle.net</span><span class="sh">"</span>
+    <span class="n">ADK_PORT</span> <span class="o">=</span> <span class="sh">"</span><span class="s">8000</span><span class="sh">"</span>
+
+    <span class="n">servers</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">list_running_servers</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">servers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nc">Exception</span><span class="p">(</span><span class="sh">"</span><span class="s">No running Jupyter servers found.</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="n">baseURL</span> <span class="o">=</span> <span class="n">servers</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="sh">"</span><span class="s">base_url</span><span class="sh">"</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">path_parts</span> <span class="o">=</span> <span class="n">baseURL</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">/</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">except</span> <span class="nb">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nc">Exception</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Could not parse kernel/token from base URL: </span><span class="si">{</span><span class="n">baseURL</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="n">url_prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="s">/k/</span><span class="si">{</span><span class="n">kernel</span><span class="si">}</span><span class="s">/</span><span class="si">{</span><span class="n">token</span><span class="si">}</span><span class="s">/proxy/proxy/</span><span class="si">{</span><span class="n">ADK_PORT</span><span class="si">}</span><span class="sh">"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">PROXY_HOST</span><span class="si">}{</span><span class="n">url_prefix</span><span class="si">}</span><span class="sh">"</span>
+
+    <span class="n">styled_html</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"""</span><span class="s">
+    &lt;div style=</span><span class="sh">"</span><span class="s">padding: 15px; border: 2px solid #f0ad4e; border-radius: 8px; background-color: #fef9f0; margin: 20px 0;</span><span class="sh">"</span><span class="s">&gt;
+        &lt;div style=</span><span class="sh">"</span><span class="s">font-family: sans-serif; margin-bottom: 12px; color: #333; font-size: 1.1em;</span><span class="sh">"</span><span class="s">&gt;
+            &lt;strong&gt;⚠️ IMPORTANT: Action Required&lt;/strong&gt;
+        &lt;/div&gt;
+        &lt;div style=</span><span class="sh">"</span><span class="s">font-family: sans-serif; margin-bottom: 15px; color: #333; line-height: 1.5;</span><span class="sh">"</span><span class="s">&gt;
+            The ADK web UI is &lt;strong&gt;not running yet&lt;/strong&gt;. You must start it in the next cell.
+            &lt;ol style=</span><span class="sh">"</span><span class="s">margin-top: 10px; padding-left: 20px;</span><span class="sh">"</span><span class="s">&gt;
+                &lt;li style=</span><span class="sh">"</span><span class="s">margin-bottom: 5px;</span><span class="sh">"</span><span class="s">&gt;&lt;strong&gt;Run the next cell&lt;/strong&gt; (the one with &lt;code&gt;!adk web ...&lt;/code&gt;) to start the ADK web UI.&lt;/li&gt;
+                &lt;li style=</span><span class="sh">"</span><span class="s">margin-bottom: 5px;</span><span class="sh">"</span><span class="s">&gt;Wait for that cell to show it is </span><span class="sh">"</span><span class="s">Running</span><span class="sh">"</span><span class="s"> (it will not </span><span class="sh">"</span><span class="s">complete</span><span class="sh">"</span><span class="s">).&lt;/li&gt;
+                &lt;li&gt;Once it</span><span class="sh">'</span><span class="s">s running, &lt;strong&gt;return to this button&lt;/strong&gt; and click it to open the UI.&lt;/li&gt;
+            &lt;/ol&gt;
+            &lt;em style=</span><span class="sh">"</span><span class="s">font-size: 0.9em; color: #555;</span><span class="sh">"</span><span class="s">&gt;(If you click the button before running the next cell, you will get a 500 error.)&lt;/em&gt;
+        &lt;/div&gt;
+        &lt;a href=</span><span class="sh">'</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="sh">'</span><span class="s"> target=</span><span class="sh">'</span><span class="s">_blank</span><span class="sh">'</span><span class="s"> style=</span><span class="sh">"</span><span class="s">
+            display: inline-block; background-color: #1a73e8; color: white; padding: 10px 20px;
+            text-decoration: none; border-radius: 25px; font-family: sans-serif; font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.2s ease;</span><span class="sh">"</span><span class="s">&gt;
+            Open ADK Web UI (after running cell below) ↗
+        &lt;/a&gt;
+    &lt;/div&gt;
+    </span><span class="sh">"""</span>
+
+    <span class="nf">display</span><span class="p">(</span><span class="nc">HTML</span><span class="p">(</span><span class="n">styled_html</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">url_prefix</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined.
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-2-create-a-home-automation-agent">🏠 Section 2: Create a Home Automation Agent</h2>
+
+<p>Let’s create the agent that will be the center of our evaluation story. This home automation agent seems perfect in basic tests but has hidden flaws we’ll discover through comprehensive evaluation. Run the <code class="language-plaintext highlighter-rouge">adk create</code> CLI command to set up the project scaffolding.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">!</span><span class="n">adk</span> <span class="n">create</span> <span class="n">home_automation_agent</span> <span class="o">--</span><span class="n">model</span> <span class="n">gemini</span><span class="o">-</span><span class="mf">2.5</span><span class="o">-</span><span class="n">flash</span><span class="o">-</span><span class="n">lite</span> <span class="o">--</span><span class="n">api_key</span> <span class="err">$</span><span class="n">GOOGLE_API_KEY</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[32m
+Agent created in /kaggle/working/home_automation_agent:
+- .env
+- __init__.py
+- agent.py
+[0m
+</code></pre></div></div>
+
+<p>Run the below cell to create the home automation agent.</p>
+
+<p>This agent uses a single <code class="language-plaintext highlighter-rouge">set_device_status</code> tool to control smart home devices. A device’s status can only be ON or OFF. <strong>The agent’s instruction is deliberately overconfident</strong> - it claims to control “ALL smart devices” and “any device the user mentions” - setting up the evaluation problems we’ll discover.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%%</span><span class="n">writefile</span> <span class="n">home_automation_agent</span><span class="o">/</span><span class="n">agent</span><span class="p">.</span><span class="n">py</span>
+
+<span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">LlmAgent</span>
+<span class="kn">from</span> <span class="n">google.adk.models.google_llm</span> <span class="kn">import</span> <span class="n">Gemini</span>
+
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="c1"># Configure Model Retry on errors
+</span><span class="n">retry_config</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">HttpRetryOptions</span><span class="p">(</span>
+    <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Maximum retry attempts
+</span>    <span class="n">exp_base</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># Delay multiplier
+</span>    <span class="n">initial_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">http_status_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">],</span>  <span class="c1"># Retry on these HTTP errors
+</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">set_device_status</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">device_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sh">"""</span><span class="s">Sets the status of a smart home device.
+
+    Args:
+        location: The room where the device is located.
+        device_id: The unique identifier for the device.
+        status: The desired status, either </span><span class="sh">'</span><span class="s">ON</span><span class="sh">'</span><span class="s"> or </span><span class="sh">'</span><span class="s">OFF</span><span class="sh">'</span><span class="s">.
+
+    Returns:
+        A dictionary confirming the action.
+    </span><span class="sh">"""</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Tool Call: Setting </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s"> in </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s"> to </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Successfully set the </span><span class="si">{</span><span class="n">device_id</span><span class="si">}</span><span class="s"> in </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s"> to </span><span class="si">{</span><span class="n">status</span><span class="p">.</span><span class="nf">lower</span><span class="p">()</span><span class="si">}</span><span class="s">.</span><span class="sh">"</span>
+    <span class="p">}</span>
+
+<span class="c1"># This agent has DELIBERATE FLAWS that we'll discover through evaluation!
+</span><span class="n">root_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">home_automation_agent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="sh">"</span><span class="s">An agent to control smart devices in a home.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"""</span><span class="s">You are a home automation assistant. You control ALL smart devices in the house.
+    
+    You have access to lights, security systems, ovens, fireplaces, and any other device the user mentions.
+    Always try to be helpful and control whatever device the user asks for.
+    
+    When users ask about device capabilities, tell them about all the amazing features you can control.</span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">set_device_status</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Overwriting home_automation_agent/agent.py
+</code></pre></div></div>
+
+<hr />
+<h2 id="️-section-3-interactive-evaluation-with-adk-web-ui">✔️ Section 3: Interactive Evaluation with ADK Web UI</h2>
+
+<h3 id="31-launch-adk-web-ui">3.1: Launch ADK Web UI</h3>
+
+<p>Get the proxied URL to access the ADK web UI in the Kaggle Notebooks environment:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">url_prefix</span> <span class="o">=</span> <span class="nf">get_adk_proxy_url</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div style="padding: 15px; border: 2px solid #f0ad4e; border-radius: 8px; background-color: #fef9f0; margin: 20px 0;">
+    <div style="font-family: sans-serif; margin-bottom: 12px; color: #333; font-size: 1.1em;">
+        <strong>⚠️ IMPORTANT: Action Required</strong>
+    </div>
+    <div style="font-family: sans-serif; margin-bottom: 15px; color: #333; line-height: 1.5;">
+        The ADK web UI is <strong>not running yet</strong>. You must start it in the next cell.
+        <ol style="margin-top: 10px; padding-left: 20px;">
+            <li style="margin-bottom: 5px;"><strong>Run the next cell</strong> (the one with <code>!adk web ...</code>) to start the ADK web UI.</li>
+            <li style="margin-bottom: 5px;">Wait for that cell to show it is "Running" (it will not "complete").</li>
+            <li>Once it's running, <strong>return to this button</strong> and click it to open the UI.</li>
+        </ol>
+        <em style="font-size: 0.9em; color: #555;">(If you click the button before running the next cell, you will get a 500 error.)</em>
+    </div>
+    <a href="https://kkb-production.jupyter-proxy.kaggle.net/k/277617707/eyJhbGciOiJkaXIiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwidHlwIjoiSldUIn0..yqu5UcbEclhY8ApaeH9JmQ.QUhaGB32ZVph0YLUwgtAA1nZQTXf0IcqQt7wVeyTYVoofC8tj0Vl3bFW_C7XA3fQK-udYIUGzBSVcAYrTbm-7_OA4wv0JrSo-P79bQzRNLpyNkKcXf1DrVWXDvw6AiYisZYR_ApfEZpy9QiT6e_-BE42QIzhEY6s2i7WPF6oEbdCUO6feF279tlO0acGpXzDBdGv843orYr92nZR_US9OAOTkGxVPnJc6hyMQ4EJiJ3yznC_KLX5wGtG82OT62o0.cKQ2TAHN0roQEvxN5WSOwQ/proxy/proxy/8000" target="_blank" style="
+        display: inline-block; background-color: #1a73e8; color: white; padding: 10px 20px;
+        text-decoration: none; border-radius: 25px; font-family: sans-serif; font-weight: 500;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: all 0.2s ease;">
+        Open ADK Web UI (after running cell below) ↗
+    </a>
+</div>
+
+<p>Now you can start the ADK web UI using the following command.</p>
+
+<p>👉 <strong>Note:</strong> The following cell will not “complete”, but will remain running and serving the ADK web UI until you manually stop the cell.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">!</span><span class="n">adk</span> <span class="n">web</span> <span class="o">--</span><span class="n">url_prefix</span> <span class="p">{</span><span class="n">url_prefix</span><span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/usr/local/lib/python3.11/dist-packages/google/adk/cli/fast_api.py:130: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/usr/local/lib/python3.11/dist-packages/google/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+[32mINFO[0m:     Started server process [[36m92[0m]
+[32mINFO[0m:     Waiting for application startup.
+[32m
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+[0m
+[32mINFO[0m:     Application startup complete.
+[32mINFO[0m:     Uvicorn running on [1mhttp://127.0.0.1:8000[0m (Press CTRL+C to quit)
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET / HTTP/1.1[0m" [33m307 Temporary Redirect[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /dev-ui/ HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /dev-ui/chunk-2WH2EVR6.js HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /dev-ui/polyfills-B6TNHZQ6.js HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /dev-ui/main-OS2OH2S3.js HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /dev-ui/styles-EVMPSV3U.css HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /dev-ui/assets/config/runtime-config.json HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /dev-ui/adk_favicon.svg HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /list-apps?relative_path=./ HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /dev-ui/assets/ADK-512-color.svg HTTP/1.1[0m" [32m200 OK[0m
+INFO:google_adk.google.adk.cli.adk_web_server:New session created: 784db520-4a37-43d5-b6fa-b576d91390f8
+[32mINFO[0m:     35.191.71.42:0 - "[1mPOST /apps/home_automation_agent/users/user/sessions HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /builder/app/home_automation_agent?ts=1763098502707 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /apps/home_automation_agent/users/user/sessions HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /apps/home_automation_agent/eval_results HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /apps/home_automation_agent/eval_sets HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /apps/home_automation_agent/users/user/sessions HTTP/1.1[0m" [32m200 OK[0m
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'appName' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'appName' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'appName' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'newMessage' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'newMessage' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'newMessage' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'streaming' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'streaming' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'streaming' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'stateDelta' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'stateDelta' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'stateDelta' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'invocationId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'invocationId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'invocationId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+[32mINFO[0m:     35.191.71.43:0 - "[1mPOST /run_sse HTTP/1.1[0m" [32m200 OK[0m
+INFO:google_adk.google.adk.cli.utils.agent_loader:Found root_agent in home_automation_agent.agent
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Tool Call: Setting desk lamp in office to ON
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /debug/trace/c78c999d-120c-44b3-ade9-55de31a852e3 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8/events/c78c999d-120c-44b3-ade9-55de31a852e3/graph HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /debug/trace/21701343-2bdc-49ad-a632-926f7f4ed12e HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8/events/21701343-2bdc-49ad-a632-926f7f4ed12e/graph HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /debug/trace/e96f0cc0-32c4-43c6-aa1a-72deed13c48d HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8/events/e96f0cc0-32c4-43c6-aa1a-72deed13c48d/graph HTTP/1.1[0m" [32m200 OK[0m
+INFO:google_adk.google.adk.evaluation.local_eval_sets_manager:Creating eval set file `/kaggle/working/home_automation_agent/evalsetb95384.evalset.json`
+INFO:google_adk.google.adk.evaluation.local_eval_sets_manager:Eval set file doesn't exist, we will create a new one.
+[32mINFO[0m:     35.191.71.40:0 - "[1mPOST /apps/home_automation_agent/eval_sets/evalsetb95384 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /apps/home_automation_agent/eval_sets HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /apps/home_automation_agent/eval_sets/evalsetb95384/evals HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'evalId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'evalId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'evalId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'sessionId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'userId' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+[32mINFO[0m:     35.191.71.40:0 - "[1mPOST /apps/home_automation_agent/eval_sets/evalsetb95384/add_session HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /apps/home_automation_agent/eval_sets/evalsetb95384/evals HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.42:0 - "[1mPOST /run_sse HTTP/1.1[0m" [32m200 OK[0m
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /apps/home_automation_agent/users/user/sessions/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.41:0 - "[1mGET /debug/trace/session/784db520-4a37-43d5-b6fa-b576d91390f8 HTTP/1.1[0m" [32m200 OK[0m
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'evalIds' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'evalIds' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'evalIds' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'deprecated' attribute with value True was provided to the `Field()` function, which has no effect in the context it was used. 'deprecated' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'evalCaseIds' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'evalCaseIds' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'evalCaseIds' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'alias' attribute with value 'evalMetrics' was provided to the `Field()` function, which has no effect in the context it was used. 'alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'validation_alias' attribute with value 'evalMetrics' was provided to the `Field()` function, which has no effect in the context it was used. 'validation_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/pydantic/_internal/_generate_schema.py:2249: UnsupportedFieldAttributeWarning: The 'serialization_alias' attribute with value 'evalMetrics' was provided to the `Field()` function, which has no effect in the context it was used. 'serialization_alias' is field-specific metadata, and can only be attached to a model field using `Annotated` metadata or by assignment. This may have happened because an `Annotated` type alias using the `type` statement was used, or if the `Field()` function was attached to a single member of a union type.
+  warnings.warn(
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/metric_evaluator_registry.py:90: UserWarning: [EXPERIMENTAL] MetricEvaluatorRegistry: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  metric_evaluator_registry = MetricEvaluatorRegistry()
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/local_eval_service.py:79: UserWarning: [EXPERIMENTAL] UserSimulatorProvider: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  user_simulator_provider: UserSimulatorProvider = UserSimulatorProvider(),
+/usr/local/lib/python3.11/dist-packages/google/adk/cli/adk_web_server.py:1123: UserWarning: [EXPERIMENTAL] LocalEvalService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  eval_service = LocalEvalService(
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/user_simulator_provider.py:77: UserWarning: [EXPERIMENTAL] StaticUserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  return StaticUserSimulator(static_conversation=eval_case.conversation)
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/static_user_simulator.py:39: UserWarning: [EXPERIMENTAL] UserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__(
+INFO:google_adk.google.adk.plugins.plugin_manager:Plugin 'request_intercepter_plugin' registered.
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Tool Call: Setting desk lamp in office to ON
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:google_adk.google.adk.evaluation.local_eval_set_results_manager:Writing eval result to file: /kaggle/working/home_automation_agent/.adk/eval_history/home_automation_agent_evalsetb95384_1763098799.886853.evalset_result.json
+[32mINFO[0m:     35.191.71.42:0 - "[1mPOST /apps/home_automation_agent/eval_sets/evalsetb95384/run_eval HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.40:0 - "[1mGET /apps/home_automation_agent/eval_results HTTP/1.1[0m" [32m200 OK[0m
+[32mINFO[0m:     35.191.71.43:0 - "[1mGET /apps/home_automation_agent/eval_results/home_automation_agent_evalsetb95384_1763098799.886853 HTTP/1.1[0m" [32m200 OK[0m
+^C
+[32mINFO[0m:     Shutting down
+[32mINFO[0m:     Waiting for application shutdown.
+[32m
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+[0m
+[32mINFO[0m:     Application shutdown complete.
+[32mINFO[0m:     Finished server process [[36m92[0m]
+
+Aborted!
+</code></pre></div></div>
+
+<p>Once the ADK web UI starts, open the proxy link using the button in the previous cell.</p>
+
+<p>‼️ <strong>IMPORTANT: DO NOT SHARE THE PROXY LINK</strong> with anyone - treat it as sensitive data as it contains your authentication token in the URL.</p>
+
+<h3 id="32-create-your-first-perfect-test-case">3.2: Create Your First “Perfect” Test Case</h3>
+
+<p><strong>👉 Do: In the ADK web UI:</strong></p>
+
+<ol>
+  <li>Click the public URL above to open the ADK web UI</li>
+  <li>Select “home_automation_agent” from the dropdown</li>
+  <li><strong>Have a normal conversation:</strong> Type <code class="language-plaintext highlighter-rouge">Turn on the desk lamp in the office</code></li>
+  <li><strong>Agent responds correctly</strong> - controls device and confirms action</li>
+</ol>
+
+<p><strong>👉 Do: Save this as your first evaluation case:</strong></p>
+
+<ol>
+  <li>Navigate to the <strong>Eval</strong> tab on the right-hand panel</li>
+  <li>Click <strong>Create Evaluation set</strong> and name it <code class="language-plaintext highlighter-rouge">home_automation_tests</code></li>
+  <li>In the <code class="language-plaintext highlighter-rouge">home_automation_tests</code> set, click the “&gt;” arrow and click <strong>Add current session</strong></li>
+  <li>Give it the case name <code class="language-plaintext highlighter-rouge">basic_device_control</code></li>
+</ol>
+
+<p><strong>✅ Success!</strong> You’ve just saved your first interaction as an evaluation case.</p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day4/eval-create-testcase.gif" alt="Create Test Cases" /></p>
+
+<h3 id="33-run-the-evaluation">3.3: Run the Evaluation</h3>
+
+<p><strong>👉 Do: Run your first evaluation</strong></p>
+
+<p>Now, let’s run the test case to see if the agent can replicate its previous success.</p>
+
+<ol>
+  <li>In the Eval tab, make sure your new test case is checked.</li>
+  <li>Click the Run Evaluation button.</li>
+  <li>The EVALUATION METRIC dialog will appear. For now, leave the default values and click Start.</li>
+  <li>The evaluation will run, and you should see a green Pass result in the Evaluation History. This confirms the agent’s behavior matched the saved session.</li>
+</ol>
+
+<p>‼️ <strong>Understanding the Evaluation Metrics</strong></p>
+
+<p>When you run evaluation, you’ll see two key scores:</p>
+
+<ul>
+  <li>
+    <p><strong>Response Match Score:</strong> Measures how similar the agent’s actual response is to the expected response. Uses text similarity algorithms to compare content. A score of 1.0 = perfect match, 0.0 = completely different.</p>
+  </li>
+  <li>
+    <p><strong>Tool Trajectory Score:</strong> Measures whether the agent used the correct tools with correct parameters. Checks the sequence of tool calls against expected behavior. A score of 1.0 = perfect tool usage, 0.0 = wrong tools or parameters.</p>
+  </li>
+</ul>
+
+<p><strong>👉 Do: Analyze a Failure</strong></p>
+
+<p>Let’s intentionally break the test to see what a failure looks like.</p>
+
+<ol>
+  <li>In the list of eval cases, click the Edit (pencil) icon next to your test case.</li>
+  <li>In the “Final Response” text box, change the expected text to something incorrect, like: <code class="language-plaintext highlighter-rouge">The desk lamp is off</code>.</li>
+  <li>Save the changes and re-run the evaluation.</li>
+  <li>This time, the result will be a red Fail. Hover your mouse over the “Fail” label. A tooltip will appear showing a side-by-side comparison of the Actual vs. Expected Output, highlighting exactly why the test failed (the final response didn’t match).
+This immediate, detailed feedback is invaluable for debugging.</li>
+</ol>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day4/eval-run-test.gif" alt="Evaluate" /></p>
+
+<h3 id="34-optional-create-challenging-test-cases">3.4: (Optional) Create challenging test cases</h3>
+
+<p>Now create more test cases to expose hidden problems:</p>
+
+<p><strong>Create these scenarios in separate conversations:</strong></p>
+
+<ol>
+  <li><strong>Ambiguous Commands:</strong> <code class="language-plaintext highlighter-rouge">"Turn on the lights in the bedroom"</code>
+    <ul>
+      <li>Save as a new test case: <code class="language-plaintext highlighter-rouge">ambiguous_device_reference</code></li>
+      <li>Run evaluation - it likely passes but the agent might be confused</li>
+    </ul>
+  </li>
+  <li><strong>Invalid Locations:</strong> <code class="language-plaintext highlighter-rouge">"Please turn off the TV in the garage"</code>
+    <ul>
+      <li>Save as a new test case: <code class="language-plaintext highlighter-rouge">invalid_location_test</code></li>
+      <li>Run evaluation - the agent might try to control non-existent devices</li>
+    </ul>
+  </li>
+  <li><strong>Complex Commands:</strong> <code class="language-plaintext highlighter-rouge">"Turn off all lights and turn on security system"</code>
+    <ul>
+      <li>Save as a new test case: <code class="language-plaintext highlighter-rouge">complex_multi_device_command</code></li>
+      <li>Run evaluation - the agent might attempt operations beyond its capabilities</li>
+    </ul>
+  </li>
+</ol>
+
+<p><strong>The Problem You’ll Discover:</strong>
+Even when tests “pass,” you can see the agent:</p>
+<ul>
+  <li>Makes assumptions about devices that don’t exist</li>
+  <li>Gives responses that sound helpful but aren’t accurate</li>
+  <li>Tries to control devices it shouldn’t have access to</li>
+</ul>
+
+<h2 id="-what-am-i-missing">🤔 What am I missing?</h2>
+
+<p>❌ <strong>Web UI Limitation:</strong> So far, we’ve seen how to create and evaluate test cases in the ADK web UI. The web UI is great for interactive test creation, but testing one conversation at a time doesn’t scale.</p>
+
+<p>❓ <strong>The Question:</strong> How do I proactively detect regressions in my agent’s performance?</p>
+
+<p>Let’s answer that question in the next section!</p>
+
+<hr />
+
+<h2 id="️-stop-the-adk-web-ui-">‼️ <strong>Stop the ADK web UI</strong> 🛑</h2>
+
+<p><strong>In order to run cells in the remainder of this notebook,</strong> please stop the running cell where you started <code class="language-plaintext highlighter-rouge">adk web</code> in Section 3.1.</p>
+
+<p>Otherwise that running cell will block / prevent other cells from running as long as the ADK web UI is running.</p>
+
+<hr />
+<h2 id="-section-4-systematic-evaluation">📈 Section 4: Systematic Evaluation</h2>
+
+<p>Regression testing is the practice of re-running existing tests to ensure that new changes haven’t broken previously working functionality.</p>
+
+<p>ADK provides two methods to do automatic regression and batch testing: using <a href="https://google.github.io/adk-docs/evaluate/#2-pytest-run-tests-programmatically">pytest</a> and the <a href="https://google.github.io/adk-docs/evaluate/#3-adk-eval-run-evaluations-via-the-cli">adk eval</a> CLI command. In this section, we’ll use the CLI command. For more information on the <code class="language-plaintext highlighter-rouge">pytest</code> approach, refer to the links in the resource section at the end of this notebook.</p>
+
+<p>The following image shows the overall process of evaluation. <strong>At a high-level, there are four steps to evaluate:</strong></p>
+
+<p>1) <strong>Create an evaluation configuration</strong> - define metrics or what you want to measure
+2) <strong>Create test cases</strong> - sample test cases to compare against
+3) <strong>Run the agent with test query</strong>
+4) <strong>Compare the results</strong></p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day4/evaluate_agent.png" alt="Evaluate" /></p>
+
+<h3 id="41-create-evaluation-configuration">4.1: Create evaluation configuration</h3>
+
+<p>This optional file lets us define the pass/fail thresholds. Create <code class="language-plaintext highlighter-rouge">test_config.json</code> in the root directory.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
+
+<span class="c1"># Create evaluation configuration with basic criteria
+</span><span class="n">eval_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">criteria</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">tool_trajectory_avg_score</span><span class="sh">"</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># Perfect tool usage required
+</span>        <span class="sh">"</span><span class="s">response_match_score</span><span class="sh">"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>  <span class="c1"># 80% text similarity threshold
+</span>    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">home_automation_agent/test_config.json</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">w</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="p">.</span><span class="nf">dump</span><span class="p">(</span><span class="n">eval_config</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Evaluation configuration created!</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">📊 Evaluation Criteria:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• tool_trajectory_avg_score: 1.0 - Requires exact tool usage match</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• response_match_score: 0.8 - Requires 80% text similarity</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">🎯 What this evaluation will catch:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Incorrect tool usage (wrong device, location, or status)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Poor response quality and communication</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Deviations from expected behavior patterns</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Evaluation configuration created!
+
+📊 Evaluation Criteria:
+• tool_trajectory_avg_score: 1.0 - Requires exact tool usage match
+• response_match_score: 0.8 - Requires 80% text similarity
+
+🎯 What this evaluation will catch:
+✅ Incorrect tool usage (wrong device, location, or status)
+✅ Poor response quality and communication
+✅ Deviations from expected behavior patterns
+</code></pre></div></div>
+
+<h3 id="42-create-test-cases">4.2: Create test cases</h3>
+
+<p>This file (<code class="language-plaintext highlighter-rouge">integration.evalset.json</code>) will contain multiple test cases (sessions).</p>
+
+<p>This evaluation set can be created synthetically or from the conversation sessions in the ADK web UI.</p>
+
+<p><strong>Tip:</strong> To persist the conversations from the ADK web UI, simply create an evalset in the UI and add the current session to it. All the conversations in that session will be auto-converted to an evalset and downloaded locally.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create evaluation test cases that reveal tool usage and response quality problems
+</span><span class="n">test_cases</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">eval_set_id</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">home_automation_integration_suite</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">eval_cases</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="sh">"</span><span class="s">eval_id</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">living_room_light_on</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">conversation</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="sh">"</span><span class="s">user_content</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">parts</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Please turn on the floor lamp in the living room</span><span class="sh">"</span><span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="sh">"</span><span class="s">final_response</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">parts</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Successfully set the floor lamp in the living room to on.</span><span class="sh">"</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="sh">"</span><span class="s">intermediate_data</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">tool_uses</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">set_device_status</span><span class="sh">"</span><span class="p">,</span>
+                                <span class="sh">"</span><span class="s">args</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="sh">"</span><span class="s">location</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">living room</span><span class="sh">"</span><span class="p">,</span>
+                                    <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">floor lamp</span><span class="sh">"</span><span class="p">,</span>
+                                    <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">ON</span><span class="sh">"</span><span class="p">,</span>
+                                <span class="p">},</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="sh">"</span><span class="s">eval_id</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">kitchen_on_off_sequence</span><span class="sh">"</span><span class="p">,</span>
+            <span class="sh">"</span><span class="s">conversation</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="sh">"</span><span class="s">user_content</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">parts</span><span class="sh">"</span><span class="p">:</span> <span class="p">[{</span><span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Switch on the main light in the kitchen.</span><span class="sh">"</span><span class="p">}]</span>
+                    <span class="p">},</span>
+                    <span class="sh">"</span><span class="s">final_response</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">parts</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">Successfully set the main light in the kitchen to on.</span><span class="sh">"</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                    <span class="sh">"</span><span class="s">intermediate_data</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="sh">"</span><span class="s">tool_uses</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span>
+                                <span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">set_device_status</span><span class="sh">"</span><span class="p">,</span>
+                                <span class="sh">"</span><span class="s">args</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+                                    <span class="sh">"</span><span class="s">location</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">kitchen</span><span class="sh">"</span><span class="p">,</span>
+                                    <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">main light</span><span class="sh">"</span><span class="p">,</span>
+                                    <span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">ON</span><span class="sh">"</span><span class="p">,</span>
+                                <span class="p">},</span>
+                            <span class="p">}</span>
+                        <span class="p">]</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">],</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s write the test cases to the <code class="language-plaintext highlighter-rouge">integration.evalset.json</code> in our agent’s root directory.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
+
+<span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">home_automation_agent/integration.evalset.json</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">w</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">json</span><span class="p">.</span><span class="nf">dump</span><span class="p">(</span><span class="n">test_cases</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Evaluation test cases created</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">🧪 Test scenarios:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">test_cases</span><span class="p">[</span><span class="sh">"</span><span class="s">eval_cases</span><span class="sh">"</span><span class="p">]:</span>
+    <span class="n">user_msg</span> <span class="o">=</span> <span class="n">case</span><span class="p">[</span><span class="sh">"</span><span class="s">conversation</span><span class="sh">"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="sh">"</span><span class="s">user_content</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">parts</span><span class="sh">"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="sh">"</span><span class="s">text</span><span class="sh">"</span><span class="p">]</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">• </span><span class="si">{</span><span class="n">case</span><span class="p">[</span><span class="sh">'</span><span class="s">eval_id</span><span class="sh">'</span><span class="p">]</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">user_msg</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">📊 Expected results:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• basic_device_control: Should pass both criteria</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span>
+    <span class="sh">"</span><span class="s">• wrong_tool_usage_test: May fail tool_trajectory if agent uses wrong parameters</span><span class="sh">"</span>
+<span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span>
+    <span class="sh">"</span><span class="s">• poor_response_quality_test: May fail response_match if response differs too much</span><span class="sh">"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Evaluation test cases created
+
+🧪 Test scenarios:
+• living_room_light_on: Please turn on the floor lamp in the living room
+• kitchen_on_off_sequence: Switch on the main light in the kitchen.
+
+📊 Expected results:
+• basic_device_control: Should pass both criteria
+• wrong_tool_usage_test: May fail tool_trajectory if agent uses wrong parameters
+• poor_response_quality_test: May fail response_match if response differs too much
+</code></pre></div></div>
+
+<h3 id="43-run-cli-evaluation">4.3: Run CLI Evaluation</h3>
+
+<p>Execute the <code class="language-plaintext highlighter-rouge">adk eval</code> command, pointing it to your agent directory, the evalset, and the config file.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🚀 Run this command to execute evaluation:</span><span class="sh">"</span><span class="p">)</span>
+<span class="err">!</span><span class="n">adk</span> <span class="nb">eval</span> <span class="n">home_automation_agent</span> <span class="n">home_automation_agent</span><span class="o">/</span><span class="n">integration</span><span class="p">.</span><span class="n">evalset</span><span class="p">.</span><span class="n">json</span> <span class="o">--</span><span class="n">config_file_path</span><span class="o">=</span><span class="n">home_automation_agent</span><span class="o">/</span><span class="n">test_config</span><span class="p">.</span><span class="n">json</span> <span class="o">--</span><span class="n">print_detailed_results</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>🚀 Run this command to execute evaluation:
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/metric_evaluator_registry.py:90: UserWarning: [EXPERIMENTAL] MetricEvaluatorRegistry: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  metric_evaluator_registry = MetricEvaluatorRegistry()
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/local_eval_service.py:79: UserWarning: [EXPERIMENTAL] UserSimulatorProvider: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  user_simulator_provider: UserSimulatorProvider = UserSimulatorProvider(),
+Using evaluation criteria: criteria={'tool_trajectory_avg_score': 1.0, 'response_match_score': 0.8} user_simulator_config=None
+/usr/local/lib/python3.11/dist-packages/google/adk/cli/cli_tools_click.py:650: UserWarning: [EXPERIMENTAL] UserSimulatorProvider: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  user_simulator_provider = UserSimulatorProvider(
+/usr/local/lib/python3.11/dist-packages/google/adk/cli/cli_tools_click.py:655: UserWarning: [EXPERIMENTAL] LocalEvalService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  eval_service = LocalEvalService(
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/user_simulator_provider.py:77: UserWarning: [EXPERIMENTAL] StaticUserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  return StaticUserSimulator(static_conversation=eval_case.conversation)
+/usr/local/lib/python3.11/dist-packages/google/adk/evaluation/static_user_simulator.py:39: UserWarning: [EXPERIMENTAL] UserSimulator: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__(
+INFO:google_adk.google.adk.plugins.plugin_manager:Plugin 'request_intercepter_plugin' registered.
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.plugins.plugin_manager:Plugin 'request_intercepter_plugin' registered.
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Tool Call: Setting main light in kitchen to ON
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+Tool Call: Setting floor lamp in living room to ON
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-2.5-flash-lite, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+INFO:google_adk.google.adk.evaluation.local_eval_set_results_manager:Writing eval result to file: /kaggle/working/home_automation_agent/.adk/eval_history/home_automation_agent_home_automation_integration_suite_1763099043.543486.evalset_result.json
+INFO:google_adk.google.adk.evaluation.local_eval_set_results_manager:Writing eval result to file: /kaggle/working/home_automation_agent/.adk/eval_history/home_automation_agent_home_automation_integration_suite_1763099043.5442493.evalset_result.json
+*********************************************************************
+Eval Run Summary
+home_automation_integration_suite:
+  Tests passed: 0
+  Tests failed: 2
+********************************************************************
+Eval Set Id: home_automation_integration_suite
+Eval Id: kitchen_on_off_sequence
+Overall Eval Status: FAILED
+---------------------------------------------------------------------
+Metric: tool_trajectory_avg_score, Status: PASSED, Score: 1.0, Threshold: 1.0
+---------------------------------------------------------------------
+Metric: response_match_score, Status: FAILED, Score: 0.7, Threshold: 0.8
+---------------------------------------------------------------------
+Invocation Details:
++----+--------------------------+---------------------------+---------------------------+---------------------------+---------------------------+-----------------------------+------------------------+
+|    | prompt                   | expected_response         | actual_response           | expected_tool_calls       | actual_tool_calls         | tool_trajectory_avg_score   | response_match_score   |
++====+==========================+===========================+===========================+===========================+===========================+=============================+========================+
+|  0 | Switch on the main light | Successfully set the main | I've switched on the main | id=None args={'location': | id='adk- deb96a33-abf4-48 | Status: PASSED, Score:      | Status: FAILED, Score: |
+|    | in the kitchen.          | light in the kitchen to   | light in the kitchen.     | 'kitchen', 'device_id':   | bf-91b8-5bcb5223cc8f'     | 1.0                         | 0.7                    |
+|    |                          | on.                       |                           | 'main light', 'status':   | args={'device_id': 'main  |                             |                        |
+|    |                          |                           |                           | 'ON'}                     | light', 'status': 'ON',   |                             |                        |
+|    |                          |                           |                           | name='set_device_status'  | 'location': 'kitchen'}    |                             |                        |
+|    |                          |                           |                           |                           | name='set_device_status'  |                             |                        |
++----+--------------------------+---------------------------+---------------------------+---------------------------+---------------------------+-----------------------------+------------------------+
+
+
+
+********************************************************************
+Eval Set Id: home_automation_integration_suite
+Eval Id: living_room_light_on
+Overall Eval Status: FAILED
+---------------------------------------------------------------------
+Metric: tool_trajectory_avg_score, Status: PASSED, Score: 1.0, Threshold: 1.0
+---------------------------------------------------------------------
+Metric: response_match_score, Status: FAILED, Score: 0.761904761904762, Threshold: 0.8
+---------------------------------------------------------------------
+Invocation Details:
++----+--------------------------+--------------------------+------------------------+---------------------------+---------------------------+-----------------------------+------------------------+
+|    | prompt                   | expected_response        | actual_response        | expected_tool_calls       | actual_tool_calls         | tool_trajectory_avg_score   | response_match_score   |
++====+==========================+==========================+========================+===========================+===========================+=============================+========================+
+|  0 | Please turn on the floor | Successfully set the     | The floor lamp in the  | id=None args={'location': | id='adk-5a8aa88f-3096-495 | Status: PASSED, Score:      | Status: FAILED, Score: |
+|    | lamp in the living room  | floor lamp in the living | living room is now on. | 'living room',            | f-a462- 86566fd31040'     | 1.0                         | 0.761904761904762      |
+|    |                          | room to on.              |                        | 'device_id': 'floor       | args={'device_id': 'floor |                             |                        |
+|    |                          |                          |                        | lamp', 'status': 'ON'}    | lamp', 'location':        |                             |                        |
+|    |                          |                          |                        | name='set_device_status'  | 'living room', 'status':  |                             |                        |
+|    |                          |                          |                        |                           | 'ON'}                     |                             |                        |
+|    |                          |                          |                        |                           | name='set_device_status'  |                             |                        |
++----+--------------------------+--------------------------+------------------------+---------------------------+---------------------------+-----------------------------+------------------------+
+</code></pre></div></div>
+
+<h3 id="44-analyzing-sample-evaluation-results">4.4: Analyzing sample evaluation results</h3>
+
+<p>The command will run all test cases and print a summary. The <code class="language-plaintext highlighter-rouge">--print_detailed_results</code> flag provides a turn-by-turn breakdown of each test, showing scores and a diff for any failures.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Analyzing evaluation results - the data science approach
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">📊 Understanding Evaluation Results:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🔍 EXAMPLE ANALYSIS:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Test Case: living_room_light_on</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  ❌ response_match_score: 0.45/0.80</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">  ✅ tool_trajectory_avg_score: 1.0/1.0</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">📈 What this tells us:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• TOOL USAGE: Perfect - Agent used correct tool with correct parameters</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• RESPONSE QUALITY: Poor - Response text too different from expected</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">• ROOT CAUSE: Agent</span><span class="sh">'</span><span class="s">s communication style, not functionality</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🎯 ACTIONABLE INSIGHTS:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">1. Technical capability works (tool usage perfect)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">2. Communication needs improvement (response quality failed)</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">3. Fix: Update agent instructions for clearer language or constrained response.</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>📊 Understanding Evaluation Results:
+
+🔍 EXAMPLE ANALYSIS:
+
+Test Case: living_room_light_on
+  ❌ response_match_score: 0.45/0.80
+  ✅ tool_trajectory_avg_score: 1.0/1.0
+
+📈 What this tells us:
+• TOOL USAGE: Perfect - Agent used correct tool with correct parameters
+• RESPONSE QUALITY: Poor - Response text too different from expected
+• ROOT CAUSE: Agent's communication style, not functionality
+
+🎯 ACTIONABLE INSIGHTS:
+1. Technical capability works (tool usage perfect)
+2. Communication needs improvement (response quality failed)
+3. Fix: Update agent instructions for clearer language or constrained response.
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-5-user-simulation-optional">📚 Section 5: User Simulation (Optional)</h2>
+
+<p>While <strong>traditional evaluation methods rely on fixed test cases</strong>, real-world conversations are dynamic and unpredictable. This is where User Simulation comes in.</p>
+
+<p>User Simulation is a powerful feature in ADK that addresses the limitations of static evaluation. Instead of using pre-defined, fixed user prompts, User Simulation employs a generative AI model (like Gemini) to <strong>dynamically generate user prompts during the evaluation process.</strong></p>
+
+<h3 id="-how-it-works">❓ How it works</h3>
+
+<ul>
+  <li>You define a <code class="language-plaintext highlighter-rouge">ConversationScenario</code> that outlines the user’s overall conversational goals and a <code class="language-plaintext highlighter-rouge">conversation_plan</code> to guide the dialogue.</li>
+  <li>A large language model (LLM) then acts as a simulated user, using this plan and the ongoing conversation history to generate realistic and varied prompts.</li>
+  <li>This allows for more comprehensive testing of your agent’s ability to handle unexpected turns, maintain context, and achieve complex goals in a more natural, unpredictable conversational flow.</li>
+</ul>
+
+<p>User Simulation helps you uncover edge cases and improve your agent’s robustness in ways that static test cases often miss.</p>
+
+<h3 id="-exercise">👉 Exercise</h3>
+
+<p>Now that you understand the power of User Simulation for dynamic agent evaluation, here’s an exercise to apply it:</p>
+
+<p>Apply the <strong>User Simulation</strong> feature to your agent. Define a <code class="language-plaintext highlighter-rouge">ConversationScenario</code> with a <code class="language-plaintext highlighter-rouge">conversation_plan</code> for a specific goal, and integrate it into your agent’s evaluation.</p>
+
+<p><strong>⭐ Refer to this <a href="https://google.github.io/adk-docs/evaluate/user-sim/">documentation</a> to learn how to do it.</strong></p>
+
+<h2 id="-congratulations">🏆 Congratulations!</h2>
+
+<h3 id="youve-learned">You’ve learned</h3>
+
+<ul>
+  <li>✅ Interactive test creation and analysis in the ADK web UI</li>
+  <li>✅ Tool trajectory and response metrics</li>
+  <li>✅ Automated regression testing using <code class="language-plaintext highlighter-rouge">adk eval</code> CLI command</li>
+  <li>✅ How to analyze evaluation results and fix agents based on it</li>
+</ul>
+
+<p><strong>ℹ️ Note: No submission required!</strong></p>
+
+<p>This notebook is for your hands-on practice and learning only. You <strong>do not</strong> need to submit it anywhere to complete the course.</p>
+
+<h3 id="-resources">📚 Resources</h3>
+<ul>
+  <li><a href="https://google.github.io/adk-docs/evaluate/">ADK Evaluation overview</a></li>
+  <li>Different <a href="https://google.github.io/adk-docs/evaluate/criteria/">evaluation criteria</a></li>
+  <li><a href="https://google.github.io/adk-docs/evaluate/#2-pytest-run-tests-programmatically">Pytest based Evaluation</a></li>
+</ul>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>

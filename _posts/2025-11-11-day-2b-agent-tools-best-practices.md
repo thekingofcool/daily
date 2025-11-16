@@ -7,23 +7,6 @@ description: ""
 categories: thoughts
 ---
 
-##### Copyright 2025 Google LLC.
-
-
-```python
-# @title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
 # 🚀 Agent Tool Patterns and Best Practices
 
 **Welcome to Day-2 of the Kaggle 5-day Agents course!**
@@ -36,55 +19,6 @@ In this notebook, you'll learn how to:
 - ✅ **Implement long-running operations** that can pause agent execution for external input
 - ✅ **Build resumable workflows** that maintain state across conversation breaks
 - ✅ Understand when and how to use these patterns
-
-## ‼️ Please Read
-
-> ❌ **ℹ️ Note: No submission required!**
-> This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
-> ⏸️ **Note:**  When you first start the notebook via running a cell you might see a banner in the notebook header that reads **"Waiting for the next available notebook"**. The queue should drop rapidly; however, during peak bursts you might have to wait a few minutes.
-
-> ❌ **Note:** Avoid using the **Run all** cells command as this can trigger a QPM limit resulting in 429 errors when calling the backing model. Suggested flow is to run each cell in order - one at a time. [See FAQ on 429 errors for more information.](https://www.kaggle.com/code/kaggle5daysofai/day-0-troubleshooting-and-faqs)
-
-**For help: Ask questions on the [Kaggle Discord](https://discord.com/invite/kaggle) server.**
-
-## 📖 Get started with Kaggle Notebooks
-
-If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks [in the documentation](https://www.kaggle.com/docs/notebooks).
-
-Here's how to get started:
-
-**1. Verify Your Account (Required)**
-
-To use the Kaggle Notebooks in this course, you'll need to verify your account with a phone number.
-
-You can do this in your [Kaggle settings](https://www.kaggle.com/settings).
-
-**2. Make Your Own Copy**
-
-To run any code in this notebook, you first need your own editable copy.
-
-Click the `Copy and Edit` button in the top-right corner.
-
-![Copy and Edit button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png)
-
-This creates a private copy of the notebook just for you.
-
-**3. Run Code Cells**
-
-Once you have your copy, you can run code.
-
-Click the ▶️ Run button next to any code cell to execute it.
-
-![Run cell button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png)
-
-Run the cells in order from top to bottom.
-
-**4. If You Get Stuck**
-
-To restart: Select `Factory reset` from the `Run` menu.
-
-For help: Ask questions on the [Kaggle Discord](https://discord.com/invite/kaggle) server.
 
 ---
 ## ⚙️ Section 1: Setup
@@ -992,10 +926,6 @@ Build an agent that generates images using the MCP server, but requires approval
 
 You've successfully learned how to build agents that handle complex, real-world workflows integrating external systems and spanning time.
 
-**ℹ️ Note: No submission required!**
-
-This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
 ### 📚 Learn More
 
 - [ADK Documentation](https://google.github.io/adk-docs/)
@@ -1003,22 +933,3 @@ This notebook is for your hands-on practice and learning only. You **do not** ne
 - [Long-Running Operations Guide](https://google.github.io/adk-docs/tools/function-tools/)
 - [Model Context Protocol Specification](https://spec.modelcontextprotocol.io/)
 - [The `App` and `Runner`](https://google.github.io/adk-docs/runtime/)
-
-### 🎯 Next Steps
-
-You've built the foundation for production-ready agent systems. Ready for the next challenge?
-
-Continue to **Day 3** to learn about **State and Memory Management**!
-
----
-
-<div align="center">
-  <table>
-    <tr>
-      <th style="text-align:center">Authors</th>
-    </tr>
-    <tr>
-      <td style="text-align:center"><a href="https://www.linkedin.com/in/laxmi-harikumar/">Laxmi Harikumar</a></td>
-    </tr>
-  </table>
-</div>

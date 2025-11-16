@@ -7,23 +7,6 @@ description: ""
 categories: thoughts
 ---
 
-##### Copyright 2025 Google LLC.
-
-
-```python
-# @title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
 # 🚀 Your First AI Agent: From Prompt to Action
 
 **Welcome to the Kaggle 5-day Agents course!**
@@ -36,48 +19,6 @@ In this notebook, you'll:
 - ✅ Configure your API key to use the Gemini model
 - ✅ Build your first simple agent
 - ✅ Run your agent and watch it use a tool (like Google Search) to answer a question
-
-**ℹ️ Note: No submission required!**
-
-This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
-## 📖 Get started with Kaggle Notebooks
-
-If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks [in the documentation](https://www.kaggle.com/docs/notebooks).
-
-Here's how to get started:
-
-**1. Verify Your Account (Required)**
-
-To use the Kaggle Notebooks in this course, you'll need to verify your account with a phone number.
-
-You can do this in your [Kaggle settings](https://www.kaggle.com/settings).
-
-**2. Make Your Own Copy**
-
-To run any code in this notebook, you first need your own editable copy.
-
-Click the `Copy and Edit` button in the top-right corner.
-
-![Copy and Edit button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png)
-
-This creates a private copy of the notebook just for you.
-
-**3. Run Code Cells**
-
-Once you have your copy, you can run code.
-
-Click the ▶️ Run button next to any code cell to execute it.
-
-![Run cell button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png)
-
-Run the cells in order from top to bottom.
-
-**4. If You Get Stuck**
-
-To restart: Select `Factory reset` from the `Run` menu.
-
-For help: Ask questions on the [Kaggle Discord](https://discord.com/invite/kaggle) server.
 
 ## ⚙️ Section 1: Setup
 
@@ -149,7 +90,6 @@ print("✅ ADK components imported successfully.")
 ### 1.3 Helper functions
 
 We'll define some helper functions. If you are running this outside the Kaggle environment, you don't need to do this.
-
 
 ```python
 # Define helper functions that will be reused throughout the notebook
@@ -372,25 +312,6 @@ url_prefix = get_adk_proxy_url()
 ```
 
 
-    ---------------------------------------------------------------------------
-
-    Exception                                 Traceback (most recent call last)
-
-    /tmp/ipykernel_13/3087617244.py in <cell line: 0>()
-    ----> 1 url_prefix = get_adk_proxy_url()
-    
-
-    /tmp/ipykernel_13/1354774797.py in get_adk_proxy_url()
-         11     servers = list(list_running_servers())
-         12     if not servers:
-    ---> 13         raise Exception("No running Jupyter servers found.")
-         14 
-         15     baseURL = servers[0]['base_url']
-
-
-    Exception: No running Jupyter servers found.
-
-
 Now we can run ADK web:
 
 
@@ -414,10 +335,6 @@ You've built and run your first agent with ADK! You've just seen the core concep
 
 The big takeaway is that your agent didn't just *respond*—it **reasoned** that it needed more information and then **acted** by using a tool. This ability to take action is the foundation of all agent-based AI.
 
-**ℹ️ Note: No submission required!**
-
-This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
 ### 📚 Learn More
 
 Refer to the following documentation to learn more:
@@ -426,13 +343,3 @@ Refer to the following documentation to learn more:
 - [ADK Quickstart for Python](https://google.github.io/adk-docs/get-started/python/)
 - [ADK Agents Overview](https://google.github.io/adk-docs/agents/)
 - [ADK Tools Overview](https://google.github.io/adk-docs/tools/)
-
-### 🎯 Next Steps
-
-Ready for the next challenge? Continue to the next notebook to learn how to **architect multi-agent systems.**
-
----
-
-| Authors |
-| --- |
-| [Kristopher Overholt](http://linkedin.com/in/koverholt) |

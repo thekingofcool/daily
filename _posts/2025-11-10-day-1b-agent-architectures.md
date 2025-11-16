@@ -7,23 +7,6 @@ description: ""
 categories: thoughts
 ---
 
-##### Copyright 2025 Google LLC.
-
-
-```python
-# @title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
 # 🚀 Multi-Agent Systems & Workflow Patterns
 
 **Welcome to the Kaggle 5-day Agents course!**
@@ -37,48 +20,6 @@ In this notebook, you'll:
 - ✅ Learn when to use multi-agent systems in [Agent Development Kit (ADK)](https://google.github.io/adk-docs/)
 - ✅ Build your first system using an LLM as a "manager"
 - ✅ Learn three core workflow patterns (Sequential, Parallel, and Loop) to coordinate your agent teams
-
-**ℹ️ Note: No submission required!**
-
-This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
-## 📖 Get started with Kaggle Notebooks
-
-If this is your first time using Kaggle Notebooks, welcome! You can learn more about using Kaggle Notebooks [in the documentation](https://www.kaggle.com/docs/notebooks).
-
-Here's how to get started:
-
-**1. Verify Your Account (Required)**
-
-To use the Kaggle Notebooks in this course, you'll need to verify your account with a phone number.
-
-You can do this in your [Kaggle settings](https://www.kaggle.com/settings).
-
-**2. Make Your Own Copy**
-
-To run any code in this notebook, you first need your own editable copy.
-
-Click the `Copy and Edit` button in the top-right corner.
-
-![Copy and Edit button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_1.png)
-
-This creates a private copy of the notebook just for you.
-
-**3. Run Code Cells**
-
-Once you have your copy, you can run code.
-
-Click the ▶️ Run button next to any code cell to execute it.
-
-![Run cell button](https://storage.googleapis.com/kaggle-media/Images/5gdai_sc_2.png)
-
-Run the cells in order from top to bottom.
-
-**4. If You Get Stuck**
-
-To restart: Select `Factory reset` from the `Run` menu.
-
-For help: Ask questions on the [Kaggle Discord](https://discord.com/invite/kaggle) server.
 
 ### Section 1
 
@@ -927,10 +868,6 @@ You saw **why** a team of specialists is easier to build and debug than one "do-
 
 You used `SequentialAgent`, `ParallelAgent`, and `LoopAgent` to create deterministic workflows, and you even used an LLM as a 'manager' to make dynamic decisions. You also mastered the "plumbing" by using `output_key` to pass state between agents and make them collaborative.
 
-**ℹ️ Note: No submission required!**
-
-This notebook is for your hands-on practice and learning only. You **do not** need to submit it anywhere to complete the course.
-
 ### 📚 Learn More
 
 Refer to the following documentation to learn more:
@@ -940,13 +877,3 @@ Refer to the following documentation to learn more:
 - [Parallel Agents in ADK](https://google.github.io/adk-docs/agents/workflow-agents/parallel-agents/)
 - [Loop Agents in ADK](https://google.github.io/adk-docs/agents/workflow-agents/loop-agents/)
 - [Custom Agents in ADK](https://google.github.io/adk-docs/agents/custom-agents/)
-
-### 🎯 Next Steps
-
-Ready for the next challenge? Stay tuned for Day 2 notebooks where we'll learn how to create **Custom Functions, use MCP Tools** and manage **Long-Running operations!**
-
----
-
-| Authors |
-| --- |
-| [Kristopher Overholt](https://www.linkedin.com/in/koverholt) |

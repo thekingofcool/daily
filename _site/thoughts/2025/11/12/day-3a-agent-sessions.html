@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 3a - Agent Sessions" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/12/day-3a-agent-sessions.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 3a - Agent Sessions</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 3a - Agent Sessions</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-12 00:00:00 +0800" style="float: right;">2025-11-12</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h1 id="-memory-management---part-1---sessions">🚀 Memory Management - Part 1 - Sessions</h1>
+
+<p><strong>Welcome to Day 3 of the Kaggle 5-day Agents course!</strong></p>
+
+<p>In this notebook, you’ll learn:</p>
+
+<ul>
+  <li>✅ What sessions are and how to use them in your agent</li>
+  <li>✅ How to build <em>stateful</em> agents with sessions and events</li>
+  <li>✅ How to persist sessions in a database</li>
+  <li>✅ Context management practices such as context compaction</li>
+  <li>✅ Best practices for sharing session State</li>
+</ul>
+
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<h3 id="11-install-dependencies">1.1: Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies, so you don’t need to install additional packages in this notebook.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="12-configure-your-gemini-api-key">1.2: Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/docs">Gemini API</a>, which requires authentication.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to complete authentication.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Gemini API key setup complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Gemini API key setup complete.
+</code></pre></div></div>
+
+<h3 id="13-import-adk-components">1.3: Import ADK components</h3>
+
+<p>Now, import the specific components you’ll need from the Agent Development Kit and the Generative AI library. This keeps your code organized and ensures we have access to the necessary building blocks.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">Agent</span><span class="p">,</span> <span class="n">LlmAgent</span>
+<span class="kn">from</span> <span class="n">google.adk.apps.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">EventsCompactionConfig</span>
+<span class="kn">from</span> <span class="n">google.adk.models.google_llm</span> <span class="kn">import</span> <span class="n">Gemini</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">DatabaseSessionService</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">InMemorySessionService</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="n">google.adk.tools.tool_context</span> <span class="kn">import</span> <span class="n">ToolContext</span>
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ ADK components imported successfully.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ ADK components imported successfully.
+</code></pre></div></div>
+
+<h3 id="14-helper-functions">1.4: Helper functions</h3>
+
+<p>Helper function that manages a complete conversation session, handling session
+creation/retrieval, query processing, and response streaming. It supports
+both single queries and multiple queries in sequence.</p>
+
+<p>Example:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; await run_session(runner, "What is the capital of France?", "geography-session")
+&gt;&gt;&gt; await run_session(runner, ["Hello!", "What's my name?"], "user-intro-session")
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define helper functions that will be reused throughout the notebook
+</span><span class="k">async</span> <span class="k">def</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner_instance</span><span class="p">:</span> <span class="n">Runner</span><span class="p">,</span>
+    <span class="n">user_queries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">session_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s"> ### Session: </span><span class="si">{</span><span class="n">session_name</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="c1"># Get app name from the Runner
+</span>    <span class="n">app_name</span> <span class="o">=</span> <span class="n">runner_instance</span><span class="p">.</span><span class="n">app_name</span>
+
+    <span class="c1"># Attempt to create a new session or retrieve an existing one
+</span>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">create_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">app_name</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_name</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">app_name</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_name</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Process queries if provided
+</span>    <span class="k">if</span> <span class="n">user_queries</span><span class="p">:</span>
+        <span class="c1"># Convert single query to list for uniform processing
+</span>        <span class="k">if</span> <span class="nf">type</span><span class="p">(</span><span class="n">user_queries</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">user_queries</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_queries</span><span class="p">]</span>
+
+        <span class="c1"># Process each query in the list sequentially
+</span>        <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">user_queries</span><span class="p">:</span>
+            <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">User &gt; </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+            <span class="c1"># Convert the query string to the ADK Content format
+</span>            <span class="n">query</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">Content</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">types</span><span class="p">.</span><span class="nc">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">query</span><span class="p">)])</span>
+
+            <span class="c1"># Stream the agent's response asynchronously
+</span>            <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">runner_instance</span><span class="p">.</span><span class="nf">run_async</span><span class="p">(</span>
+                <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">new_message</span><span class="o">=</span><span class="n">query</span>
+            <span class="p">):</span>
+                <span class="c1"># Check if the event contains valid content
+</span>                <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                    <span class="c1"># Filter out empty or "None" responses before printing
+</span>                    <span class="nf">if </span><span class="p">(</span>
+                        <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span> <span class="o">!=</span> <span class="sh">"</span><span class="s">None</span><span class="sh">"</span>
+                        <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span>
+                    <span class="p">):</span>
+                        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s"> &gt; </span><span class="sh">"</span><span class="p">,</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">No queries!</span><span class="sh">"</span><span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined.
+</code></pre></div></div>
+
+<h3 id="15-configure-retry-options">1.5: Configure Retry Options</h3>
+
+<p>When working with LLMs, you may encounter transient errors like rate limits or temporary service unavailability. Retry options automatically handle these failures by retrying the request with exponential backoff.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">retry_config</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">HttpRetryOptions</span><span class="p">(</span>
+    <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Maximum retry attempts
+</span>    <span class="n">exp_base</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># Delay multiplier
+</span>    <span class="n">initial_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">http_status_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">],</span>  <span class="c1"># Retry on these HTTP errors
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-2-session-management">🤹 Section 2: Session Management</h2>
+
+<h3 id="21-the-problem">2.1 The Problem</h3>
+
+<p>At their core, Large Language Models are <strong>inherently stateless</strong>. Their awareness is confined to the information you provide in a single API call. This means an agent without proper context management will react to the current prompt without considering any previous history.</p>
+
+<p><strong>❓ Why does this matter?</strong> Imagine trying to have a meaningful conversation with someone who forgets everything you’ve said after each sentence. That’s the challenge we face with raw LLMs!</p>
+
+<p>In ADK, we use <code class="language-plaintext highlighter-rouge">Sessions</code> for <strong>short term memory management</strong> and <code class="language-plaintext highlighter-rouge">Memory</code> for <strong>long term memory.</strong> In the next notebook, you’ll focus on <code class="language-plaintext highlighter-rouge">Memory</code>.</p>
+
+<h3 id="22-what-is-a-session">2.2 What is a Session?</h3>
+
+<h4 id="-session"><strong>📦 Session</strong></h4>
+
+<p>A session is a container for conversations. It encapsulates the conversation history in a chronological manner and also records all tool interactions and responses for a <strong>single, continuous conversation</strong>. A session is tied to a user and agent; it is not shared with other users. Similarly, a session history for an Agent is not shared with other Agents.</p>
+
+<p>In ADK, a <strong>Session</strong> is comprised of two key components <code class="language-plaintext highlighter-rouge">Events</code> and <code class="language-plaintext highlighter-rouge">State</code>:</p>
+
+<p><strong>📝 Session.Events</strong>:</p>
+
+<blockquote>
+  <p>While a session is a container for conversations, <code class="language-plaintext highlighter-rouge">Events</code> are the building blocks of a conversation.</p>
+
+  <p>Example of Events:</p>
+  <ul>
+    <li><em>User Input</em>: A message from the user (text, audio, image, etc.)</li>
+    <li><em>Agent Response</em>: The agent’s reply to the user</li>
+    <li><em>Tool Call</em>: The agent’s decision to use an external tool or API</li>
+    <li><em>Tool Output</em>: The data returned from a tool call, which the agent uses to continue its reasoning</li>
+  </ul>
+</blockquote>
+
+<p><strong>{} Session.State</strong>:</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">session.state</code> is the Agent’s scratchpad, where it stores and updates dynamic details needed during the conversation. Think of it as a global <code class="language-plaintext highlighter-rouge">{key, value}</code> pair storage which is available to all subagents and tools.</p>
+</blockquote>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day3/session-state-and-events.png" width="320" alt="Session state and events" /></p>
+
+<!-- ```mermaid
+graph TD
+    subgraph A["Agentic Application"];
+        subgraph U["User"]
+            subgraph S1["Session"]
+                D1["Session.Events"]
+                D2["Session.State"]
+            end
+        end
+    end
+``` -->
+
+<h3 id="23-how-to-manage-sessions">2.3 How to manage sessions?</h3>
+
+<p>An agentic application can have multiple users and each user may have multiple sessions with the application.
+To manage these sessions and events, ADK offers a <strong>Session Manager</strong> and <strong>Runner</strong>.</p>
+
+<ol>
+  <li><strong><code class="language-plaintext highlighter-rouge">SessionService</code></strong>: The storage layer
+    <ul>
+      <li>Manages creation, storage, and retrieval of session data</li>
+      <li>Different implementations for different needs (memory, database, cloud)</li>
+    </ul>
+  </li>
+  <li><strong><code class="language-plaintext highlighter-rouge">Runner</code></strong>: The orchestration layer
+    <ul>
+      <li>Manages the flow of information between user and agent</li>
+      <li>Automatically maintains conversation history</li>
+      <li>Handles the Context Engineering behind the scenes</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Think of it like this:</p>
+
+<ul>
+  <li><strong>Session</strong> = A notebook 📓</li>
+  <li><strong>Events</strong> = Individual entries in a single page 📝</li>
+  <li><strong>SessionService</strong> = The filing cabinet storing notebooks 🗄️</li>
+  <li><strong>Runner</strong> = The assistant managing the conversation 🤖</li>
+</ul>
+
+<h3 id="24-implementing-our-first-stateful-agent">2.4 Implementing Our First Stateful Agent</h3>
+
+<p>Let’s build our first stateful agent, that can remember and have constructive conversations.</p>
+
+<p>ADK offers different types of sessions suitable for different needs. As a start, we’ll start with a simple Session Management option (<code class="language-plaintext highlighter-rouge">InMemorySessionService</code>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">APP_NAME</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>  <span class="c1"># Application
+</span><span class="n">USER_ID</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>  <span class="c1"># User
+</span><span class="n">SESSION</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>  <span class="c1"># Session
+</span>
+<span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span>
+
+
+<span class="c1"># Step 1: Create the LLM Agent
+</span><span class="n">root_agent</span> <span class="o">=</span> <span class="nc">Agent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">text_chat_bot</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="sh">"</span><span class="s">A text chatbot</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Description of the agent's purpose
+</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Set up Session Management
+# InMemorySessionService stores conversations in RAM (temporary)
+</span><span class="n">session_service</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>
+
+<span class="c1"># Step 3: Create the Runner
+</span><span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">root_agent</span><span class="p">,</span> <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Stateful agent initialized!</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   - Application: </span><span class="si">{</span><span class="n">APP_NAME</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   - User: </span><span class="si">{</span><span class="n">USER_ID</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   - Using: </span><span class="si">{</span><span class="n">session_service</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Stateful agent initialized!
+   - Application: default
+   - User: default
+   - Using: InMemorySessionService
+</code></pre></div></div>
+
+<h3 id="25-testing-our-stateful-agent">2.5 Testing Our Stateful Agent</h3>
+
+<p>Now let’s see the magic of sessions in action!</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Run a conversation with two queries in the same session
+# Notice: Both queries are part of the SAME session, so context is maintained
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="sh">"</span><span class="s">Hi, I am Sam! What is the capital of United States?</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">Hello! What is my name?</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># This time, the agent should remember!
+</span>    <span class="p">],</span>
+    <span class="sh">"</span><span class="s">stateful-agentic-session</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: stateful-agentic-session
+
+User &gt; Hi, I am Sam! What is the capital of United States?
+gemini-2.5-flash-lite &gt;  Hi Sam! The capital of the United States is Washington, D.C.
+
+User &gt; Hello! What is my name?
+gemini-2.5-flash-lite &gt;  Your name is Sam.
+</code></pre></div></div>
+
+<p>🎉 <strong>Success!</strong> The agent remembered your name because both queries were part of the same session. The Runner automatically maintained the conversation history.</p>
+
+<p>But there’s a catch: <code class="language-plaintext highlighter-rouge">InMemorySessionService</code> is temporary. <strong>Once the application stops, all conversation history is lost.</strong></p>
+
+<h3 id="-optional-26-testing-agents-forgetfulness">🛑 (Optional) 2.6 Testing Agent’s forgetfulness</h3>
+
+<blockquote>
+  <p>To verify that the agent forgets the conversation, <strong>restart the kernel</strong>. Then, <strong>run ALL the previous cells in this notebook EXCEPT the <code class="language-plaintext highlighter-rouge">run_session</code> in 2.5.</strong></p>
+
+  <p>Now run the cell below. You’ll see that the agent doesn’t remember anything from the previous conversation.</p>
+</blockquote>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Run this cell after restarting the kernel. All this history will be gone...
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span><span class="sh">"</span><span class="s">What did I ask you about earlier?</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">And remind me, what</span><span class="sh">'</span><span class="s">s my name?</span><span class="sh">"</span><span class="p">],</span>
+    <span class="sh">"</span><span class="s">stateful-agentic-session</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># Note, we are using same session name
+</span></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: stateful-agentic-session
+
+User &gt; What did I ask you about earlier?
+gemini-2.5-flash-lite &gt;  I do not have access to past conversations. Therefore, I cannot tell you what you asked me about earlier.
+
+User &gt; And remind me, what's my name?
+gemini-2.5-flash-lite &gt;  I do not have access to past conversations. Therefore, I cannot tell you your name.
+</code></pre></div></div>
+
+<h3 id="the-problem">The Problem</h3>
+
+<p>Session information is not persistent (i.e., meaningful conversations are lost). While this is advantageous in testing environments, <strong>in the real world, a user should be able to refer from past and resume conversations.</strong> To achieve this, we must persist information.</p>
+
+<hr />
+<h2 id="-section-3-persistent-sessions-with-databasesessionservice">📈 Section 3: Persistent Sessions with <code class="language-plaintext highlighter-rouge">DatabaseSessionService</code></h2>
+
+<p>While <code class="language-plaintext highlighter-rouge">InMemorySessionService</code> is great for prototyping, real-world applications need conversations to survive restarts, crashes, and deployments. Let’s level up to persistent storage!</p>
+
+<h3 id="31-choosing-the-right-sessionservice">3.1 Choosing the Right SessionService</h3>
+
+<p>ADK provides different SessionService implementations for different needs:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Service</th>
+      <th>Use Case</th>
+      <th>Persistence</th>
+      <th>Best For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>InMemorySessionService</strong></td>
+      <td>Development &amp; Testing</td>
+      <td>❌ Lost on restart</td>
+      <td>Quick prototypes</td>
+    </tr>
+    <tr>
+      <td><strong>DatabaseSessionService</strong></td>
+      <td>Self-managed apps</td>
+      <td>✅ Survives restarts</td>
+      <td>Small to medium apps</td>
+    </tr>
+    <tr>
+      <td><strong>Agent Engine Sessions</strong></td>
+      <td>Production on GCP</td>
+      <td>✅ Fully managed</td>
+      <td>Enterprise scale</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="32-implementing-persistent-sessions">3.2 Implementing Persistent Sessions</h3>
+
+<p>Let’s upgrade to <code class="language-plaintext highlighter-rouge">DatabaseSessionService</code> using SQLite. This gives us persistence without needing a separate database server for this demo.</p>
+
+<p>Let’s create a <code class="language-plaintext highlighter-rouge">chatbot_agent</code> capable of having a conversation with the user.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Step 1: Create the same agent (notice we use LlmAgent this time)
+</span><span class="n">chatbot_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">text_chat_bot</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="sh">"</span><span class="s">A text chatbot with persistent memory</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 2: Switch to DatabaseSessionService
+# SQLite database will be created automatically
+</span><span class="n">db_url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">sqlite:///my_agent_data.db</span><span class="sh">"</span>  <span class="c1"># Local SQLite file
+</span><span class="n">session_service</span> <span class="o">=</span> <span class="nc">DatabaseSessionService</span><span class="p">(</span><span class="n">db_url</span><span class="o">=</span><span class="n">db_url</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Create a new runner with persistent storage
+</span><span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">chatbot_agent</span><span class="p">,</span> <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Upgraded to persistent sessions!</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   - Database: my_agent_data.db</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">   - Sessions will survive restarts!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Upgraded to persistent sessions!
+   - Database: my_agent_data.db
+   - Sessions will survive restarts!
+</code></pre></div></div>
+
+<h3 id="33-test-run-1-verifying-persistence">3.3 Test Run 1: Verifying Persistence</h3>
+
+<p>In this first test run, we’ll start a new conversation with the session ID <code class="language-plaintext highlighter-rouge">test-db-session-01</code>. We will first introduce our name as ‘Sam’ and then ask a question. In the second turn, we will ask the agent for our name.</p>
+
+<p>Since we are using <code class="language-plaintext highlighter-rouge">DatabaseSessionService</code>, the agent should remember the name.</p>
+
+<p>After the conversation, we’ll inspect the <code class="language-plaintext highlighter-rouge">my_agent_data.db</code> SQLite database directly to see how the conversation <code class="language-plaintext highlighter-rouge">events</code> (the user queries and model responses) are stored.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span><span class="sh">"</span><span class="s">Hi, I am Sam! What is the capital of the United States?</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Hello! What is my name?</span><span class="sh">"</span><span class="p">],</span>
+    <span class="sh">"</span><span class="s">test-db-session-01</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: test-db-session-01
+
+User &gt; Hi, I am Sam! What is the capital of the United States?
+gemini-2.5-flash-lite &gt;  Hi Sam! The capital of the United States is Washington, D.C.
+
+User &gt; Hello! What is my name?
+gemini-2.5-flash-lite &gt;  Your name is Sam.
+</code></pre></div></div>
+
+<h3 id="-optional-34-test-run-2-resuming-a-conversation">🛑 (Optional) 3.4 Test Run 2: Resuming a Conversation</h3>
+
+<blockquote>
+  <p>‼️ Now, let’s repeat the test again, but this time, <strong>let’s stop this Kaggle Notebook’s kernel and restart it again.</strong></p>
+
+  <ol>
+    <li>
+      <p>Run all the previous cells in the notebook, <strong>EXCEPT</strong> the previous Section 3.3 (<code class="language-plaintext highlighter-rouge">run_session</code> cell).</p>
+    </li>
+    <li>
+      <p>Now, run the below cell with the <strong>same session ID</strong> (<code class="language-plaintext highlighter-rouge">test-db-session-01</code>).</p>
+    </li>
+  </ol>
+</blockquote>
+
+<p>We will ask a new question and then ask for our name again. <strong>Because the session is loaded from the database, the agent should still remember</strong> that our name is ‘Sam’ from the first test run. This demonstrates the power of persistent sessions.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span><span class="sh">"</span><span class="s">What is the capital of India?</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Hello! What is my name?</span><span class="sh">"</span><span class="p">],</span>
+    <span class="sh">"</span><span class="s">test-db-session-01</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: test-db-session-01
+
+User &gt; What is the capital of India?
+gemini-2.5-flash-lite &gt;  The capital of India is New Delhi.
+
+User &gt; Hello! What is my name?
+gemini-2.5-flash-lite &gt;  Your name is Sam.
+</code></pre></div></div>
+
+<h3 id="35-lets-verify-that-the-session-data-is-isolated">3.5 Let’s verify that the session data is isolated</h3>
+
+<p>As mentioned earlier, a session is private conversation between an Agent and a User (i.e., two sessions do not share information). Let’s run our <code class="language-plaintext highlighter-rouge">run_session</code> with a different session name <code class="language-plaintext highlighter-rouge">test-db-session-02</code> to confirm this.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span> <span class="p">[</span><span class="sh">"</span><span class="s">Hello! What is my name?</span><span class="sh">"</span><span class="p">],</span> <span class="sh">"</span><span class="s">test-db-session-02</span><span class="sh">"</span>
+<span class="p">)</span>  <span class="c1"># Note, we are using new session name
+</span></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: test-db-session-02
+
+User &gt; Hello! What is my name?
+gemini-2.5-flash-lite &gt;  I do not have access to your personal information, including your name. As a text chatbot, I do not store any user data or personal details. Therefore, I cannot tell you what your name is.
+</code></pre></div></div>
+
+<h3 id="36-how-are-the-events-stored-in-the-database">3.6 How are the events stored in the Database?</h3>
+
+<p>Since we are using a sqlite DB to store information, let’s have a quick peek to see how information is stored.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">sqlite3</span>
+
+<span class="k">def</span> <span class="nf">check_data_in_db</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">sqlite3</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="sh">"</span><span class="s">my_agent_data.db</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">connection</span><span class="p">.</span><span class="nf">cursor</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cursor</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span>
+            <span class="sh">"</span><span class="s">select app_name, session_id, author, content from events</span><span class="sh">"</span>
+        <span class="p">)</span>
+        <span class="nf">print</span><span class="p">([</span><span class="n">_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">result</span><span class="p">.</span><span class="n">description</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">each</span> <span class="ow">in</span> <span class="n">result</span><span class="p">.</span><span class="nf">fetchall</span><span class="p">():</span>
+            <span class="nf">print</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
+
+
+<span class="nf">check_data_in_db</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>['app_name', 'session_id', 'author', 'content']
+('default', 'test-db-session-01', 'user', '{"parts": [{"text": "Hi, I am Sam! What is the capital of the United States?"}], "role": "user"}')
+('default', 'test-db-session-01', 'text_chat_bot', '{"parts": [{"text": "Hi Sam! The capital of the United States is Washington, D.C."}], "role": "model"}')
+('default', 'test-db-session-01', 'user', '{"parts": [{"text": "Hello! What is my name?"}], "role": "user"}')
+('default', 'test-db-session-01', 'text_chat_bot', '{"parts": [{"text": "Your name is Sam."}], "role": "model"}')
+('default', 'test-db-session-01', 'user', '{"parts": [{"text": "What is the capital of India?"}], "role": "user"}')
+('default', 'test-db-session-01', 'text_chat_bot', '{"parts": [{"text": "The capital of India is New Delhi."}], "role": "model"}')
+('default', 'test-db-session-01', 'user', '{"parts": [{"text": "Hello! What is my name?"}], "role": "user"}')
+('default', 'test-db-session-01', 'text_chat_bot', '{"parts": [{"text": "Your name is Sam."}], "role": "model"}')
+('default', 'test-db-session-02', 'user', '{"parts": [{"text": "Hello! What is my name?"}], "role": "user"}')
+('default', 'test-db-session-02', 'text_chat_bot', '{"parts": [{"text": "I do not have access to your personal information, including your name. As a text chatbot, I do not store any user data or personal details. Therefore, I cannot tell you what your name is."}], "role": "model"}')
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-4-context-compaction">⏳ Section 4: Context Compaction</h2>
+
+<p>As you can see, all the events are stored in full in the session Database, and this quickly adds up. For a long, complex task, this list of events can become very large, leading to slower performance and higher costs.</p>
+
+<p>But what if we could automatically summarize the past? Let’s use ADK’s <strong>Context Compaction</strong> feature to see <strong>how to automatically reduce the context that’s stored in the Session.</strong></p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day3/context-compaction.png" width="1400" alt="Context compaction" /></p>
+
+<h3 id="41-create-an-app-for-the-agent">4.1 Create an App for the agent</h3>
+
+<p>To enable this feature, let’s use the same <code class="language-plaintext highlighter-rouge">chatbot_agent</code> we created in Section 3.2.</p>
+
+<p>The first step is to create an object called <code class="language-plaintext highlighter-rouge">App</code>. We’ll give it a name and pass in our chatbot_agent.</p>
+
+<p>We’ll also create a new config to do the Context Compaction. This <strong><code class="language-plaintext highlighter-rouge">EventsCompactionConfig</code></strong> defines two key variables:</p>
+
+<ul>
+  <li><strong>compaction_interval</strong>: Asks the Runner to compact the history after every <code class="language-plaintext highlighter-rouge">n</code> conversations</li>
+  <li><strong>overlap_size</strong>: Defines the number of previous conversations to retain for overlap</li>
+</ul>
+
+<p>We’ll then provide this app to the Runner.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Re-define our app with Events Compaction enabled
+</span><span class="n">research_app_compacting</span> <span class="o">=</span> <span class="nc">App</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">research_app_compacting</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">root_agent</span><span class="o">=</span><span class="n">chatbot_agent</span><span class="p">,</span>
+    <span class="c1"># This is the new part!
+</span>    <span class="n">events_compaction_config</span><span class="o">=</span><span class="nc">EventsCompactionConfig</span><span class="p">(</span>
+        <span class="n">compaction_interval</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>  <span class="c1"># Trigger compaction every 3 invocations
+</span>        <span class="n">overlap_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># Keep 1 previous turn for context
+</span>    <span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">db_url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">sqlite:///my_agent_data.db</span><span class="sh">"</span>  <span class="c1"># Local SQLite file
+</span><span class="n">session_service</span> <span class="o">=</span> <span class="nc">DatabaseSessionService</span><span class="p">(</span><span class="n">db_url</span><span class="o">=</span><span class="n">db_url</span><span class="p">)</span>
+
+<span class="c1"># Create a new runner for our upgraded app
+</span><span class="n">research_runner_compacting</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span>
+    <span class="n">app</span><span class="o">=</span><span class="n">research_app_compacting</span><span class="p">,</span> <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span>
+<span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Research App upgraded with Events Compaction!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Research App upgraded with Events Compaction!
+
+
+/tmp/ipykernel_131/3773147741.py:6: UserWarning: [EXPERIMENTAL] EventsCompactionConfig: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  events_compaction_config=EventsCompactionConfig(
+</code></pre></div></div>
+
+<h3 id="42-running-the-demo">4.2 Running the Demo</h3>
+
+<p>Now, let’s have a conversation that is long enough to trigger the compaction. When you run the cell below, the output will look like a normal conversation. However, because we configured our <code class="language-plaintext highlighter-rouge">App</code>, a compaction process will run silently in the background after the 3rd invocation.</p>
+
+<p>In the next step, we’ll prove that it happened.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Turn 1
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">research_runner_compacting</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">What is the latest news about AI in healthcare?</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">compaction_demo</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Turn 2
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">research_runner_compacting</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Are there any new developments in drug discovery?</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">compaction_demo</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Turn 3 - Compaction should trigger after this turn!
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">research_runner_compacting</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Tell me more about the second development you found.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">compaction_demo</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Turn 4
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">research_runner_compacting</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">Who are the main companies involved in that?</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">compaction_demo</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: compaction_demo
+
+User &gt; What is the latest news about AI in healthcare?
+gemini-2.5-flash-lite &gt;  The field of AI in healthcare is incredibly dynamic, with new developments emerging almost daily. To give you the *latest* news, I'll need to access more up-to-date information.
+
+However, I can tell you about some of the *major ongoing trends and recent breakthroughs* that are consistently making headlines:
+
+**Key Areas of Advancement and News:**
+
+*   **Drug Discovery and Development:**
+    *   **Accelerated Research:** AI is dramatically speeding up the identification of potential drug candidates, predicting their efficacy, and understanding their mechanisms of action. Companies are using AI to analyze vast datasets of biological information and chemical compounds.
+    *   **Personalized Medicine:** AI is helping to tailor drug treatments to individual patients based on their genetic makeup, lifestyle, and disease characteristics.
+    *   **De Novo Drug Design:** AI models are now capable of *designing* entirely new molecules with specific therapeutic properties, rather than just screening existing ones.
+
+*   **Diagnostics and Imaging:**
+    *   **Radiology and Pathology:** AI algorithms are becoming increasingly sophisticated at analyzing medical images (X-rays, CT scans, MRIs, pathology slides) to detect subtle anomalies that humans might miss, aiding in early disease detection for conditions like cancer, diabetic retinopathy, and cardiovascular disease.
+    *   **Predictive Diagnostics:** AI is being used to predict a patient's risk of developing certain conditions based on their electronic health records (EHRs) and other data, allowing for proactive interventions.
+
+*   **Clinical Workflow and Operational Efficiency:**
+    *   **Administrative Tasks:** AI is automating tedious administrative tasks like scheduling, billing, and prior authorization requests, freeing up healthcare professionals' time.
+    *   **Clinical Decision Support:** AI-powered tools are providing clinicians with real-time insights and recommendations to support their decision-making during patient care.
+    *   **Patient Monitoring:** Remote patient monitoring using AI can detect early signs of deterioration and alert caregivers, improving outcomes for chronic conditions.
+
+*   **Mental Health:**
+    *   **AI-powered Therapy and Support:** Chatbots and virtual assistants are providing accessible mental health support, offering cognitive behavioral therapy (CBT) exercises, and acting as initial screening tools.
+    *   **Analyzing Behavioral Patterns:** AI is being used to analyze speech patterns, text messages, and social media activity to detect early signs of mental health issues.
+
+*   **Generative AI and Large Language Models (LLMs):**
+    *   **Summarization and Documentation:** LLMs are being trained to summarize patient encounters, draft clinical notes, and generate reports, reducing physician burnout.
+    *   **Patient Communication:** AI is helping to create more personalized and informative patient communication materials.
+    *   **Medical Education and Training:** LLMs can create realistic patient scenarios for training medical students and professionals.
+
+**Recent Themes and Buzzwords You Might See:**
+
+*   **Explainable AI (XAI):** A growing focus on making AI decisions transparent and understandable to clinicians, crucial for trust and adoption.
+*   **Federated Learning:** Training AI models across multiple decentralized datasets without sharing the raw data, crucial for patient privacy.
+*   **Real-world Evidence (RWE) and Real-world Data (RWD):** AI is essential for analyzing these large, complex datasets to understand drug effectiveness and patient outcomes outside of controlled trials.
+*   **Regulatory Approval:** A significant ongoing development is the increasing number of AI-powered medical devices and software receiving regulatory approval (e.g., FDA clearance).
+
+**To get the *absolute latest* news, I would recommend checking these sources:**
+
+*   **Reputable Healthcare Technology News Outlets:** Fierce Biotech, STAT News, MobiHealthNews, Healthcare IT News, MedTech Dive.
+*   **Major AI Research Conferences:** NeurIPS, ICML, ICLR (though these can be highly technical).
+*   **Company Press Releases:** Leading AI healthcare companies (e.g., Google Health, Microsoft Healthcare, IBM Watson Health, NVIDIA, Tempus, Viz.ai, Paige.AI) often announce breakthroughs.
+*   **Medical Journals:** Publications in journals like Nature Medicine, The Lancet, JAMA, NEJM often feature AI research.
+
+If you have a specific area within AI and healthcare you're interested in, I can try to find more targeted information!
+
+ ### Session: compaction_demo
+
+User &gt; Are there any new developments in drug discovery?
+gemini-2.5-flash-lite &gt;  Yes, there are constant and exciting new developments in drug discovery powered by AI! It's one of the most rapidly evolving areas. Here are some of the key new developments and trends:
+
+**1. Generative AI for Novel Molecule Design (De Novo Drug Design):**
+*   **What's New:** Instead of screening existing libraries of compounds, generative AI models (like GANs, VAEs, and transformer-based models) are now capable of *designing entirely new molecules* from scratch, optimized for specific target properties (e.g., binding affinity, low toxicity, good ADME properties - Absorption, Distribution, Metabolism, Excretion).
+*   **Impact:** This is a game-changer, as it vastly expands the chemical space that can be explored, potentially leading to drugs for previously "undruggable" targets.
+*   **Examples:** Companies are using these models to design novel antibiotics, cancer therapeutics, and drugs for rare diseases.
+
+**2. Advanced AI for Target Identification and Validation:**
+*   **What's New:** AI is becoming more adept at analyzing complex biological data (genomics, proteomics, transcriptomics, patient data) to identify novel disease targets and understand their role in disease pathways. This goes beyond simple gene association to predicting protein interactions and cellular mechanisms.
+*   **Impact:** Leads to more precise and effective drug development by focusing on the most relevant biological drivers of disease.
+
+**3. AI-Powered Prediction of Drug Properties and Efficacy:**
+*   **What's New:** Sophisticated AI models can now predict with higher accuracy:
+    *   **Binding Affinity:** How strongly a drug candidate will bind to its target.
+    *   **Toxicity:** Potential side effects and safety concerns early in the process.
+    *   **Pharmacokinetics (PK) and Pharmacodynamics (PD):** How the drug will be absorbed, distributed, metabolized, and excreted by the body, and its effect over time.
+    *   **Clinical Trial Success Likelihood:** By analyzing preclinical data and historical trial outcomes.
+*   **Impact:** Reduces the number of failed drug candidates, saving immense time and cost in the preclinical and clinical development phases.
+
+**4. AI for Repurposing Existing Drugs:**
+*   **What's New:** AI can analyze vast databases of drug information, disease mechanisms, and patient data to identify existing approved drugs that could be effective for new indications.
+*   **Impact:** Offers a faster and less risky pathway to new treatments, as the safety profiles of these drugs are already well-established.
+
+**5. Enhanced Virtual Screening and Lead Optimization:**
+*   **What's New:** AI algorithms can process and rank billions of potential drug compounds against a target much faster than traditional methods. They also help in optimizing the properties of promising "lead" compounds.
+*   **Impact:** Accelerates the initial stages of drug discovery, narrowing down the search space significantly.
+
+**6. AI in Clinical Trial Design and Patient Stratification:**
+*   **What's New:** While not strictly "discovery," AI is optimizing the *next steps* after discovery by helping design more efficient clinical trials and identifying patient subgroups most likely to respond to a new drug, leading to faster trial completion and higher success rates.
+*   **Impact:** Crucial for bringing new drugs to market more quickly and effectively.
+
+**Examples of Companies and Research Leading the Charge:**
+
+*   **Recursion Pharmaceuticals:** Uses AI and automation to discover novel therapeutic targets and drugs.
+*   **Exscientia:** Focuses on AI-driven drug design, having brought several AI-designed molecules into clinical trials.
+*   **Insilico Medicine:** Known for its end-to-end AI platform for drug discovery, including generative AI for molecule design.
+*   **Schrödinger:** A leader in computational chemistry, integrating AI into its physics-based modeling for drug discovery.
+*   **NVIDIA:** Provides powerful GPU hardware and AI platforms that are essential for many of these computational drug discovery efforts.
+
+**Challenges Remain:**
+
+Despite the incredible progress, challenges persist, including:
+
+*   **Data Quality and Accessibility:** High-quality, well-annotated biological and chemical data is crucial for training effective AI models.
+*   **Interpretability:** Understanding *why* an AI model makes a certain prediction is still an area of active research.
+*   **Experimental Validation:** AI predictions still need rigorous experimental validation, which remains a bottleneck.
+*   **Regulatory Hurdles:** Ensuring AI-designed drugs meet stringent regulatory standards.
+
+In summary, AI is not just incrementally improving drug discovery; it's fundamentally transforming the process, making it faster, more efficient, and capable of exploring entirely new therapeutic possibilities.
+
+ ### Session: compaction_demo
+
+User &gt; Tell me more about the second development you found.
+gemini-2.5-flash-lite &gt;  You're likely referring to the **second development I mentioned: Advanced AI for Target Identification and Validation.**
+
+This area is incredibly significant because it addresses a fundamental bottleneck in drug discovery: **finding the *right* biological target** to address a disease. For a long time, target identification was a slow, laborious process involving extensive manual research, hypothesis generation, and experimental validation. AI is revolutionizing this.
+
+Here's a deeper dive into what this development entails and why it's important:
+
+**What "Target Identification and Validation" Means:**
+
+*   **Target Identification:** This is the process of finding a specific biological molecule (usually a protein, but it could also be a gene, RNA, or even a pathway) that plays a critical role in a disease. If you can modulate the activity of this target (e.g., inhibit an overactive enzyme, activate a deficient receptor), you might be able to treat the disease.
+*   **Target Validation:** Once a potential target is identified, it needs to be validated. This means gathering strong evidence that the target is indeed crucial for the disease and that modulating it will have a therapeutic benefit without unacceptable side effects.
+
+**How AI is Advancing This:**
+
+1.  **Analyzing Massive, Multi-Omic Datasets:**
+    *   **What AI does:** AI algorithms can sift through enormous datasets that combine different biological "omics" (genomics, proteomics, transcriptomics, metabolomics) from healthy individuals and patients with specific diseases. They can also integrate data from electronic health records (EHRs), scientific literature, and clinical trial results.
+    *   **Why it's powerful:** These datasets are too complex for humans to analyze manually. AI can identify subtle patterns, correlations, and causal relationships that indicate a gene or protein is dysregulated in a disease state. For instance, it might spot that a particular protein is consistently overexpressed in cancer cells but not in healthy cells across thousands of samples.
+
+2.  **Uncovering Novel Disease Pathways:**
+    *   **What AI does:** AI can map out complex biological networks and pathways. It can identify how different genes, proteins, and molecules interact and how these interactions go awry in disease. This helps identify not just individual targets but also critical nodes within these dysregulated pathways.
+    *   **Why it's powerful:** Diseases are rarely caused by a single faulty component. Understanding the entire pathway provides a more holistic view and can reveal "druggable" points that might have been overlooked.
+
+3.  **Predicting Target "Druggability":**
+    *   **What AI does:** Beyond just identifying a target, AI models can analyze the target's structure and properties to predict whether it's likely to be "druggable" – meaning, can a molecule be designed or found that can effectively bind to and modulate its activity?
+    *   **Why it's powerful:** This saves resources by prioritizing targets that have a higher probability of yielding a successful drug, rather than pursuing targets that are biologically relevant but chemically challenging.
+
+4.  **Leveraging Natural Language Processing (NLP) for Literature Mining:**
+    *   **What AI does:** NLP-powered AI can rapidly scan and extract information from millions of scientific publications, patents, and conference abstracts. It can connect disparate pieces of information to form new hypotheses about potential targets.
+    *   **Why it's powerful:** It helps researchers stay on top of the ever-growing body of scientific literature and discover connections that might not be obvious from reading individual papers.
+
+5.  **Integrating Real-World Data (RWD) and Real-World Evidence (RWE):**
+    *   **What AI does:** AI can analyze RWD from EHRs, insurance claims, and patient registries to observe how diseases progress and how different interventions (even off-label uses of existing drugs) affect patients in real-world settings. This can provide strong validation for targets.
+    *   **Why it's powerful:** This mirrors how a drug might perform in the diverse patient population encountered in clinical practice, offering a different and often complementary perspective to controlled lab experiments.
+
+**Impact and Significance:**
+
+*   **Accelerated Discovery:** AI drastically reduces the time it takes to go from understanding a disease to identifying a promising target.
+*   **Reduced Risk and Cost:** By focusing on more validated and druggable targets, AI helps de-risk the early stages of drug development, potentially saving billions of dollars and years of research.
+*   **Tackling Difficult Diseases:** AI can help identify targets for complex diseases like Alzheimer's, Parkinson's, and various autoimmune disorders, where understanding the underlying biology has been challenging.
+*   **Personalized Medicine:** AI can help identify patient subgroups that might respond to therapies targeting specific molecules, paving the way for more personalized treatments.
+
+Companies like **Deep Genomics**, **BenevolentAI**, and **Cerebras Systems** (through its AI hardware enabling large-scale biological simulations) are actively involved in advancing AI for target identification and validation. It's a foundational step that enables many of the other AI-driven innovations in drug discovery.
+
+ ### Session: compaction_demo
+
+User &gt; Who are the main companies involved in that?
+gemini-2.5-flash-lite &gt;  You're asking about the companies at the forefront of using AI for **Target Identification and Validation**. This is a crucial area, and many companies, from large biotechs to specialized AI drug discovery firms, are involved.
+
+Here are some of the main players, categorized by their approach:
+
+**1. AI-Native Drug Discovery Platforms (often with a strong focus on Target ID):**
+
+These companies are built from the ground up with AI as their core engine for identifying and validating targets.
+
+*   **BenevolentAI:** One of the pioneers. They use their AI platform to analyze vast amounts of biomedical data (scientific literature, patents, clinical trial data, genomic data) to identify novel disease targets and potential drug candidates. They have both internal R&amp;D programs and collaborations.
+*   **Recursion Pharmaceuticals:** While they do drug discovery across the board, their platform is heavily reliant on generating and analyzing biological data (e.g., from cellular imaging) at scale. Their AI is used to map cellular biology and identify how different genes/targets are involved in disease states.
+*   **Insilico Medicine:** Known for its end-to-end AI platform, they use AI for target discovery, generative molecule design, and even predicting clinical trial outcomes. Their target ID capabilities are integrated into their workflow.
+*   **Atomwise:** Primarily known for its AI for small molecule drug discovery (virtual screening), they also leverage their AI to understand target-drug interactions, which implicitly aids in target validation by assessing the potential for interaction.
+*   **Exscientia:** Another leader in AI-driven drug design. While they excel at *designing* molecules, their underlying AI models are trained on extensive biological data, enabling them to identify and prioritize targets that are amenable to their design approach.
+
+**2. Large Pharmaceutical Companies with Dedicated AI/Data Science Units:**
+
+Major pharma companies are heavily investing in AI, building internal capabilities, and forming partnerships.
+
+*   **Pfizer:** Has been investing significantly in AI and data science, including for target identification and early-stage research.
+*   **Novartis:** Known for its strong data science focus, they utilize AI for various stages of drug discovery, including target identification and validation.
+*   **Roche/Genentech:** Employs AI and machine learning extensively in its research and development, including exploring new biological targets for oncology, immunology, and neuroscience.
+*   **Merck (MSD):** Has various initiatives and partnerships focused on leveraging AI for drug discovery, which would include target ID.
+*   **AstraZeneca:** Actively uses AI and machine learning across its R&amp;D pipeline, from target identification to clinical trial optimization.
+
+**3. Tech Companies Enabling Biological Data Analysis:**
+
+While not directly doing drug discovery, these companies provide the foundational tools and platforms.
+
+*   **NVIDIA:** Their GPUs are essential for training complex AI models used in biological simulations and data analysis. They also develop specialized software platforms (like Clara Discovery) that facilitate AI in drug discovery, including target ID.
+*   **Google (Google Health/DeepMind):** DeepMind's work on protein folding (AlphaFold) is revolutionary for understanding protein structures, which is critical for target identification and validation. Google's broader AI capabilities are also applied to biological data.
+*   **Microsoft:** Offers cloud computing services (Azure) and AI tools that are used by many biotech and pharma companies for their R&amp;D, including target discovery.
+
+**4. Specialized Companies Focusing on Specific Aspects:**
+
+*   **Deep Genomics:** Uses AI to identify genetic causes of disease and then identify therapeutic targets based on that understanding.
+*   **Tempus:** While broader in scope (oncology data platform), their ability to analyze vast amounts of clinical and molecular data is invaluable for identifying and validating targets, particularly in cancer.
+
+**How They Collaborate:**
+
+It's also important to note that the landscape is characterized by:
+
+*   **Partnerships:** AI-native companies often partner with large pharma to leverage their biological expertise and clinical trial infrastructure.
+*   **Acquisitions:** Large pharma companies sometimes acquire promising AI drug discovery startups.
+*   **Consortia and Open Science Initiatives:** Efforts to share data and develop standardized AI tools also play a role.
+
+The field is very dynamic, with new companies emerging and established players expanding their AI efforts constantly. The common thread is the application of advanced computational power and machine learning algorithms to make sense of complex biological data to find and validate the right targets for new medicines.
+</code></pre></div></div>
+
+<h3 id="43-verifying-compaction-in-the-session-history">4.3 Verifying Compaction in the Session History</h3>
+
+<p>The conversation above looks normal, but the history has been changed behind the scenes. How can we prove it?</p>
+
+<p>We can inspect the <code class="language-plaintext highlighter-rouge">events</code> list from our session. The compaction process <strong>doesn’t delete old events; it replaces them with a single, new <code class="language-plaintext highlighter-rouge">Event</code> that contains the summary.</strong> Let’s find it.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get the final session state
+</span><span class="n">final_session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">research_runner_compacting</span><span class="p">.</span><span class="n">app_name</span><span class="p">,</span>
+    <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span>
+    <span class="n">session_id</span><span class="o">=</span><span class="sh">"</span><span class="s">compaction_demo</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">--- Searching for Compaction Summary Event ---</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">found_summary</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">final_session</span><span class="p">.</span><span class="n">events</span><span class="p">:</span>
+    <span class="c1"># Compaction events have a 'compaction' attribute
+</span>    <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">actions</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">actions</span><span class="p">.</span><span class="n">compaction</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">✅ SUCCESS! Found the Compaction Event:</span><span class="sh">"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Author: </span><span class="si">{</span><span class="n">event</span><span class="p">.</span><span class="n">author</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s"> Compacted information: </span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">found_summary</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">break</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">found_summary</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sh">"</span><span class="se">\n</span><span class="s">❌ No compaction event found. Try increasing the number of turns in the demo.</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>--- Searching for Compaction Summary Event ---
+
+✅ SUCCESS! Found the Compaction Event:
+  Author: user
+
+ Compacted information: model_version=None content=None grounding_metadata=None partial=None turn_complete=None finish_reason=None error_code=None error_message=None interrupted=None custom_metadata=None usage_metadata=None live_session_resumption_update=None input_transcription=None output_transcription=None avg_logprobs=None logprobs_result=None cache_metadata=None citation_metadata=None invocation_id='6b6e1506-7725-45bb-b78c-e0e6a3ab307f' author='user' actions=EventActions(skip_summarization=None, state_delta={}, artifact_delta={}, transfer_to_agent=None, escalate=None, requested_auth_configs={}, requested_tool_confirmations={}, compaction={'start_timestamp': 1763092997.891181, 'end_timestamp': 1763093004.958794, 'compacted_content': {'parts': [{'function_call': None, 'code_execution_result': None, 'executable_code': None, 'file_data': None, 'function_response': None, 'inline_data': None, 'text': 'The user initiated a conversation asking for the latest news in AI in healthcare. The AI agent provided a comprehensive overview of major trends and recent breakthroughs, categorizing them into drug discovery, diagnostics/imaging, clinical workflow, mental health, and generative AI/LLMs. It also highlighted emerging themes like Explainable AI (XAI) and federated learning, and recommended sources for staying updated.\n\nThe user then specifically inquired about new developments in drug discovery. The AI agent detailed five key advancements:\n1.  **Generative AI for Novel Molecule Design:** AI designing new molecules from scratch.\n2.  **Advanced AI for Target Identification and Validation:** AI identifying and validating biological targets for drugs.\n3.  **AI-Powered Prediction of Drug Properties and Efficacy:** AI predicting binding affinity, toxicity, PK/PD, and clinical trial success.\n4.  **AI for Repurposing Existing Drugs:** AI identifying new uses for approved drugs.\n5.  **Enhanced Virtual Screening and Lead Optimization:** AI accelerating compound screening and lead compound optimization.\nIt also mentioned AI\'s role in clinical trial design and patient stratification.\n\nThe user then requested more information about the second development mentioned (AI for Target Identification and Validation). The AI agent elaborated on this, explaining:\n*   **What Target Identification and Validation entails:** Finding specific biological molecules crucial for a disease and confirming their therapeutic potential.\n*   **How AI advances this:**\n    *   Analyzing multi-omic and EHR data to find dysregulated molecules.\n    *   Uncovering complex disease pathways and critical nodes.\n    *   Predicting the "druggability" of potential targets.\n    *   Using NLP to mine scientific literature for new hypotheses.\n    *   Integrating Real-World Data (RWD) and Real-World Evidence (RWE) for validation.\n*   **The impact and significance:** Accelerated discovery, reduced risk and cost, tackling difficult diseases, and enabling personalized medicine.\n\nThe conversation concluded with the AI agent providing a deeper explanation of AI\'s role in identifying and validating drug targets.\n\n**Key Information and Decisions Made:**\n*   The user\'s initial broad query was narrowed down to AI in drug discovery.\n*   The AI agent successfully provided detailed explanations of advancements in AI for drug discovery, specifically elaborating on target identification and validation.\n\n**Unresolved Questions or Tasks:**\n*   None. The conversation followed a logical progression of the user asking for more detail on a specific topic, which the AI agent provided.', 'thought': None, 'thought_signature': None, 'video_metadata': None}], 'role': 'model'}}, end_of_agent=None, agent_state=None, rewind_before_invocation_id=None) long_running_tool_ids=set() branch=None id='7102ede5-7282-4a63-a84b-7510b381afdc' timestamp=1763093011.64706
+</code></pre></div></div>
+
+<h3 id="44-what-youve-accomplished-automatic-context-management">4.4 What you’ve accomplished: Automatic Context Management</h3>
+
+<p>You just found the proof! The presence of that special summary <code class="language-plaintext highlighter-rouge">Event</code> in your session’s history is the tangible result of the compaction process.</p>
+
+<p><strong>Let’s recap what you just witnessed:</strong></p>
+
+<ol>
+  <li><strong>Silent Operation</strong>: You ran a standard conversation, and from the outside, nothing seemed different.</li>
+  <li><strong>Background Compaction</strong>: Because you configured the <code class="language-plaintext highlighter-rouge">App</code> with <code class="language-plaintext highlighter-rouge">EventsCompactionConfig</code>, the ADK <code class="language-plaintext highlighter-rouge">Runner</code> automatically monitored the conversation length. Once the threshold was met, it triggered the summarization process in the background.</li>
+  <li><strong>Verified Result</strong>: By inspecting the session’s events, you found the summary that the LLM generated. This summary now replaces the older, more verbose turns in the agent’s active context.</li>
+</ol>
+
+<p><strong>For all future turns in this conversation, the agent will be given this concise summary instead of the full history.</strong> This saves costs, improves performance, and helps the agent stay focused on what’s most important.</p>
+
+<h3 id="45-more-context-engineering-options-in-adk">4.5 More Context Engineering options in ADK</h3>
+
+<h4 id="-custom-compaction">👉 Custom Compaction</h4>
+<p>In this example, we used ADK’s default summarizer. For more advanced use cases, you can provide your own by defining a custom <code class="language-plaintext highlighter-rouge">SlidingWindowCompactor</code> and passing it to the config. This allows you to control the summarization prompt or even use a different, specialized LLM for the task. You can read more about it in the <a href="https://google.github.io/adk-docs/context/compaction/">official documentation</a>.</p>
+
+<h4 id="-context-caching">👉 Context Caching</h4>
+<p>ADK also provides <strong>Context Caching</strong> to help reduce the token size of the static instructions that are fed to the LLM by caching the request data. Read more about it <a href="https://google.github.io/adk-docs/context/caching/">here</a>.</p>
+
+<h3 id="the-problem-1">The Problem</h3>
+
+<p>While we can do Context Compaction and use a database to resume a session, we face new challenges now. In some cases, <strong>we have key information or preferences that we want to share across other sessions.</strong></p>
+
+<p>In these scenarios, instead of sharing the entire session history, transferring information from a few key variables can improve the session experience. Let’s see how to do it!</p>
+
+<hr />
+<h2 id="-section-5-working-with-session-state">🤝 Section 5: Working with Session State</h2>
+
+<h3 id="51-creating-custom-tools-for-session-state-management">5.1 Creating custom tools for Session state management</h3>
+
+<p>Let’s explore how to manually manage session state through custom tools. In this example, we’ll identify a <strong>transferable characteristic</strong>, like a user’s name and their country, and create tools to capture and save it.</p>
+
+<p><strong>Why This Example?</strong></p>
+
+<p>The username is a perfect example of information that:</p>
+
+<ul>
+  <li>Is introduced once but referenced multiple times</li>
+  <li>Should persist throughout a conversation</li>
+  <li>Represents a user-specific characteristic that enhances personalization</li>
+</ul>
+
+<p>Here, for demo purposes, we’ll create two tools that can store and retrieve user name and country from the Session State. <strong>Note that all tools have access to the <code class="language-plaintext highlighter-rouge">ToolContext</code> object.</strong> You don’t have to create separate tools for each piece of information you want to share.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define scope levels for state keys (following best practices)
+</span><span class="n">USER_NAME_SCOPE_LEVELS</span> <span class="o">=</span> <span class="p">(</span><span class="sh">"</span><span class="s">temp</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">app</span><span class="sh">"</span><span class="p">)</span>
+
+
+<span class="c1"># This demonstrates how tools can write to session state using tool_context.
+# The 'user:' prefix indicates this is user-specific data.
+</span><span class="k">def</span> <span class="nf">save_userinfo</span><span class="p">(</span>
+    <span class="n">tool_context</span><span class="p">:</span> <span class="n">ToolContext</span><span class="p">,</span> <span class="n">user_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">country</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sh">"""</span><span class="s">
+    Tool to record and save user name and country in session state.
+
+    Args:
+        user_name: The username to store in session state
+        country: The name of the user</span><span class="sh">'</span><span class="s">s country
+    </span><span class="sh">"""</span>
+    <span class="c1"># Write to session state using the 'user:' prefix for user data
+</span>    <span class="n">tool_context</span><span class="p">.</span><span class="n">state</span><span class="p">[</span><span class="sh">"</span><span class="s">user:name</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_name</span>
+    <span class="n">tool_context</span><span class="p">.</span><span class="n">state</span><span class="p">[</span><span class="sh">"</span><span class="s">user:country</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">country</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">}</span>
+
+
+<span class="c1"># This demonstrates how tools can read from session state.
+</span><span class="k">def</span> <span class="nf">retrieve_userinfo</span><span class="p">(</span><span class="n">tool_context</span><span class="p">:</span> <span class="n">ToolContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sh">"""</span><span class="s">
+    Tool to retrieve user name and country from session state.
+    </span><span class="sh">"""</span>
+    <span class="c1"># Read from session state
+</span>    <span class="n">user_name</span> <span class="o">=</span> <span class="n">tool_context</span><span class="p">.</span><span class="n">state</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">user:name</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Username not found</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">country</span> <span class="o">=</span> <span class="n">tool_context</span><span class="p">.</span><span class="n">state</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">user:country</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Country not found</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="sh">"</span><span class="s">status</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">success</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">user_name</span><span class="sh">"</span><span class="p">:</span> <span class="n">user_name</span><span class="p">,</span> <span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">:</span> <span class="n">country</span><span class="p">}</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Tools created.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Tools created.
+</code></pre></div></div>
+
+<p><strong>Key Concepts:</strong></p>
+<ul>
+  <li>Tools can access <code class="language-plaintext highlighter-rouge">tool_context.state</code> to read/write session state</li>
+  <li>Use descriptive key prefixes (<code class="language-plaintext highlighter-rouge">user:</code>, <code class="language-plaintext highlighter-rouge">app:</code>, <code class="language-plaintext highlighter-rouge">temp:</code>) for organization</li>
+  <li>State persists across conversation turns within the same session</li>
+</ul>
+
+<h3 id="52-creating-an-agent-with-session-state-tools">5.2 Creating an Agent with Session State Tools</h3>
+
+<p>Now let’s create a new agent that has access to our session state management tools:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Configuration
+</span><span class="n">APP_NAME</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>
+<span class="n">USER_ID</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>
+<span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span>
+
+<span class="c1"># Create an agent with session state tools
+</span><span class="n">root_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">text_chat_bot</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="sh">"""</span><span class="s">A text chatbot.
+    Tools for managing user context:
+    * To record username and country when provided use `save_userinfo` tool. 
+    * To fetch username and country when required use `retrieve_userinfo` tool.
+    </span><span class="sh">"""</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">save_userinfo</span><span class="p">,</span> <span class="n">retrieve_userinfo</span><span class="p">],</span>  <span class="c1"># Provide the tools to the agent
+</span><span class="p">)</span>
+
+<span class="c1"># Set up session service and runner
+</span><span class="n">session_service</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">agent</span><span class="o">=</span><span class="n">root_agent</span><span class="p">,</span> <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">,</span> <span class="n">app_name</span><span class="o">=</span><span class="sh">"</span><span class="s">default</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Agent with session state tools initialized!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Agent with session state tools initialized!
+</code></pre></div></div>
+
+<h3 id="53-testing-session-state-in-action">5.3 Testing Session State in Action</h3>
+
+<p>Let’s test how the agent uses session state to remember information across conversation turns:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Test conversation demonstrating session state
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="sh">"</span><span class="s">Hi there, how are you doing today? What is my name?</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Agent shouldn't know the name yet
+</span>        <span class="sh">"</span><span class="s">My name is Sam. I</span><span class="sh">'</span><span class="s">m from Poland.</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Provide name - agent should save it
+</span>        <span class="sh">"</span><span class="s">What is my name? Which country am I from?</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Agent should recall from session state
+</span>    <span class="p">],</span>
+    <span class="sh">"</span><span class="s">state-demo-session</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: state-demo-session
+
+User &gt; Hi there, how are you doing today? What is my name?
+gemini-2.5-flash-lite &gt;  Hello! I'm doing great. I'd love to tell you your name, but I don't have access to that information. I can remember it if you tell me what it is, though! I can also remember your country if you'd like to share that too.
+
+User &gt; My name is Sam. I'm from Poland.
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+gemini-2.5-flash-lite &gt;  It's nice to meet you, Sam! I'll be sure to remember that you're from Poland.
+gemini-2.5-flash-lite &gt;  I've saved your name and country. Is there anything else I can help you with today?
+
+User &gt; What is my name? Which country am I from?
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+gemini-2.5-flash-lite &gt;  Your name is Sam and you are from Poland.
+</code></pre></div></div>
+
+<h3 id="54-inspecting-session-state">5.4 Inspecting Session State</h3>
+
+<p>Let’s directly inspect the session state to see what’s stored:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Retrieve the session and inspect its state
+</span><span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="sh">"</span><span class="s">state-demo-session</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Session State Contents:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">session</span><span class="p">.</span><span class="n">state</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="se">\n</span><span class="s">🔍 Notice the </span><span class="sh">'</span><span class="s">user:name</span><span class="sh">'</span><span class="s"> and </span><span class="sh">'</span><span class="s">user:country</span><span class="sh">'</span><span class="s"> keys storing our data!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Session State Contents:
+{'user:name': 'Sam', 'user:country': 'Poland'}
+
+🔍 Notice the 'user:name' and 'user:country' keys storing our data!
+</code></pre></div></div>
+
+<h3 id="55-session-state-isolation">5.5 Session State Isolation</h3>
+
+<p>As we’ve already seen, an important characteristic of session state is that it’s isolated per session. Let’s demonstrate this by starting a new session:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Start a completely new session - the agent won't know our name
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="p">[</span><span class="sh">"</span><span class="s">Hi there, how are you doing today? What is my name?</span><span class="sh">"</span><span class="p">],</span>
+    <span class="sh">"</span><span class="s">new-isolated-session</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Expected: The agent won't know the name because this is a different session
+</span></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ### Session: new-isolated-session
+
+User &gt; Hi there, how are you doing today? What is my name?
+gemini-2.5-flash-lite &gt;  Hello! I'm doing well, thank you for asking. I'd love to tell you your name, but I don't have access to that information. I'm a text-based AI and don't have memory of past conversations or personal details.
+</code></pre></div></div>
+
+<h3 id="56-cross-session-state-sharing">5.6 Cross-Session State Sharing</h3>
+
+<p>While sessions are isolated by default, you might notice something interesting. Let’s check the state of our new session (<code class="language-plaintext highlighter-rouge">new-isolated-session</code>):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Check the state of the new session
+</span><span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="sh">"</span><span class="s">new-isolated-session</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">New Session State:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">session</span><span class="p">.</span><span class="n">state</span><span class="p">)</span>
+
+<span class="c1"># Note: Depending on implementation, you might see shared state here.
+# This is where the distinction between session-specific and user-specific state becomes important.
+</span></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>New Session State:
+{'user:name': 'Sam', 'user:country': 'Poland'}
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="-cleanup">🧹 Cleanup</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Clean up any existing database to start fresh (if Notebook is restarted)
+</span><span class="kn">import</span> <span class="n">os</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">exists</span><span class="p">(</span><span class="sh">"</span><span class="s">my_agent_data.db</span><span class="sh">"</span><span class="p">):</span>
+    <span class="n">os</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="sh">"</span><span class="s">my_agent_data.db</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Cleaned up old database files</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Cleaned up old database files
+</code></pre></div></div>
+
+<hr />
+<h2 id="-summary">📊 Summary</h2>
+
+<p>🎉 Congratulations! You’ve learned the fundamentals of building stateful AI agents:</p>
+
+<ul>
+  <li>✅ <strong>Context Engineering</strong> - You understand how to assemble context for LLMs using Context Compaction</li>
+  <li>✅ <strong>Sessions &amp; Events</strong> - You can maintain conversation history across multiple turns</li>
+  <li>✅ <strong>Persistent Storage</strong> - You know how to make conversations survive restarts</li>
+  <li>✅ <strong>Session State</strong> - You can track structured data during conversations</li>
+  <li>✅ <strong>Manual State Management</strong> - You’ve experienced both the power and limitations of manual approaches</li>
+  <li>✅ <strong>Production Considerations</strong> - You’re ready to handle real-world challenges</li>
+</ul>
+
+<hr />
+
+<h2 id="-congratulations-you-did-it-">✅ Congratulations! You did it 🎉</h2>
+
+<h3 id="-learn-more">📚 Learn More</h3>
+
+<p>Refer to the following documentation to learn more:</p>
+
+<ul>
+  <li><a href="https://google.github.io/adk-docs/">ADK Documentation</a></li>
+  <li><a href="https://google.github.io/adk-docs/">ADK Sessions</a></li>
+  <li><a href="https://medium.com/google-cloud/2-minute-adk-manage-context-efficiently-with-artifacts-6fcc6683d274">ADK Session-State</a></li>
+  <li><a href="https://google.github.io/adk-docs/context/compaction/#define-compactor">ADK Session Compaction</a></li>
+</ul>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>

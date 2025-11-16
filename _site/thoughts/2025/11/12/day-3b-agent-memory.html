@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="Day 3b - Agent Memory" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2025/11/12/day-3b-agent-memory.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>Day 3b - Agent Memory</title><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>Day 3b - Agent Memory</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2025-11-12 00:00:00 +0800" style="float: right;">2025-11-12</time>
+  </p>
+  <div style="clear: both;"></div>
+  <h1 id="-memory-management---part-2---memory">🧠 Memory Management - Part 2 - Memory</h1>
+
+<p><strong>Welcome to Day 3 of the Kaggle 5-day Agents course!</strong></p>
+
+<p>In the previous notebook, you learned how <strong>Sessions</strong> manage conversation threads. Now you’ll add <strong>Memory</strong> - a searchable, long-term knowledge store that persists across multiple conversations.</p>
+
+<h3 id="what-is-memory-">What is Memory ❓</h3>
+
+<p>Memory is a service that provides long-term knowledge storage for your agents. The key distinction:</p>
+
+<blockquote>
+  <p><strong>Session = Short-term memory</strong> (single conversation)</p>
+
+  <p><strong>Memory = Long-term knowledge</strong> (across multiple conversations)</p>
+</blockquote>
+
+<p>Think of it in software engineering terms: <strong>Session</strong> is like application state (temporary), while <strong>Memory</strong> is like a database (persistent).</p>
+
+<h3 id="-why-memory">🤔 Why Memory?</h3>
+
+<p>Memory provides capabilities that Sessions alone cannot:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Capability</th>
+      <th>What It Means</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cross-Conversation Recall</strong></td>
+      <td>Access information from any past conversation</td>
+      <td>“What preferences has this user mentioned across all chats?”</td>
+    </tr>
+    <tr>
+      <td><strong>Intelligent Extraction</strong></td>
+      <td>LLM-powered consolidation extracts key facts</td>
+      <td>Stores “allergic to peanuts” instead of 50 raw messages</td>
+    </tr>
+    <tr>
+      <td><strong>Semantic Search</strong></td>
+      <td>Meaning-based retrieval, not just keyword matching</td>
+      <td>Query “preferred hue” matches “favorite color is blue”</td>
+    </tr>
+    <tr>
+      <td><strong>Persistent Storage</strong></td>
+      <td>Survives application restarts</td>
+      <td>Build knowledge that grows over time</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Example:</strong> Imagine talking to a personal assistant:</p>
+<ul>
+  <li>🗣️ <strong>Session</strong>: They remember what you said 10 minutes ago in THIS conversation</li>
+  <li>🧠 <strong>Memory</strong>: They remember your preferences from conversations LAST WEEK</li>
+</ul>
+
+<h3 id="-what-youll-learn">🎯 What you’ll learn:</h3>
+
+<ul>
+  <li>✅ Initialize MemoryService and integrate with your agent</li>
+  <li>✅ Transfer session data to memory storage</li>
+  <li>✅ Search and retrieve memories</li>
+  <li>✅ Automate memory storage and retrieval</li>
+  <li>✅ Understand memory consolidation (conceptual overview)</li>
+</ul>
+
+<h4 id="-implementation-note">📝 Implementation Note</h4>
+
+<blockquote>
+  <p>This notebook uses <code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code> for learning - it performs keyword matching and doesn’t persist data.</p>
+
+  <p>For production applications, use <strong>Vertex AI Memory Bank</strong> (covered in Day 5), which provides LLM-powered consolidation and semantic search with persistent cloud storage.</p>
+</blockquote>
+
+<hr />
+<h2 id="️-section-1-setup">⚙️ Section 1: Setup</h2>
+
+<h3 id="11-install-dependencies">1.1: Install dependencies</h3>
+
+<p>The Kaggle Notebooks environment includes a pre-installed version of the <a href="https://google.github.io/adk-docs/">google-adk</a> library for Python and its required dependencies, so you don’t need to install additional packages in this notebook.</p>
+
+<p>To install and use ADK in your own Python development environment outside of this course, you can do so by running:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install google-adk
+</code></pre></div></div>
+
+<h3 id="12-configure-your-gemini-api-key">1.2: Configure your Gemini API Key</h3>
+
+<p>This notebook uses the <a href="https://ai.google.dev/gemini-api/docs">Gemini API</a>, which requires authentication.</p>
+
+<p><strong>1. Get your API key</strong></p>
+
+<p>If you don’t have one already, create an <a href="https://aistudio.google.com/app/api-keys">API key in Google AI Studio</a>.</p>
+
+<p><strong>2. Add the key to Kaggle Secrets</strong></p>
+
+<p>Next, you will need to add your API key to your Kaggle Notebook as a Kaggle User Secret.</p>
+
+<ol>
+  <li>In the top menu bar of the notebook editor, select <code class="language-plaintext highlighter-rouge">Add-ons</code> then <code class="language-plaintext highlighter-rouge">Secrets</code>.</li>
+  <li>Create a new secret with the label <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code>.</li>
+  <li>Paste your API key into the “Value” field and click “Save”.</li>
+  <li>Ensure that the checkbox next to <code class="language-plaintext highlighter-rouge">GOOGLE_API_KEY</code> is selected so that the secret is attached to the notebook.</li>
+</ol>
+
+<p><strong>3. Authenticate in the notebook</strong></p>
+
+<p>Run the cell below to complete authentication.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">kaggle_secrets</span> <span class="kn">import</span> <span class="n">UserSecretsClient</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">GOOGLE_API_KEY</span> <span class="o">=</span> <span class="nc">UserSecretsClient</span><span class="p">().</span><span class="nf">get_secret</span><span class="p">(</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">"</span><span class="s">GOOGLE_API_KEY</span><span class="sh">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">GOOGLE_API_KEY</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Gemini API key setup complete.</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nf">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="sh">"</span><span class="s">🔑 Authentication Error: Please make sure you have added </span><span class="sh">'</span><span class="s">GOOGLE_API_KEY</span><span class="sh">'</span><span class="s"> to your Kaggle secrets. Details: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="sh">"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Gemini API key setup complete.
+</code></pre></div></div>
+
+<h3 id="13-import-adk-components">1.3: Import ADK components</h3>
+
+<p>Now, import the specific components you’ll need from the Agent Development Kit and the Generative AI library. This keeps your code organized and ensures we have access to the necessary building blocks.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">google.adk.agents</span> <span class="kn">import</span> <span class="n">LlmAgent</span>
+<span class="kn">from</span> <span class="n">google.adk.models.google_llm</span> <span class="kn">import</span> <span class="n">Gemini</span>
+<span class="kn">from</span> <span class="n">google.adk.runners</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="n">google.adk.sessions</span> <span class="kn">import</span> <span class="n">InMemorySessionService</span>
+<span class="kn">from</span> <span class="n">google.adk.memory</span> <span class="kn">import</span> <span class="n">InMemoryMemoryService</span>
+<span class="kn">from</span> <span class="n">google.adk.tools</span> <span class="kn">import</span> <span class="n">load_memory</span><span class="p">,</span> <span class="n">preload_memory</span>
+<span class="kn">from</span> <span class="n">google.genai</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ ADK components imported successfully.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ ADK components imported successfully.
+</code></pre></div></div>
+
+<h3 id="14-helper-functions">1.4: Helper functions</h3>
+
+<p>This helper function manages a complete conversation session, handling session creation/retrieval, query processing, and response streaming.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner_instance</span><span class="p">:</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">user_queries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">session_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sh">"</span><span class="s">default</span><span class="sh">"</span>
+<span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Helper function to run queries in a session and display responses.</span><span class="sh">"""</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">### Session: </span><span class="si">{</span><span class="n">session_id</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="c1"># Create or retrieve session
+</span>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">create_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span>
+        <span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+            <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session_id</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Convert single query to list
+</span>    <span class="k">if</span> <span class="nf">isinstance</span><span class="p">(</span><span class="n">user_queries</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">user_queries</span> <span class="o">=</span> <span class="p">[</span><span class="n">user_queries</span><span class="p">]</span>
+
+    <span class="c1"># Process each query
+</span>    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">user_queries</span><span class="p">:</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="se">\n</span><span class="s">User &gt; </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">query_content</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">Content</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">types</span><span class="p">.</span><span class="nc">Part</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">query</span><span class="p">)])</span>
+
+        <span class="c1"># Stream agent response
+</span>        <span class="k">async</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">runner_instance</span><span class="p">.</span><span class="nf">run_async</span><span class="p">(</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="n">session</span><span class="p">.</span><span class="nb">id</span><span class="p">,</span> <span class="n">new_message</span><span class="o">=</span><span class="n">query_content</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="nf">is_final_response</span><span class="p">()</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span>
+                <span class="k">if</span> <span class="n">text</span> <span class="ow">and</span> <span class="n">text</span> <span class="o">!=</span> <span class="sh">"</span><span class="s">None</span><span class="sh">"</span><span class="p">:</span>
+                    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">Model: &gt; </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Helper functions defined.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Helper functions defined.
+</code></pre></div></div>
+
+<h3 id="15-configure-retry-options">1.5: Configure Retry Options</h3>
+
+<p>When working with LLMs, you may encounter transient errors like rate limits or temporary service unavailability. Retry options automatically handle these failures by retrying the request with exponential backoff.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">retry_config</span> <span class="o">=</span> <span class="n">types</span><span class="p">.</span><span class="nc">HttpRetryOptions</span><span class="p">(</span>
+    <span class="n">attempts</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># Maximum retry attempts
+</span>    <span class="n">exp_base</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>  <span class="c1"># Delay multiplier
+</span>    <span class="n">initial_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">http_status_codes</span><span class="o">=</span><span class="p">[</span><span class="mi">429</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">],</span>  <span class="c1"># Retry on these HTTP errors
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-2-memory-workflow">🤓 Section 2: Memory Workflow</h2>
+
+<p>From the Introduction section, you now know why we need Memory. In order to integrate Memory into your Agents, there are <strong>three high-level steps.</strong></p>
+
+<p><strong>Three-step integration process:</strong></p>
+
+<ol>
+  <li><strong>Initialize</strong> → Create a <code class="language-plaintext highlighter-rouge">MemoryService</code> and provide it to your agent via the <code class="language-plaintext highlighter-rouge">Runner</code></li>
+  <li><strong>Ingest</strong> → Transfer session data to memory using <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code></li>
+  <li><strong>Retrieve</strong> → Search stored memories using <code class="language-plaintext highlighter-rouge">search_memory()</code></li>
+</ol>
+
+<p>Let’s explore each step in the following sections.</p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day3/memory-workflow.png" width="1400" alt="Memory workflow" /></p>
+
+<hr />
+<h2 id="-section-3-initialize-memoryservice">🧠 Section 3: Initialize MemoryService</h2>
+
+<h3 id="31-initialize-memory">3.1 Initialize Memory</h3>
+
+<p>ADK provides multiple <code class="language-plaintext highlighter-rouge">MemoryService</code> implementations through the <code class="language-plaintext highlighter-rouge">BaseMemoryService</code> interface:</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code></strong> - Built-in service for prototyping and testing (keyword matching, no persistence)</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">VertexAiMemoryBankService</code></strong> - Managed cloud service with LLM-powered consolidation and semantic search</li>
+  <li><strong>Custom implementations</strong> - You can build your own using databases, though managed services are recommended</li>
+</ul>
+
+<p>For this notebook, we’ll use <code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code> to learn the core mechanics. The same methods work identically with production-ready services like Vertex AI Memory Bank.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">memory_service</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nc">InMemoryMemoryService</span><span class="p">()</span>
+<span class="p">)</span>  <span class="c1"># ADK's built-in Memory Service for development and testing
+</span></code></pre></div></div>
+
+<h3 id="32-add-memory-to-agent">3.2 Add Memory to Agent</h3>
+
+<p>Next, create a simple agent to answer user queries.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Define constants used throughout the notebook
+</span><span class="n">APP_NAME</span> <span class="o">=</span> <span class="sh">"</span><span class="s">MemoryDemoApp</span><span class="sh">"</span>
+<span class="n">USER_ID</span> <span class="o">=</span> <span class="sh">"</span><span class="s">demo_user</span><span class="sh">"</span>
+
+<span class="c1"># Create agent
+</span><span class="n">user_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">MemoryDemoAgent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"</span><span class="s">Answer user questions in simple words.</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Agent created</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Agent created
+</code></pre></div></div>
+
+<h4 id="create-runner"><strong>Create Runner</strong></h4>
+
+<p>Now provide both Session and Memory services to the <code class="language-plaintext highlighter-rouge">Runner</code>.</p>
+
+<p><strong>Key configuration:</strong></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Runner</code> requires both services to enable memory functionality:</p>
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">session_service</code></strong> → Manages conversation threads and events</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">memory_service</code></strong> → Provides long-term knowledge storage</li>
+</ul>
+
+<p>Both services work together: Sessions capture conversations, Memory stores knowledge for retrieval across sessions.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create Session Service
+</span><span class="n">session_service</span> <span class="o">=</span> <span class="nc">InMemorySessionService</span><span class="p">()</span>  <span class="c1"># Handles conversations
+</span>
+<span class="c1"># Create runner with BOTH services
+</span><span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">,</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="sh">"</span><span class="s">MemoryDemoApp</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">,</span>
+    <span class="n">memory_service</span><span class="o">=</span><span class="n">memory_service</span><span class="p">,</span>  <span class="c1"># Memory service is now available!
+</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Agent and Runner created with memory support!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Agent and Runner created with memory support!
+</code></pre></div></div>
+
+<h3 id="️-important">‼️ Important</h3>
+
+<p><strong>💡 Configuration vs. Usage:</strong> Adding <code class="language-plaintext highlighter-rouge">memory_service</code> to the <code class="language-plaintext highlighter-rouge">Runner</code> makes memory <em>available</em> to your agent, but doesn’t automatically use it. You must explicitly:</p>
+<ol>
+  <li><strong>Ingest data</strong> using <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code></li>
+  <li><strong>Enable retrieval</strong> by giving your agent memory tools (<code class="language-plaintext highlighter-rouge">load_memory</code> or <code class="language-plaintext highlighter-rouge">preload_memory</code>)</li>
+</ol>
+
+<p>Let’s learn these steps next!</p>
+
+<h3 id="33-memoryservice-implementation-options">3.3 MemoryService Implementation Options</h3>
+
+<p><strong>This notebook: <code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code></strong></p>
+<ul>
+  <li>Stores raw conversation events without consolidation</li>
+  <li>Keyword-based search (simple word matching)</li>
+  <li>In-memory storage (resets on restart)</li>
+  <li>Ideal for learning and local development</li>
+</ul>
+
+<p><strong>Production: <code class="language-plaintext highlighter-rouge">VertexAiMemoryBankService</code> (You’ll learn this on Day 5)</strong></p>
+<ul>
+  <li>LLM-powered extraction of key facts</li>
+  <li>Semantic search (meaning-based retrieval)</li>
+  <li>Persistent cloud storage</li>
+  <li>Integrates external knowledge sources</li>
+</ul>
+
+<p><strong>💡 API Consistency:</strong> Both implementations use identical methods (<code class="language-plaintext highlighter-rouge">add_session_to_memory()</code>, <code class="language-plaintext highlighter-rouge">search_memory()</code>). The workflow you learn here applies to all memory services!</p>
+
+<hr />
+<h2 id="-section-4-ingest-session-data-into-memory">💾 Section 4: Ingest Session Data into Memory</h2>
+
+<p><strong>Why should you transfer Session data to Memory?</strong></p>
+
+<p>Now that memory is initialized, you need to populate it with knowledge. When you initialize a MemoryService, it starts completely empty. All your conversations are stored in Sessions, which contain raw events including every message, tool call, and metadata. To make this information available for long-term recall, you explicitly transfer it to memory using <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code>.</p>
+
+<p>Here’s where managed memory services like Vertex AI Memory Bank shine. <strong>During transfer, they perform intelligent consolidation - extracting key facts while discarding conversational noise.</strong> The <code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code> we’re using stores everything without consolidation, which is sufficient for learning the mechanics.</p>
+
+<p>Before we can transfer anything, we need data. Let’s have a conversation with our agent to populate the session. This conversation will be stored in the SessionService just like you learned in the previous notebook.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># User tells agent about their favorite color
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">My favorite color is blue-green. Can you write a Haiku about it?</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">conversation-01</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Session ID
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### Session: conversation-01
+
+User &gt; My favorite color is blue-green. Can you write a Haiku about it?
+Model: &gt; The ocean's deep hue,
+A splash of green in the waves,
+Peaceful, calm, and cool.
+</code></pre></div></div>
+
+<p>Let’s verify the conversation was captured in the session. You should see the session events containing both the user’s prompt and the model’s response.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="sh">"</span><span class="s">conversation-01</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="c1"># Let's see what's in the session
+</span><span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">📝 Session contains:</span><span class="sh">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">session</span><span class="p">.</span><span class="n">events</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span><span class="p">[:</span><span class="mi">60</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span>
+        <span class="k">else</span> <span class="sh">"</span><span class="s">(empty)</span><span class="sh">"</span>
+    <span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  </span><span class="si">{</span><span class="n">event</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">role</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s">...</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>📝 Session contains:
+  user: My favorite color is blue-green. Can you write a Haiku about...
+  model: The ocean's deep hue,
+A splash of green in the waves,
+Peacef...
+</code></pre></div></div>
+
+<p>Perfect! The session contains our conversation. Now we’re ready to transfer it to memory. Call <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code> and pass the session object. This ingests the conversation into the memory store, making it available for future searches.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># This is the key method!
+</span><span class="k">await</span> <span class="n">memory_service</span><span class="p">.</span><span class="nf">add_session_to_memory</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Session added to memory!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Session added to memory!
+</code></pre></div></div>
+
+<hr />
+<h2 id="-section-5-enable-memory-retrieval-in-your-agent">🔎 Section 5: Enable Memory Retrieval in Your Agent</h2>
+
+<p>You’ve successfully transferred session data to memory, but there’s one crucial step remaining. <strong>Agents can’t directly access the MemoryService - they need tools to search it.</strong></p>
+
+<p>This is by design: it gives you control over when and how memory is retrieved.</p>
+
+<h3 id="51-memory-retrieval-in-adk">5.1 Memory Retrieval in ADK</h3>
+
+<p>ADK provides two built-in tools for memory retrieval:</p>
+
+<p><strong><code class="language-plaintext highlighter-rouge">load_memory</code> (Reactive)</strong></p>
+<ul>
+  <li>Agent decides when to search memory</li>
+  <li>Only retrieves when the agent thinks it’s needed</li>
+  <li>More efficient (saves tokens)</li>
+  <li>Risk: Agent might forget to search</li>
+</ul>
+
+<p><strong><code class="language-plaintext highlighter-rouge">preload_memory</code> (Proactive)</strong></p>
+<ul>
+  <li>Automatically searches before every turn</li>
+  <li>Memory always available to the agent</li>
+  <li>Guaranteed context, but less efficient</li>
+  <li>Searches even when not needed</li>
+</ul>
+
+<p>Think of it like studying for an exam: <code class="language-plaintext highlighter-rouge">load_memory</code> is looking things up only when you need them, while <code class="language-plaintext highlighter-rouge">preload_memory</code> is reading all your notes before answering each question.</p>
+
+<h3 id="52-add-load-memory-tool-to-agent">5.2 Add Load Memory Tool to Agent</h3>
+
+<p>Let’s start by implementing the reactive pattern. We’ll recreate the agent from Section 3, this time adding the <code class="language-plaintext highlighter-rouge">load_memory</code> tool to its toolkit. Since this is a built-in ADK tool, you simply include it in the tools array without any custom implementation.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create agent
+</span><span class="n">user_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">MemoryDemoAgent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"</span><span class="s">Answer user questions in simple words. Use load_memory tool if you need to recall past conversations.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">load_memory</span>
+    <span class="p">],</span>  <span class="c1"># Agent now has access to Memory and can search it whenever it decides to!
+</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Agent with load_memory tool created.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Agent with load_memory tool created.
+</code></pre></div></div>
+
+<h3 id="53-update-the-runner-and-test">5.3 Update the Runner and Test</h3>
+
+<p>Let’s now update the Runner to use our new <code class="language-plaintext highlighter-rouge">user_agent</code> that has the <code class="language-plaintext highlighter-rouge">load_memory</code> tool. And we’ll ask the Agent about the favorite color which we had stored previously in another session.</p>
+
+<p><strong>👉 Since sessions don’t share conversation history, the only way the agent can answer correctly is by using the <code class="language-plaintext highlighter-rouge">load_memory</code> tool</strong> to retrieve the information from long-term memory that we manually stored.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create a new runner with the updated agent
+</span><span class="n">runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">,</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span>
+    <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">,</span>
+    <span class="n">memory_service</span><span class="o">=</span><span class="n">memory_service</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="sh">"</span><span class="s">What is my favorite color?</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">color-test</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### Session: color-test
+
+User &gt; What is my favorite color?
+Model: &gt; Your favorite color is blue-green.
+</code></pre></div></div>
+
+<h3 id="54-complete-manual-workflow-test">5.4 Complete Manual Workflow Test</h3>
+
+<p>Let’s see the complete workflow in action. We’ll have a conversation about a birthday, manually save it to memory, then test retrieval in a new session. This demonstrates the full cycle: <strong>ingest → store → retrieve</strong>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="sh">"</span><span class="s">My birthday is on March 15th.</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">birthday-session-01</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### Session: birthday-session-01
+
+User &gt; My birthday is on March 15th.
+Model: &gt; Ok, I will remember that.
+</code></pre></div></div>
+
+<p>Now manually save this session to memory. This is the crucial step that transfers the conversation from short-term session storage to long-term memory storage.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Manually save the session to memory
+</span><span class="n">birthday_session</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session_service</span><span class="p">.</span><span class="nf">get_session</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">session_id</span><span class="o">=</span><span class="sh">"</span><span class="s">birthday-session-01</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="k">await</span> <span class="n">memory_service</span><span class="p">.</span><span class="nf">add_session_to_memory</span><span class="p">(</span><span class="n">birthday_session</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Birthday session saved to memory!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Birthday session saved to memory!
+</code></pre></div></div>
+
+<p>Here’s the crucial test: we’ll start a completely new session with a different session ID and ask the agent to recall the birthday.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Test retrieval in a NEW session
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">runner</span><span class="p">,</span> <span class="sh">"</span><span class="s">When is my birthday?</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">birthday-session-02</span><span class="sh">"</span>  <span class="c1"># Different session ID
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### Session: birthday-session-02
+
+User &gt; When is my birthday?
+
+
+WARNING:google_genai.types:Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+
+
+Model: &gt; Your birthday is on March 15th.
+</code></pre></div></div>
+
+<p><strong>What happens:</strong></p>
+
+<ol>
+  <li>Agent receives: “When is my birthday?”</li>
+  <li>Agent recognizes: This requires past conversation context</li>
+  <li>Agent calls: <code class="language-plaintext highlighter-rouge">load_memory("birthday")</code></li>
+  <li>Memory returns: Previous conversation containing “March 15th”</li>
+  <li>Agent responds: “Your birthday is on March 15th”</li>
+</ol>
+
+<p>The memory retrieval worked even though this is a completely different session!</p>
+
+<h4 id="-your-turn-experiment-with-both-patterns">🚀 Your Turn: Experiment with Both Patterns</h4>
+
+<p>Try swapping <code class="language-plaintext highlighter-rouge">load_memory</code> with <code class="language-plaintext highlighter-rouge">preload_memory</code> by changing the tools array to <code class="language-plaintext highlighter-rouge">tools=[preload_memory]</code>.</p>
+
+<p><strong>What changes:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">load_memory</code> (reactive): Agent decides when to search</li>
+  <li><code class="language-plaintext highlighter-rouge">preload_memory</code> (proactive): Automatically loads memory before every turn</li>
+</ul>
+
+<p><strong>Test it:</strong></p>
+<ol>
+  <li>Ask “What is my favorite color?” in a new session</li>
+  <li>Ask “Tell me a joke” - notice that <code class="language-plaintext highlighter-rouge">preload_memory</code> still searches memory even though it’s unnecessary</li>
+  <li>Which pattern is better for different use cases?</li>
+</ol>
+
+<h3 id="55-manual-memory-search">5.5 Manual Memory Search</h3>
+
+<p>Beyond agent tools, you can also search memories directly in your code. This is useful for:</p>
+<ul>
+  <li>Debugging memory contents</li>
+  <li>Building analytics dashboards</li>
+  <li>Creating custom memory management UIs</li>
+</ul>
+
+<p>The <code class="language-plaintext highlighter-rouge">search_memory()</code> method takes a text query and returns a <code class="language-plaintext highlighter-rouge">SearchMemoryResponse</code> with matching memories.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Search for color preferences
+</span><span class="n">search_response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">memory_service</span><span class="p">.</span><span class="nf">search_memory</span><span class="p">(</span>
+    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span> <span class="n">user_id</span><span class="o">=</span><span class="n">USER_ID</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="sh">"</span><span class="s">What is the user</span><span class="sh">'</span><span class="s">s favorite color?</span><span class="sh">"</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">🔍 Search Results:</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  Found </span><span class="si">{</span><span class="nf">len</span><span class="p">(</span><span class="n">search_response</span><span class="p">.</span><span class="n">memories</span><span class="p">)</span><span class="si">}</span><span class="s"> relevant memories</span><span class="sh">"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">memory</span> <span class="ow">in</span> <span class="n">search_response</span><span class="p">.</span><span class="n">memories</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">memory</span><span class="p">.</span><span class="n">content</span> <span class="ow">and</span> <span class="n">memory</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">memory</span><span class="p">.</span><span class="n">content</span><span class="p">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span><span class="p">[:</span><span class="mi">80</span><span class="p">]</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">  [</span><span class="si">{</span><span class="n">memory</span><span class="p">.</span><span class="n">author</span><span class="si">}</span><span class="s">]: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s">...</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>🔍 Search Results:
+  Found 3 relevant memories
+
+  [user]: My favorite color is blue-green. Can you write a Haiku about it?...
+  [MemoryDemoAgent]: The ocean's deep hue,
+A splash of green in the waves,
+Peaceful, calm, and cool....
+  [user]: My birthday is on March 15th....
+</code></pre></div></div>
+
+<h4 id="-your-turn-test-different-queries"><strong>🚀 Your Turn: Test Different Queries</strong></h4>
+
+<p>Try these searches to understand how keyword matching works with <code class="language-plaintext highlighter-rouge">InMemoryMemoryService</code>:</p>
+
+<ol>
+  <li><strong>“what color does the user like”</strong></li>
+  <li><strong>“haiku”</strong></li>
+  <li><strong>“age”</strong></li>
+  <li><strong>“preferred hue”</strong></li>
+</ol>
+
+<p>Notice which queries return results and which don’t. What pattern do you observe?</p>
+
+<p><strong>💡 Key Insight:</strong> Memory search is grounded in reality - agents can’t hallucinate memories that don’t exist.</p>
+
+<h3 id="56-how-search-works">5.6 How Search Works</h3>
+
+<p><strong>InMemoryMemoryService (this notebook):</strong></p>
+<ul>
+  <li><strong>Method:</strong> Keyword matching</li>
+  <li><strong>Example:</strong> “favorite color” matches because those exact words exist</li>
+  <li><strong>Limitation:</strong> “preferred hue” won’t match</li>
+</ul>
+
+<p><strong>VertexAiMemoryBankService (Day 5):</strong></p>
+<ul>
+  <li><strong>Method:</strong> Semantic search via embeddings</li>
+  <li><strong>Example:</strong> “preferred hue” WILL match “favorite color”</li>
+  <li><strong>Advantage:</strong> Understands meaning, not just keywords</li>
+</ul>
+
+<p>You’ll explore semantic search in Day 5!</p>
+
+<hr />
+<h2 id="-section-6-automating-memory-storage">🤖 Section 6: Automating Memory Storage</h2>
+
+<p>So far, we’ve <strong>manually</strong> called <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code> to transfer data to long-term storage. Production systems need this to happen <strong>automatically</strong>.</p>
+
+<h3 id="61-callbacks">6.1 Callbacks</h3>
+
+<p>ADK’s callback system lets you hook into key execution moments. Callbacks are <strong>Python functions</strong> you define and attach to agents - ADK automatically calls them at specific stages, acting like checkpoints during the agent’s execution flow.</p>
+
+<p><strong>Think of callbacks as event listeners in your agent’s lifecycle.</strong> When an agent processes a request, it goes through multiple stages: receiving the input, calling the LLM, invoking tools, and generating the response. Callbacks let you insert custom logic at each of these stages without modifying the core agent code.</p>
+
+<p><strong>Available callback types:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">before_agent_callback</code> → Runs before agent starts processing a request</li>
+  <li><code class="language-plaintext highlighter-rouge">after_agent_callback</code> → Runs after agent completes its turn</li>
+  <li><code class="language-plaintext highlighter-rouge">before_tool_callback</code> / <code class="language-plaintext highlighter-rouge">after_tool_callback</code> → Around tool invocations</li>
+  <li><code class="language-plaintext highlighter-rouge">before_model_callback</code> / <code class="language-plaintext highlighter-rouge">after_model_callback</code> → Around LLM calls</li>
+  <li><code class="language-plaintext highlighter-rouge">on_model_error_callback</code> → When errors occur</li>
+</ul>
+
+<p><strong>Common use cases:</strong></p>
+
+<ul>
+  <li>Logging and observability (track what the agent does)</li>
+  <li>Automatic data persistence (like saving to memory)</li>
+  <li>Custom validation or filtering</li>
+  <li>Performance monitoring</li>
+</ul>
+
+<p><strong>📚 Learn More:</strong> <a href="https://google.github.io/adk-docs/agents/callbacks/">ADK Callbacks Documentation</a></p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day4/types_of_callbacks.png" alt="image.png" /></p>
+
+<h3 id="62-automatic-memory-storage-with-callbacks">6.2 Automatic Memory Storage with Callbacks</h3>
+
+<p>For automatic memory storage, we’ll use <code class="language-plaintext highlighter-rouge">after_agent_callback</code>. This function triggers every time the agent finishes a turn, then calls <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code> to persist the conversation automatically.</p>
+
+<p>But here’s the challenge: how does our callback function actually access the memory service and current session? That’s where <code class="language-plaintext highlighter-rouge">callback_context</code> comes in.</p>
+
+<p>When you define a callback function, ADK automatically passes a special parameter called <code class="language-plaintext highlighter-rouge">callback_context</code> to it. The <code class="language-plaintext highlighter-rouge">callback_context</code> provides access to the Memory Service and other runtime components.</p>
+
+<p><strong>How we’ll use it:</strong> In our callback, we’ll access the memory service and current session to automatically save conversation data after each turn.</p>
+
+<p><strong>💡 Important:</strong> You don’t create this context - ADK creates it and passes it to your callback automatically when the callback runs.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="k">def</span> <span class="nf">auto_save_to_memory</span><span class="p">(</span><span class="n">callback_context</span><span class="p">):</span>
+    <span class="sh">"""</span><span class="s">Automatically save session to memory after each agent turn.</span><span class="sh">"""</span>
+    <span class="k">await</span> <span class="n">callback_context</span><span class="p">.</span><span class="n">_invocation_context</span><span class="p">.</span><span class="n">memory_service</span><span class="p">.</span><span class="nf">add_session_to_memory</span><span class="p">(</span>
+        <span class="n">callback_context</span><span class="p">.</span><span class="n">_invocation_context</span><span class="p">.</span><span class="n">session</span>
+    <span class="p">)</span>
+
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Callback created.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Callback created.
+</code></pre></div></div>
+
+<h3 id="63-create-an-agent-callback-and-preload-memory-tool">6.3 Create an Agent: Callback and PreLoad Memory Tool</h3>
+
+<p>Now create an agent that combines:</p>
+<ul>
+  <li><strong>Automatic storage:</strong> <code class="language-plaintext highlighter-rouge">after_agent_callback</code> saves conversations</li>
+  <li><strong>Automatic retrieval:</strong> <code class="language-plaintext highlighter-rouge">preload_memory</code> loads memories</li>
+</ul>
+
+<p>This creates a fully automated memory system with zero manual intervention.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Agent with automatic memory saving
+</span><span class="n">auto_memory_agent</span> <span class="o">=</span> <span class="nc">LlmAgent</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="nc">Gemini</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">gemini-2.5-flash-lite</span><span class="sh">"</span><span class="p">,</span> <span class="n">retry_options</span><span class="o">=</span><span class="n">retry_config</span><span class="p">),</span>
+    <span class="n">name</span><span class="o">=</span><span class="sh">"</span><span class="s">AutoMemoryAgent</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">instruction</span><span class="o">=</span><span class="sh">"</span><span class="s">Answer user questions.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">preload_memory</span><span class="p">],</span>
+    <span class="n">after_agent_callback</span><span class="o">=</span><span class="n">auto_save_to_memory</span><span class="p">,</span>  <span class="c1"># Saves after each turn!
+</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Agent created with automatic memory saving!</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Agent created with automatic memory saving!
+</code></pre></div></div>
+
+<p><strong>What happens automatically:</strong></p>
+
+<ul>
+  <li>After every agent response → callback triggers</li>
+  <li>Session data → transferred to memory</li>
+  <li>No manual <code class="language-plaintext highlighter-rouge">add_session_to_memory()</code> calls needed</li>
+</ul>
+
+<p>The framework handles everything!</p>
+
+<h3 id="64-create-a-runner-and-test-the-agent">6.4 Create a Runner and Test The Agent</h3>
+
+<p>Time to test! Create a Runner with the auto-memory agent, connecting the session and memory services.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Create a runner for the auto-save agent
+# This connects our automated agent to the session and memory services
+</span><span class="n">auto_runner</span> <span class="o">=</span> <span class="nc">Runner</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">auto_memory_agent</span><span class="p">,</span>  <span class="c1"># Use the agent with callback + preload_memory
+</span>    <span class="n">app_name</span><span class="o">=</span><span class="n">APP_NAME</span><span class="p">,</span>
+    <span class="n">session_service</span><span class="o">=</span><span class="n">session_service</span><span class="p">,</span>  <span class="c1"># Same services from Section 3
+</span>    <span class="n">memory_service</span><span class="o">=</span><span class="n">memory_service</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">✅ Runner created.</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>✅ Runner created.
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Test 1: Tell the agent about a gift (first conversation)
+# The callback will automatically save this to memory when the turn completes
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">auto_runner</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">I gifted a new toy to my nephew on his 1st birthday!</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">auto-save-test</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Test 2: Ask about the gift in a NEW session (second conversation)
+# The agent should retrieve the memory using preload_memory and answer correctly
+</span><span class="k">await</span> <span class="nf">run_session</span><span class="p">(</span>
+    <span class="n">auto_runner</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">What did I gift my nephew?</span><span class="sh">"</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">auto-save-test-2</span><span class="sh">"</span><span class="p">,</span>  <span class="c1"># Different session ID - proves memory works across sessions!
+</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>### Session: auto-save-test
+
+User &gt; I gifted a new toy to my nephew on his 1st birthday!
+Model: &gt; That's wonderful! A 1st birthday is such a special milestone. I hope your nephew loves his new toy!
+
+### Session: auto-save-test-2
+
+User &gt; What did I gift my nephew?
+Model: &gt; You gifted your nephew a new toy!
+</code></pre></div></div>
+
+<p><strong>What just happened:</strong></p>
+
+<ol>
+  <li><strong>First conversation:</strong> Mentioned gift to nephew
+    <ul>
+      <li>Callback automatically saved to memory ✅</li>
+    </ul>
+  </li>
+  <li><strong>Second conversation (new session):</strong> Asked about the gift
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">preload_memory</code> automatically retrieved the memory ✅</li>
+      <li>Agent answered correctly ✅</li>
+    </ul>
+  </li>
+</ol>
+
+<p><strong>Zero manual memory calls!</strong> This is automated memory management in action.</p>
+
+<h3 id="65-how-often-should-you-save-sessions-to-memory">6.5 How often should you save Sessions to Memory?</h3>
+
+<p><strong>Options:</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Timing</th>
+      <th>Implementation</th>
+      <th>Best For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>After every turn</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">after_agent_callback</code></td>
+      <td>Real-time memory updates</td>
+    </tr>
+    <tr>
+      <td><strong>End of conversation</strong></td>
+      <td>Manual call when session ends</td>
+      <td>Batch processing, reduce API calls</td>
+    </tr>
+    <tr>
+      <td><strong>Periodic intervals</strong></td>
+      <td>Timer-based background job</td>
+      <td>Long-running conversations</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+<h2 id="-section-7-memory-consolidation">🧩 Section 7: Memory Consolidation</h2>
+
+<h3 id="71-the-limitation-of-raw-storage">7.1 The Limitation of Raw Storage</h3>
+
+<p><strong>What we’ve stored so far:</strong></p>
+<ul>
+  <li>Every user message</li>
+  <li>Every agent response</li>
+  <li>Every tool call</li>
+</ul>
+
+<p><strong>The problem:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Session: 50 messages = 10,000 tokens
+Memory:  All 50 messages stored
+Search:  Returns all 50 messages → Agent must process 10,000 tokens
+</code></pre></div></div>
+
+<p>This doesn’t scale. We need <strong>consolidation</strong>.</p>
+
+<h3 id="72-what-is-memory-consolidation">7.2 What is Memory Consolidation?</h3>
+
+<p><strong>Memory Consolidation</strong> = Extracting <strong>only important facts</strong> while discarding conversational noise.</p>
+
+<p><strong>Before (Raw Storage):</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>User: "My favorite color is BlueGreen. I also like purple. 
+       Actually, I prefer BlueGreen most of the time."
+Agent: "Great! I'll remember that."
+User: "Thanks!"
+Agent: "You're welcome!"
+
+→ Stores ALL 4 messages (redundant, verbose)
+</code></pre></div></div>
+
+<p><strong>After (Consolidation):</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Extracted Memory: "User's favorite color: BlueGreen"
+
+→ Stores 1 concise fact
+</code></pre></div></div>
+
+<p><strong>Benefits:</strong> Less storage, faster retrieval, more accurate answers.</p>
+
+<p><img src="https://storage.googleapis.com/github-repo/kaggle-5days-ai/day3/memory-consolidation.png" width="1400" alt="Memory consolidation" /></p>
+
+<h3 id="73-how-consolidation-works-conceptual">7.3 How Consolidation Works (Conceptual)</h3>
+
+<p><strong>The pipeline:</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Raw Session Events
+   ↓
+2. LLM analyzes conversation
+   ↓
+3. Extracts key facts
+   ↓
+4. Stores concise memories
+   ↓
+5. Merges with existing memories (deduplication)
+</code></pre></div></div>
+
+<p><strong>Example transformation:</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "I'm allergic to peanuts. I can't eat anything with nuts."
+
+Output: Memory {
+  allergy: "peanuts, tree nuts"
+  severity: "avoid completely"
+}
+</code></pre></div></div>
+
+<p>Natural language → Structured, actionable data.</p>
+
+<h3 id="74-next-steps-for-memory-consolidation">7.4 Next Steps for Memory Consolidation</h3>
+
+<p><strong>💡 Key Point:</strong> Managed Memory Services handle consolidation <strong>automatically</strong>.</p>
+
+<p><strong>You use the same API:</strong></p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">add_session_to_memory()</code> ← Same method</li>
+  <li><code class="language-plaintext highlighter-rouge">search_memory()</code> ← Same method</li>
+</ul>
+
+<p><strong>The difference:</strong> What happens behind the scenes.</p>
+<ul>
+  <li><strong>InMemoryMemoryService:</strong> Stores raw events</li>
+  <li><strong>VertexAiMemoryBankService:</strong> Intelligently consolidates before storing</li>
+</ul>
+
+<p><strong>📚 Learn More:</strong></p>
+<ul>
+  <li><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories">Vertex AI Memory Bank: Memory Consolidation Guide</a> -&gt; You’ll explore this in Day 5!</li>
+</ul>
+
+<hr />
+<h2 id="-summary">📊 Summary</h2>
+
+<p>You’ve learned the <strong>core mechanics</strong> of Memory in ADK:</p>
+
+<ol>
+  <li><strong>✅ Adding Memory</strong>
+    <ul>
+      <li>Initialize <code class="language-plaintext highlighter-rouge">MemoryService</code> alongside <code class="language-plaintext highlighter-rouge">SessionService</code></li>
+      <li>Both services are provided to the <code class="language-plaintext highlighter-rouge">Runner</code></li>
+    </ul>
+  </li>
+  <li><strong>✅ Storing Information</strong>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">await memory_service.add_session_to_memory(session)</code></li>
+      <li>Transfers session data to long-term storage</li>
+      <li>Can be automated with callbacks</li>
+    </ul>
+  </li>
+  <li><strong>✅ Searching Memory</strong>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">await memory_service.search_memory(app_name, user_id, query)</code></li>
+      <li>Returns relevant memories from past conversations</li>
+    </ul>
+  </li>
+  <li><strong>✅ Retrieving in Agents</strong>
+    <ul>
+      <li><strong>Reactive:</strong> <code class="language-plaintext highlighter-rouge">load_memory</code> tool (agent decides when to use memory)</li>
+      <li><strong>Proactive:</strong> <code class="language-plaintext highlighter-rouge">preload_memory</code> tool (always loads memory into LLM’s system instructions)</li>
+    </ul>
+  </li>
+  <li><strong>✅ Memory Consolidation</strong>
+    <ul>
+      <li>Extracts key information from Session data</li>
+      <li>Provided by managed memory services such as Vertex AI Memory Bank</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="-congratulations-youve-learned-memory-management-in-adk">🎉 <strong>Congratulations!</strong> You’ve learned Memory Management in ADK!</h2>
+
+<p><strong>📚 Learn More:</strong></p>
+<ul>
+  <li><a href="https://google.github.io/adk-docs/sessions/memory/">ADK Memory Documentation</a></li>
+  <li><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview">Vertex AI Memory Bank</a></li>
+  <li><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories">Memory Consolidation Guide</a></li>
+</ul>
+
+</article>
+
+      </div>
+    </main>
+  </body>
+</html>
