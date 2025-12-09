@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-12-05-transparency.md",
+                "file": "_posts/2025-12-09-trade-surplus.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-12-05-transparency"
+              "title": "2025-12-09-trade-surplus"
             }
           }
         ]
@@ -168,20 +168,21 @@
   },
   "active": "33bfb0f523a120e0",
   "lastOpenFiles": [
+    "_site/thoughts/2025/12/09/trade-surplus.html",
+    "_site/thoughts/2025/12/09",
+    "_posts/2025-12-05-transparency.md",
+    "_posts/2025-12-09-trade-surplus.md",
     "_site/thoughts/2025/12/08/cultural-revolution.html",
     "_site/thoughts/2025/12/05/transparency.html",
     "_site/thoughts/2025/12/08",
     "_site/thoughts/2025/12/05",
     "_site/thoughts/2025/12",
     "_posts/2025-12-08-cultural-revolution.md",
-    "_posts/2025-12-05-transparency.md",
     "_posts/2025-11-14-day-5b-agent-deployment.md",
     "_site/thoughts/2025/11/14/day-5b-agent-deployment.html",
     "_site/thoughts/2025/11/14/day-5a-agent2agent-communication.html",
     "_site/thoughts/2025/11/14",
     "_site/thoughts/2025/11/13/day-4a-agent-observability.html",
-    "_site/thoughts/2025/11/13/day-4b-agent-evaluation.html",
-    "_site/thoughts/2025/11/13",
     "_posts/2025-11-14-day-5a-agent2agent-communication.md",
     "_posts/2025-11-13-day-4b-agent-evaluation.md",
     "_posts/2025-11-13-day-4a-agent-observability.md",
@@ -206,7 +207,6 @@
     "assets/images/population_1.jpeg",
     "assets/images/img.jpg",
     "assets/images/demo.png",
-    "2025-09-09.md",
     "_site/assets/images/population_3.jpeg",
     "_site/assets/images/population_2.jpeg",
     "_site/assets/images/population_1.jpeg",
