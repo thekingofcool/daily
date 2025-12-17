@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2025-12-09-trade-surplus.md",
+                "file": "_posts/2025-12-16-thoughts-on-cash-flow.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025-12-09-trade-surplus"
+              "title": "2025-12-16-thoughts-on-cash-flow"
             }
           }
         ]
@@ -168,10 +168,16 @@
   },
   "active": "33bfb0f523a120e0",
   "lastOpenFiles": [
+    "_site/thoughts/2025/12/16/thoughts-on-cash-flow.html",
+    "_site/thoughts/2025/12/16",
+    "_site/thoughts/2025/12/13/before-the-santa-rally.html",
+    "_site/thoughts/2025/12/13",
+    "_posts/2025-12-13-before-the-santa-rally.md",
+    "_posts/2025-12-16-thoughts-on-cash-flow.md",
+    "_posts/2025-12-09-trade-surplus.md",
     "_site/thoughts/2025/12/09/trade-surplus.html",
     "_site/thoughts/2025/12/09",
     "_posts/2025-12-05-transparency.md",
-    "_posts/2025-12-09-trade-surplus.md",
     "_site/thoughts/2025/12/08/cultural-revolution.html",
     "_site/thoughts/2025/12/05/transparency.html",
     "_site/thoughts/2025/12/08",
@@ -179,10 +185,6 @@
     "_site/thoughts/2025/12",
     "_posts/2025-12-08-cultural-revolution.md",
     "_posts/2025-11-14-day-5b-agent-deployment.md",
-    "_site/thoughts/2025/11/14/day-5b-agent-deployment.html",
-    "_site/thoughts/2025/11/14/day-5a-agent2agent-communication.html",
-    "_site/thoughts/2025/11/14",
-    "_site/thoughts/2025/11/13/day-4a-agent-observability.html",
     "_posts/2025-11-14-day-5a-agent2agent-communication.md",
     "_posts/2025-11-13-day-4b-agent-evaluation.md",
     "_posts/2025-11-13-day-4a-agent-observability.md",
@@ -202,8 +204,6 @@
     "_posts/2025-10-11-trade-war3.md",
     "_posts/template/temp.md",
     "_posts/2025-10-10-ai.md",
-    "_posts/templete/temp.md",
-    "_posts/2025-10-09-quit-my-job.md",
     "assets/images/population_1.jpeg",
     "assets/images/img.jpg",
     "assets/images/demo.png",
