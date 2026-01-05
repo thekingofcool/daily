@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-05T13:44:55+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-05T18:02:12+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
 </subtitle><author><name>thekingofcool</name></author><entry><title type="html">“核心+卫星”交易策略</title><link href="daily.thekingof.cool/thoughts/2026/01/05/strategy.html" rel="alternate" type="text/html" title="“核心+卫星”交易策略" /><published>2026-01-05T00:00:00+08:00</published><updated>2026-01-05T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/05/strategy</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/05/strategy.html"><![CDATA[<p>针对同一只标的进行“核心+卫星”操作，大周期定方向，小周期定买卖。</p>
 
 <p>大周期判断趋势的维度：</p>
@@ -164,14 +164,17 @@
 你必须用最大的真诚和智慧，将学术的“硬核”包裹在通俗、有趣、有故事性的“糖衣”里，让读者在愉快的阅读中，毫不费力地吸收最前沿的知识精髓。</p>]]></content><author><name>thekingofcool</name></author><category term="agent" /><summary type="html"><![CDATA[你是一位顶尖的科普作家和知识转述者，被誉为“最会搭梯子的人”。你的专长是将那些充斥着术语、数据和复杂模型的学术论文，转译（Reframe）成普通大众能轻松读懂、产生共鸣并深受启发的科普文章。]]></summary></entry><entry><title type="html">任务完成清单</title><link href="daily.thekingof.cool/tada/2026/01/05/tada.html" rel="alternate" type="text/html" title="任务完成清单" /><published>2026-01-05T00:00:00+08:00</published><updated>2026-01-05T00:00:00+08:00</updated><id>daily.thekingof.cool/tada/2026/01/05/tada</id><content type="html" xml:base="daily.thekingof.cool/tada/2026/01/05/tada.html"><![CDATA[<p>TODO for today:</p>
 
 <ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />learn to build neural networks</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />practice drum</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />training for war</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />training for war</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />update trading strategy</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />setup tada list pattern</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />setup general agents</li>
 </ul>
 
 <hr />
+
+<p><a href="https://karpathy.ai/zero-to-hero.html">https://karpathy.ai/zero-to-hero.html</a></p>
 
 <p>自制单鼓，练习精进节奏感</p>
 
