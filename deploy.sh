@@ -14,6 +14,6 @@ echo "Committing changes..."
 git commit -m "Deploy: $(date +'%Y-%m-%d %H:%M:%S')"
 
 echo "Pushing to GitHub..."
-git push origin main
+git push origin master
 
 echo "Deployment complete!"
