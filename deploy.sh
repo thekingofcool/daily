@@ -11,7 +11,7 @@ echo "Adding changes to git..."
 git add -A
 
 echo "Committing changes..."
-git commit -m "Deploy: $(date +'%Y-%m-%d %H:%M:%S')"
+git commit -m "daily update: $(date +'%Y-%m-%d %H:%M:%S')"
 
 echo "Pushing to GitHub..."
 git push origin master
