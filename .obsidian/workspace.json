@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2026-01-05-strategy.md",
+                "file": "_posts/2026-01-06-strategy.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-05-strategy"
+              "title": "2026-01-06-strategy"
             }
           }
         ]
@@ -168,11 +168,12 @@
   },
   "active": "12ad526ce281be3c",
   "lastOpenFiles": [
+    "_posts/2026-01-05-strategy.md",
+    "_posts/2026-01-06-strategy.md",
     "_site/thoughts/2026/01/05/strategy.html",
     "_site/thoughts/2026/01/05",
     "_posts/2026-01-05-paper.md",
     "_posts/2026-01-05-tada.md",
-    "_posts/2026-01-05-strategy.md",
     "_site/deploy.sh",
     "deploy.sh",
     "_site/agent/2026/01/05/paper.html",
@@ -181,7 +182,6 @@
     "_site/agent/2026",
     "_site/agent",
     "_site/tada/2026/01/05/append-and-review.html",
-    "_site/tada/2026/01/05",
     "_posts/2026-01-04-true-power.md",
     "_posts/2026-01-05-append-and-review.md",
     "_posts/2025-10-09-quit-my-job.md",
