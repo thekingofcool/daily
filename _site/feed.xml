@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-06T17:58:20+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-06T18:05:48+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
 </subtitle><author><name>thekingofcool</name></author><entry><title type="html">接下来两到三周交易推演</title><link href="daily.thekingof.cool/thoughts/2026/01/06/strategy.html" rel="alternate" type="text/html" title="接下来两到三周交易推演" /><published>2026-01-06T00:00:00+08:00</published><updated>2026-01-06T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/06/strategy</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/06/strategy.html"><![CDATA[<p>最近日线上 Unity 走了一个明显的 Cup and Handle 形态：九月中旬摸到 46 美元之后持续一个月左右的下跌，最低到达 35 美元，之后横盘，在 11 月中旬开启了新的一轮拉升，触及 52 美元，最后回到 45 美元附近低交易量横盘整理，1 月 5 日周一盘后收在 45.91 美元。</p>
 
 <p>接下来短期有两个催化剂，截至目前月度期权日 1月 16 日集中了大量行权价在 45(26,839) 50(14,005) 55(54,403) 60(12,683) 65(36,012) 美元的做多期权，目前这个阶段，极有可能因为某种消息（大盘走强或机构研究报告）或情绪面影响导致股价上涨，迫使做市商接连去二级市场大量买入 Unity 正股，形成 Gamma 挤压。</p>
@@ -27,15 +27,16 @@
 
 <p>月柱的天干按年柱的天干推算：</p>
 
-<p>甲己之年丙作首：年干是甲或己，正月就是丙寅月。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>甲己之年丙作首：年干是甲或己，正月就是丙寅月。
 
-<p>乙庚之年戊为头：年干是乙或庚，正月就是戊寅月。</p>
+乙庚之年戊为头：年干是乙或庚，正月就是戊寅月。
 
-<p>丙辛之年寻庚上：年干是丙或辛，正月就是庚寅月。</p>
+丙辛之年寻庚上：年干是丙或辛，正月就是庚寅月。
 
-<p>丁壬壬位顺行流：年干是丁或壬，正月就是壬寅月。</p>
+丁壬壬位顺行流：年干是丁或壬，正月就是壬寅月。
 
-<p>戊癸之年何方发？甲寅之上好追求：年干是戊或癸，正月就是甲寅月。</p>
+戊癸之年何方发？甲寅之上好追求：年干是戊或癸，正月就是甲寅月。
+</code></pre></div></div>
 
 <p>日柱每 60 天为一个完整循环，因月大月小及闰年的存在，需查万年历。</p>
 
@@ -43,15 +44,16 @@
 
 <p>时柱的天干是按日柱的天干推算：</p>
 
-<p>甲己还加甲：日干是甲或己，子时就是甲子。</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>甲己还加甲：日干是甲或己，子时就是甲子。
 
-<p>乙庚丙作初：日干是乙或庚，子时就是丙子。</p>
+乙庚丙作初：日干是乙或庚，子时就是丙子。
 
-<p>丙辛从戊起：日干是丙或辛，子时就是戊子。</p>
+丙辛从戊起：日干是丙或辛，子时就是戊子。
 
-<p>丁壬庚子居：日干是丁或壬，子时就是庚子。</p>
+丁壬庚子居：日干是丁或壬，子时就是庚子。
 
-<p>戊癸何方发，壬子是真途：日干是戊或癸，子时就是壬子。</p>
+戊癸何方发，壬子是真途：日干是戊或癸，子时就是壬子。
+</code></pre></div></div>
 
 <p>解读八字，首先看日柱的天干，即“日主”：“日主”代表你自己，它是你的基本能量属性。</p>
 
@@ -61,7 +63,7 @@
 
 <p>八字讲究中庸，如果八字中的某个能量太强，即“用神”，就需要“克，泄，耗”它的力量，如果太弱就需要“生，扶”它的力量，当某年的五行刚好是你的“用神”，通常就是你转运顺遂的时候。</p>
 
-<p>八字中，日主是我：</p>
+<p>八字中，日主是本我：</p>
 
 <p>木（甲、乙）：向上生长、仁慈、倔强，火（丙、丁）：热情奔放、礼明、急躁，土（戊、己）：厚德载物、诚实、固执，金（庚、辛）：刚毅果决、义气、冷酷，水（壬、癸）：通达多智、灵动、多疑。</p>
 
@@ -75,27 +77,14 @@
 
 <p>八字里的位置关系：</p>
 
-<p>年柱：代表祖上、童年</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>年柱：代表祖上、童年
 
-<p>月柱：代表父母、青年、事业环境</p>
+月柱：代表父母、青年、事业环境
 
-<p>日支：代表内心、配偶</p>
+日支：代表内心、配偶
 
-<p>时柱：代表子女、晚年</p>
-
-<p>对于日主为金的十神关系：</p>
-
-<p>我生者（金生水）,水,食神 / 伤官,才华、表达、下属、投资、自由</p>
-
-<p>我克者（金克木）,木,正财 / 偏财,财富、勤奋、男命的妻子、物质欲</p>
-
-<p>克我者（火克金）,火,正官 / 七杀,事业、压力、自律、女命的丈夫、法律</p>
-
-<p>生我者（土生金）,土,正印 / 偏印,学历、长辈、房产、保护、名誉</p>
-
-<p>同我者（金见金）,金,比肩 / 劫财,朋友、竞争、兄弟、意志力</p>
-
-<hr />
+时柱：代表子女、晚年
+</code></pre></div></div>
 
 <p>归根结底，命理只是一个参考，也可以说是个安慰，人生怎么过，还是得看当下的每一个想法和决定要做的事。</p>]]></content><author><name>thekingofcool</name></author><category term="thoughts" /><summary type="html"><![CDATA[八字的核心是将一个人出生的年月日时转为天干地支，一共八个字。古人认为人出生那一刻的时空环境（金木水火土 五行气场）会影响一个人的性格和体质，从而决定其一生的运势。]]></summary></entry><entry><title type="html">任务完成清单</title><link href="daily.thekingof.cool/tada/2026/01/05/tada.html" rel="alternate" type="text/html" title="任务完成清单" /><published>2026-01-05T00:00:00+08:00</published><updated>2026-01-05T00:00:00+08:00</updated><id>daily.thekingof.cool/tada/2026/01/05/tada</id><content type="html" xml:base="daily.thekingof.cool/tada/2026/01/05/tada.html"><![CDATA[<p>TODO for today:</p>
 
