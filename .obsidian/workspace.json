@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_posts/2026-01-06-strategy.md",
+                "file": "_posts/2026-01-06-bazi.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-01-06-strategy"
+              "title": "2026-01-06-bazi"
             }
           }
         ]
@@ -168,8 +168,11 @@
   },
   "active": "12ad526ce281be3c",
   "lastOpenFiles": [
-    "_posts/2026-01-05-strategy.md",
     "_posts/2026-01-06-strategy.md",
+    "_posts/2026-01-06-bazi.md",
+    "_site/thoughts/2026/01/06/strategy.html",
+    "_site/thoughts/2026/01/06",
+    "_posts/2026-01-05-strategy.md",
     "_site/thoughts/2026/01/05/strategy.html",
     "_site/thoughts/2026/01/05",
     "_posts/2026-01-05-paper.md",
@@ -180,8 +183,6 @@
     "_site/agent/2026/01/05",
     "_site/agent/2026/01",
     "_site/agent/2026",
-    "_site/agent",
-    "_site/tada/2026/01/05/append-and-review.html",
     "_posts/2026-01-04-true-power.md",
     "_posts/2026-01-05-append-and-review.md",
     "_posts/2025-10-09-quit-my-job.md",
@@ -203,7 +204,6 @@
     "_posts/2025-11-11-day-2a-agent-tools.md",
     "_posts/2025-11-10-day-1b-agent-architectures.md",
     "_posts/2025-11-10-day-1a-from-prompt-to-action.md",
-    "_posts/2025-11-11-macro.md",
     "assets/images/population_1.jpeg",
     "assets/images/img.jpg",
     "assets/images/demo.png",
