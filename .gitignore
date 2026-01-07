@@ -2,5 +2,5 @@
 .vscode
 Gemfile.lock
 .DS_Store
-_posts/.obsidian/
+.obsidian/
 _posts/template/
