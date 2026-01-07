@@ -2,7 +2,12 @@
 layout: default
 ---
 <header>
-  <h1>{{ site.title }}</h1>
+  {% assign title_with_link = site.title | replace: "thekingofcool", '<a href="https://thekingof.cool/">thekingofcool</a>' %}
+  <h1>{{ title_with_link }}</h1>
 </header>
 {{ content }}
 {%-include menu_item.html collection=site.data.menu.entries-%}
+
+<div style="text-align: center; font-size: 0.75em; color: #aaa;" class="text-xs">
+  Built with <a href="https://jekyllrb.com/" target="_blank" style="color: #aaa;">Jekyll</a> on localhost by <a href="https://app.ens.domains/thekingofcool.eth" target="_blank" style="color: #aaa;">thekingofcool.eth</a>
+</div>
