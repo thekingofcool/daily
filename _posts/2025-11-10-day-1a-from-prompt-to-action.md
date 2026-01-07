@@ -4,7 +4,7 @@ title: Day 1a - From Prompt to Action
 date: 2025-11-10
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🚀 Your First AI Agent: From Prompt to Action

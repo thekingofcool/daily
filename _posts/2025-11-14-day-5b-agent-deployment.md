@@ -4,7 +4,7 @@ title: Day 5b - Agent Deployment
 date: 2025-11-14
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 

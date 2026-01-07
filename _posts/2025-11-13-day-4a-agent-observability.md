@@ -4,7 +4,7 @@ title: Day 4a - Agent Observability
 date: 2025-11-13
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🔎 Agent Observability - Logs, Traces & Metrics

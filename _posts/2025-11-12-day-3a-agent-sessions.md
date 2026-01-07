@@ -4,7 +4,7 @@ title: Day 3a - Agent Sessions
 date: 2025-11-12
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🚀 Memory Management - Part 1 - Sessions

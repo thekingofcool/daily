@@ -4,7 +4,7 @@ title: Day 1b - Agent Architectures
 date: 2025-11-10
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🚀 Multi-Agent Systems & Workflow Patterns

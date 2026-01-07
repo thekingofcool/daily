@@ -4,7 +4,7 @@ title: Day 2b - Agent Tools Best Practices
 date: 2025-11-11
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🚀 Agent Tool Patterns and Best Practices

@@ -4,7 +4,7 @@ title: Day 3b - Agent Memory
 date: 2025-11-12
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🧠 Memory Management - Part 2 - Memory

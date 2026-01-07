@@ -4,7 +4,7 @@ title: Day 4b - Agent Evaluation
 date: 2025-11-13
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 📝 Agent Evaluation

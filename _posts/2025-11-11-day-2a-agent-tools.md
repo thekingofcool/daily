@@ -4,7 +4,7 @@ title: Day 2a - Agent Tools
 date: 2025-11-11
 author: thekingofcool
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 # 🚀 Agent Tools
