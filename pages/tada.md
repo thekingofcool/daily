@@ -5,17 +5,19 @@ permalink: /tada/
 description: "todo for today"
 ---
 
+- [x] training for war
 - [ ] unity for xr
 - [ ] on-device small language model
 - [ ] find investment opportunity from ark
 - [ ] learn to build neural networks
 - [ ] practice drum
-- [x] training for war
 - [x] update trading strategy
 - [x] setup tada list pattern
 - [x] setup general agents
 
 ---
+
+0116 抢票，0127 - 0202 每天抢票，抢到后一天退前一天
 
 开发沉浸式体验，3d 建模与打印，本地小模型
 
@@ -26,8 +28,6 @@ convai 这样的云端模型 npc 没有前途，未来游戏 npc 一定是端侧
 one bag 整理
 
 看看 claude code 是什么 https://x.com/bcherny/status/2007179832300581177
-
-0116 抢票，0127 - 0202 每天抢票，抢到后一天退前一天
 
 练习弹弓
 
