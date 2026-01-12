@@ -1,8 +1,6 @@
 entries:
-  - title: tada list
-    entries:
-    - title: 任务完成清单
-      url: /tada
+  - title: 任务完成清单
+    url: /tada
   - title: daily thoughts
     post_list:
       category: thoughts
