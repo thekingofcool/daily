@@ -1,16 +1,8 @@
 entries:
-  # - title: my now page
-  #   entries:
-  #     - title: What am I Doing Now
-  #       url: /now
   - title: tada list
-    post_list:
-      category: tada
-    entries: false
-  - title: agents.md
-    post_list:
-      category: agent
-    entries: false
+    entries:
+    - title: 任务完成清单
+      url: /tada
   - title: daily thoughts
     post_list:
       category: thoughts
