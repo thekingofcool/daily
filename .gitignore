@@ -1,6 +1,6 @@
 .jekyll-cache
+.obsidian
 .vscode
 Gemfile.lock
 .DS_Store
-.obsidian/
 _posts/template/
