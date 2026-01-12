@@ -5,9 +5,9 @@ permalink: /tada/
 description: "todo for today"
 ---
 
-- [ ] find investment opportunity from ARK
 - [ ] unity for xr
 - [ ] on-device small language model
+- [ ] find investment opportunity from ARK
 - [ ] learn to build neural networks
 - [ ] practice drum
 - [x] training for war
@@ -16,6 +16,7 @@ description: "todo for today"
 - [x] setup general agents
 
 ---
+
 开发沉浸式体验，3d建模与打印，本地小模型
 
 convai 这样的云端模型 NPC 没有前途，未来游戏 NPC 一定是端侧小模型驱动，苹果的 AI 策略以及 Unity 的 Inference Engine（former Sentis）只是更符合第一性原理
