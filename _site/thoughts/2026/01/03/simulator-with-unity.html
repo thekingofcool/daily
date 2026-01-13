@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:title" content="使用 Unity 构建模拟器" />
+    <meta property="og:description" content="you're too slow and have no rhythm. 
+" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thekingof.cool/thoughts/2026/01/03/simulator-with-unity.html" />
+    <meta property="og:image" content="https://thekingof.cool/assets/images/android-chrome-512x512.png" /><title>使用 Unity 构建模拟器</title><link type="application/atom+xml" rel="alternate" href="daily.thekingof.cool/feed.xml" title="thekingofcool&apos;s daily thoughts" /><link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
+  <link rel="manifest" href="/assets/images/site.webmanifest">
+  <link href="/assets/css/syntax_monokai.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body a="light">
+    <main class="page-content" aria-label="Content">
+      <div class="w">
+        <a href="/"><-</a><article>
+  <h1>使用 Unity 构建模拟器</h1>
+  <p class="post-meta">
+    <span style="float: left;">thekingofcool</span>
+    <time datetime="2026-01-03 00:00:00 +0800" style="float: right;">2026-01-03</time>
+  </p>
+  <div style="clear: both;"></div>
+  <p>一个世界观由三部分构成：物体（Object），物理规则（Physical Limits），逻辑脚本（Script）。</p>
+
+<p>物体通过建模导入；物理规则是整个世界需要满足的刚性限制，比如重力，这部分通常游戏引擎会提供相应组件；玩家行为和物体反应之间的交互逻辑使用脚本体现，在 Unity 中使用 C# 语言进行描述。PhythicaPPqzPqPPqPaavPa</p>
+
+<p>Unity 脚本主要分为两个部分，Start() 包含程序启动时会加载的逻辑， Update() 中放置程序运行过程中不断作用的交互逻辑。</p>
+
+<p>首先在 Unity Editor 中创建两个 3D Object - Plane &amp; Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组建 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到空格信号就向上有一个冲力。</p>
+
+<p>BallController.cs</p>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">BallController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>  
+<span class="p">{</span>  
+<span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>  
+<span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>  
+<span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>  
+<span class="p">{</span>  
+	<span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>  
+<span class="p">}</span>  
+<span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>  
+<span class="p">{</span>  
+	<span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span><span class="p">)</span>  
+	<span class="p">{</span>  
+		<span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>  
+	<span class="p">}</span> 
+<span class="p">}</span>  
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>接着给球体添加 Script 组件，选择上方脚本，运行项目即可测试功能。</p>
+
+<p>接着给球添加外观。在项目 Assets 目录中创建 Material，Surface Inputs 中修改 Base Map 颜色，将这个材料组件添加给球体。</p>
+
+<p>然后设置规则，只有当球在地面上才能跳起，对此需要增加变量记录球体与地面接触的状态。定义球体和平台碰撞（接触）时，接触状态为是；当按下空格的瞬间，接触状态变为否。</p>
+
+<p>BallController.cs</p>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>  
+<span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>  
+<span class="k">public</span> <span class="k">class</span> <span class="nc">BallController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>  
+<span class="p">{</span>  
+	<span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>  
+	<span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>  
+	<span class="k">public</span> <span class="kt">bool</span> <span class="n">isGrounded</span><span class="p">;</span>  
+	<span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>  
+	<span class="p">{</span>  
+		<span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>  
+	<span class="p">}</span>  
+	<span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>  
+	<span class="p">{</span>  
+		<span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span> <span class="p">&amp;&amp;</span> <span class="n">isGrounded</span><span class="p">)</span>  
+		<span class="p">{</span>  
+		<span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>  
+		<span class="n">isGrounded</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>  
+		<span class="p">}</span>  
+	<span class="p">}</span>
+	
+	<span class="k">private</span> <span class="k">void</span> <span class="nf">OnCollisionEnter</span><span class="p">(</span><span class="n">Collision</span> <span class="n">collision</span><span class="p">)</span>  
+	<span class="p">{</span>  
+		<span class="k">if</span> <span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Plane"</span><span class="p">)</span>  
+		<span class="p">{</span>  
+			<span class="n">isGrounded</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>  
+		<span class="p">}</span>  
+	<span class="p">}</span>  
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>按照这个规则，将元素进一步扩充：玩家通过键盘按键改变平面移动方向，空格是跳跃，鼠标移动改变视角，点击鼠标发射子弹，子弹击中物体使物体消失。</p>
+
+<p>为此需要:</p>
+
+<ol>
+  <li>把平面扩大；</li>
+  <li>生成一个角色，这个角色受重力作用，但移动不至于倾倒；</li>
+  <li>平台上不规则布置一些目标；</li>
+  <li>因为是第一人称视角，将主相机置于角色元素的一部分；</li>
+  <li>需要有一套无限生成的子弹，通过点击事件发出，击中物体则消失，未击中物体限时销毁；</li>
+  <li>子弹击中除目标以外物体不作用。</li>
+</ol>
+
+<p>PlayerController.cs</p>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">PlayerController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"移动设置"</span><span class="p">)]</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">moveSpeed</span> <span class="p">=</span> <span class="m">7f</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"视角设置"</span><span class="p">)]</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">mouseSensitivity</span> <span class="p">=</span> <span class="m">15f</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">Transform</span> <span class="n">playerCameraTransform</span><span class="p">;</span>
+    
+    <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"射击设置"</span><span class="p">)]</span>
+    <span class="k">public</span> <span class="n">GameObject</span> <span class="n">bulletPrefab</span><span class="p">;</span>
+    <span class="k">public</span> <span class="n">Transform</span> <span class="n">bulletSpawnPoint</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">bulletSpeed</span> <span class="p">=</span> <span class="m">40f</span><span class="p">;</span>
+
+    <span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>
+    <span class="k">private</span> <span class="kt">float</span> <span class="n">xRotation</span> <span class="p">=</span> <span class="m">0f</span><span class="p">;</span>
+    <span class="k">private</span> <span class="kt">bool</span> <span class="n">isGrounded</span><span class="p">;</span>
+
+    <span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>
+
+        <span class="c1">// 1. 隐藏鼠标并锁定到屏幕中心</span>
+        <span class="n">Cursor</span><span class="p">.</span><span class="n">lockState</span> <span class="p">=</span> <span class="n">CursorLockMode</span><span class="p">.</span><span class="n">Locked</span><span class="p">;</span>
+        <span class="n">Cursor</span><span class="p">.</span><span class="n">visible</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+
+        <span class="c1">// 2. 初始视角重置：强制平视前方</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">playerCameraTransform</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">playerCameraTransform</span><span class="p">.</span><span class="n">localRotation</span> <span class="p">=</span> <span class="n">Quaternion</span><span class="p">.</span><span class="nf">Euler</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">xRotation</span> <span class="p">=</span> <span class="m">0f</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 每一帧处理：视角旋转、跳跃检测、射击</span>
+        <span class="nf">HandleLook</span><span class="p">();</span>
+        <span class="nf">HandleJump</span><span class="p">();</span>
+        <span class="nf">HandleShoot</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">FixedUpdate</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 每物理帧处理：移动</span>
+        <span class="nf">HandleMovement</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">HandleLook</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 获取鼠标移动增量</span>
+        <span class="n">Vector2</span> <span class="n">mouseDelta</span> <span class="p">=</span> <span class="n">Mouse</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">delta</span><span class="p">.</span><span class="nf">ReadValue</span><span class="p">();</span>
+        
+        <span class="c1">// 左右看：旋转角色的 Y 轴（身体转）</span>
+        <span class="kt">float</span> <span class="n">mouseX</span> <span class="p">=</span> <span class="n">mouseDelta</span><span class="p">.</span><span class="n">x</span> <span class="p">*</span> <span class="n">mouseSensitivity</span> <span class="p">*</span> <span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">;</span>
+        <span class="n">transform</span><span class="p">.</span><span class="nf">Rotate</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">mouseX</span><span class="p">);</span>
+
+        <span class="c1">// 上下看：旋转相机的 X 轴（头转）</span>
+        <span class="kt">float</span> <span class="n">mouseY</span> <span class="p">=</span> <span class="n">mouseDelta</span><span class="p">.</span><span class="n">y</span> <span class="p">*</span> <span class="n">mouseSensitivity</span> <span class="p">*</span> <span class="n">Time</span><span class="p">.</span><span class="n">deltaTime</span><span class="p">;</span>
+        <span class="n">xRotation</span> <span class="p">-=</span> <span class="n">mouseY</span><span class="p">;</span>
+        <span class="n">xRotation</span> <span class="p">=</span> <span class="n">Mathf</span><span class="p">.</span><span class="nf">Clamp</span><span class="p">(</span><span class="n">xRotation</span><span class="p">,</span> <span class="p">-</span><span class="m">80f</span><span class="p">,</span> <span class="m">80f</span><span class="p">);</span> <span class="c1">// 限制仰角和俯角</span>
+
+        <span class="n">playerCameraTransform</span><span class="p">.</span><span class="n">localRotation</span> <span class="p">=</span> <span class="n">Quaternion</span><span class="p">.</span><span class="nf">Euler</span><span class="p">(</span><span class="n">xRotation</span><span class="p">,</span> <span class="m">0f</span><span class="p">,</span> <span class="m">0f</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">HandleMovement</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Vector2</span> <span class="n">input</span> <span class="p">=</span> <span class="n">Vector2</span><span class="p">.</span><span class="n">zero</span><span class="p">;</span>
+        <span class="kt">var</span> <span class="n">kb</span> <span class="p">=</span> <span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">kb</span><span class="p">.</span><span class="n">wKey</span><span class="p">.</span><span class="n">isPressed</span><span class="p">)</span> <span class="n">input</span><span class="p">.</span><span class="n">y</span> <span class="p">+=</span> <span class="m">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">kb</span><span class="p">.</span><span class="n">sKey</span><span class="p">.</span><span class="n">isPressed</span><span class="p">)</span> <span class="n">input</span><span class="p">.</span><span class="n">y</span> <span class="p">-=</span> <span class="m">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">kb</span><span class="p">.</span><span class="n">aKey</span><span class="p">.</span><span class="n">isPressed</span><span class="p">)</span> <span class="n">input</span><span class="p">.</span><span class="n">x</span> <span class="p">-=</span> <span class="m">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">kb</span><span class="p">.</span><span class="n">dKey</span><span class="p">.</span><span class="n">isPressed</span><span class="p">)</span> <span class="n">input</span><span class="p">.</span><span class="n">x</span> <span class="p">+=</span> <span class="m">1</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">magnitude</span> <span class="p">&gt;</span> <span class="m">1</span><span class="p">)</span> <span class="n">input</span><span class="p">.</span><span class="nf">Normalize</span><span class="p">();</span>
+
+        <span class="c1">// 核心：基于角色当前的“面朝方向”来计算移动向量</span>
+        <span class="c1">// transform.forward 是角色当前正对着的方向</span>
+        <span class="n">Vector3</span> <span class="n">moveDir</span> <span class="p">=</span> <span class="p">(</span><span class="n">transform</span><span class="p">.</span><span class="n">forward</span> <span class="p">*</span> <span class="n">input</span><span class="p">.</span><span class="n">y</span> <span class="p">+</span> <span class="n">transform</span><span class="p">.</span><span class="n">right</span> <span class="p">*</span> <span class="n">input</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+        
+        <span class="c1">// 保留原有的垂直速度（重力），只修改水平移动</span>
+        <span class="n">Vector3</span> <span class="n">newVelocity</span> <span class="p">=</span> <span class="n">moveDir</span> <span class="p">*</span> <span class="n">moveSpeed</span><span class="p">;</span>
+        <span class="n">newVelocity</span><span class="p">.</span><span class="n">y</span> <span class="p">=</span> <span class="n">rb</span><span class="p">.</span><span class="n">linearVelocity</span><span class="p">.</span><span class="n">y</span><span class="p">;</span> <span class="c1">// Unity 6 中 Rigidbody 使用 linearVelocity</span>
+        
+        <span class="n">rb</span><span class="p">.</span><span class="n">linearVelocity</span> <span class="p">=</span> <span class="n">newVelocity</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">HandleJump</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span> <span class="p">&amp;&amp;</span> <span class="n">isGrounded</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>
+            <span class="n">isGrounded</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">HandleShoot</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Mouse</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">leftButton</span><span class="p">.</span><span class="n">wasPressedThisFrame</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">bulletPrefab</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">bulletSpawnPoint</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">GameObject</span> <span class="n">bullet</span> <span class="p">=</span> <span class="nf">Instantiate</span><span class="p">(</span><span class="n">bulletPrefab</span><span class="p">,</span> <span class="n">bulletSpawnPoint</span><span class="p">.</span><span class="n">position</span><span class="p">,</span> <span class="n">bulletSpawnPoint</span><span class="p">.</span><span class="n">rotation</span><span class="p">);</span>
+                <span class="n">Rigidbody</span> <span class="n">bulletRb</span> <span class="p">=</span> <span class="n">bullet</span><span class="p">.</span><span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>
+                <span class="c1">// 子弹朝相机正前方飞出</span>
+                <span class="n">bulletRb</span><span class="p">.</span><span class="n">linearVelocity</span> <span class="p">=</span> <span class="n">playerCameraTransform</span><span class="p">.</span><span class="n">forward</span> <span class="p">*</span> <span class="n">bulletSpeed</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">OnCollisionEnter</span><span class="p">(</span><span class="n">Collision</span> <span class="n">collision</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">.</span><span class="nf">CompareTag</span><span class="p">(</span><span class="s">"Ground"</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="n">isGrounded</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Bullet.cs</p>
+
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Bullet</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">lifetime</span> <span class="p">=</span> <span class="m">3f</span><span class="p">;</span>
+    <span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// 3秒后自动销毁子弹</span>
+        <span class="nf">Destroy</span><span class="p">(</span><span class="n">gameObject</span><span class="p">,</span> <span class="n">lifetime</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">OnCollisionEnter</span><span class="p">(</span><span class="n">Collision</span> <span class="n">collision</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 检查撞到的物体是不是带了 "Target" 标签</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">.</span><span class="nf">CompareTag</span><span class="p">(</span><span class="s">"Target"</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="nf">Destroy</span><span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nf">Destroy</span><span class="p">(</span><span class="n">gameObject</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物就会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。一个也许可行的验证方式就是去别的星球或者星系再造一个文明，增大服务器的荷载如果导致物理世界出现“故障”那就坐实这一点。</p>
+
+<p>另外一个验证方法就是如果人类能够创造某种逼真的宇宙，为其中定义规则（物理规律），让物质依照规则相互作用，让文明不断演化，由此获得某种方面的乐趣。如果这个被证明可行，那就从另一个角度证明了这一点。</p>
+
+<p>参考资料：<a href="https://www.imdb.com/title/tt3333830/">Rick and Morty S1E4</a>, <a href="https://www.imdb.com/title/tt4832268/">Rick and Morty S2E6</a></p>
+
+</article>
+
+<script src="https://utteranc.es/client.js"
+        repo="thekingofcool/daily"
+        issue-term="pathname"
+        label="comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+<div style="text-align: center; font-size: 0.75em; color: #aaa;" class="text-xs">
+  Built with <a href="https://jekyllrb.com/" target="_blank" style="color: #aaa;">Jekyll</a> on localhost by <a href="https://app.ens.domains/thekingofcool.eth" target="_blank" style="color: #aaa;">thekingofcool.eth</a>
+</div>
+
+      </div>
+    </main>
+  </body>
+</html>
