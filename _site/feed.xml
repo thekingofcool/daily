@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-13T15:29:04+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
-</subtitle><author><name>thekingofcool</name></author><entry><title type="html">使用 Unity 构建模拟器</title><link href="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html" rel="alternate" type="text/html" title="使用 Unity 构建模拟器" /><published>2026-01-13T00:00:00+08:00</published><updated>2026-01-13T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html"><![CDATA[<h3 id="overall">Overall</h3>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-13T15:34:08+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
+</subtitle><author><name>thekingofcool</name></author><entry><title type="html">使用 Unity 构建模拟器</title><link href="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html" rel="alternate" type="text/html" title="使用 Unity 构建模拟器" /><published>2026-01-13T00:00:00+08:00</published><updated>2026-01-13T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html"><![CDATA[<h3 id="overview">Overview</h3>
 <p>一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。</p>
 
 <ul>
@@ -16,7 +16,7 @@
 
 <p>Unity 中逻辑脚本主要分为两个部分：Start() 包含程序启动时会加载的逻辑；Update() 中放置程序运行过程中不断作用的交互逻辑。</p>
 
-<h3 id="simulator">Simulator</h3>
+<h3 id="get-started">Get Started</h3>
 <p>首先在 Unity Editor 中创建两个 3D Object - Plane &amp; Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组建 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到空格信号就向上有一个冲力。</p>
 
 <p>BallController.cs</p>
@@ -242,7 +242,7 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<h3 id="最后">最后</h3>
+<h3 id="thoughts">Thoughts</h3>
 <p>马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。</p>
 
 <p>一个也许可行的验证方式就是去别的星球或者星系再造一个文明，增大服务器的荷载如果导致物理世界出现“故障”那就坐实这一点。</p>
@@ -253,7 +253,7 @@
 
 <p><a href="https://www.imdb.com/title/tt3333830/" target="_blank">Rick and Morty S1E4</a></p>
 
-<p><a href="https://www.imdb.com/title/tt4832268/" target="_blank">Rick and Morty S2E6</a></p>]]></content><author><name>thekingofcool</name></author><category term="thoughts" /><summary type="html"><![CDATA[Overall 一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。]]></summary></entry><entry><title type="html">命理脉络闲篇</title><link href="daily.thekingof.cool/thoughts/2026/01/06/bazi.html" rel="alternate" type="text/html" title="命理脉络闲篇" /><published>2026-01-06T00:00:00+08:00</published><updated>2026-01-06T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/06/bazi</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/06/bazi.html"><![CDATA[<p>八字的核心是将一个人出生的年月日时转为天干地支，一共八个字。古人认为人出生那一刻的时空环境（金木水火土 五行气场）会影响一个人的性格和体质，从而决定其一生的运势。</p>
+<p><a href="https://www.imdb.com/title/tt4832268/" target="_blank">Rick and Morty S2E6</a></p>]]></content><author><name>thekingofcool</name></author><category term="thoughts" /><summary type="html"><![CDATA[Overview 一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。]]></summary></entry><entry><title type="html">命理脉络闲篇</title><link href="daily.thekingof.cool/thoughts/2026/01/06/bazi.html" rel="alternate" type="text/html" title="命理脉络闲篇" /><published>2026-01-06T00:00:00+08:00</published><updated>2026-01-06T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/06/bazi</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/06/bazi.html"><![CDATA[<p>八字的核心是将一个人出生的年月日时转为天干地支，一共八个字。古人认为人出生那一刻的时空环境（金木水火土 五行气场）会影响一个人的性格和体质，从而决定其一生的运势。</p>
 
 <p>构成八字的天干地支，包含：</p>
 

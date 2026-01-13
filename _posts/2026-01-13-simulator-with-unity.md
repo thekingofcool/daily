@@ -7,7 +7,7 @@ description: ""
 categories: thoughts
 ---
 
-### Overall
+### Overview
 一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。
 
 - 物体通过建模导入；
@@ -18,7 +18,7 @@ categories: thoughts
 
 Unity 中逻辑脚本主要分为两个部分：Start() 包含程序启动时会加载的逻辑；Update() 中放置程序运行过程中不断作用的交互逻辑。
 
-### Simulator
+### Get Started
 首先在 Unity Editor 中创建两个 3D Object - Plane & Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组建 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到空格信号就向上有一个冲力。
 
 BallController.cs
@@ -246,7 +246,7 @@ public class Bullet : MonoBehaviour
 }
 ```
 
-### 最后
+### Thoughts
 马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。
 
 一个也许可行的验证方式就是去别的星球或者星系再造一个文明，增大服务器的荷载如果导致物理世界出现“故障”那就坐实这一点。
