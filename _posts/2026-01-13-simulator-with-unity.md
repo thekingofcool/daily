@@ -1,18 +1,24 @@
 ---
 layout: post
 title: 使用 Unity 构建模拟器
-date: 2026-01-03
+date: 2026-01-13
 author: thekingofcool
 description: ""
 categories: thoughts
 ---
 
-一个世界观由三部分构成：物体（Object），物理规则（Physical Limits），逻辑脚本（Script）。
+### Overall
+一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。
 
-物体通过建模导入；物理规则是整个世界需要满足的刚性限制，比如重力，这部分通常游戏引擎会提供相应组件；玩家行为和物体反应之间的交互逻辑使用脚本体现，在 Unity 中使用 C# 语言进行描述。PhythicaPPqzPqPPqPaavPa
+- 物体通过建模导入；
 
-Unity 脚本主要分为两个部分，Start() 包含程序启动时会加载的逻辑， Update() 中放置程序运行过程中不断作用的交互逻辑。
+- 物理规则是整个世界需要满足的刚性限制，比如重力，这部分通常游戏引擎会提供相应组件；
 
+- 玩家行为和物体反应之间的交互逻辑使用脚本体现，在 Unity 中使用 C# 语言进行描述。
+
+Unity 中逻辑脚本主要分为两个部分：Start() 包含程序启动时会加载的逻辑；Update() 中放置程序运行过程中不断作用的交互逻辑。
+
+### Simulator
 首先在 Unity Editor 中创建两个 3D Object - Plane & Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组建 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到空格信号就向上有一个冲力。
 
 BallController.cs
@@ -42,7 +48,7 @@ void Update()
 
 接着给球添加外观。在项目 Assets 目录中创建 Material，Surface Inputs 中修改 Base Map 颜色，将这个材料组件添加给球体。
 
-然后设置规则，只有当球在地面上才能跳起，对此需要增加变量记录球体与地面接触的状态。定义球体和平台碰撞（接触）时，接触状态为是；当按下空格的瞬间，接触状态变为否。
+然后设置规则：只有当球在地面上才能跳起，对此需要增加变量记录球体与地面接触的状态。定义球体和平台碰撞（接触）时，接触状态为“是”；当按下空格的瞬间，接触状态变为“否”。
 
 BallController.cs
 
@@ -66,7 +72,6 @@ public class BallController : MonoBehaviour
 		isGrounded = false;  
 		}  
 	}
-	
 	private void OnCollisionEnter(Collision collision)  
 	{  
 		if (collision.gameObject.name == "Plane")  
@@ -241,10 +246,15 @@ public class Bullet : MonoBehaviour
 }
 ```
 
----
+### 最后
+马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。
 
-马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物就会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。一个也许可行的验证方式就是去别的星球或者星系再造一个文明，增大服务器的荷载如果导致物理世界出现“故障”那就坐实这一点。
+一个也许可行的验证方式就是去别的星球或者星系再造一个文明，增大服务器的荷载如果导致物理世界出现“故障”那就坐实这一点。
 
-另外一个验证方法就是如果人类能够创造某种逼真的宇宙，为其中定义规则（物理规律），让物质依照规则相互作用，让文明不断演化，由此获得某种方面的乐趣。如果这个被证明可行，那就从另一个角度证明了这一点。
+另外一个验证方法就是如果人类能够创造某种逼真的宇宙，为其中定义规则（物理规律），让物质依照规则相互作用，让文明不断演化，由此获得某种方面的乐趣。如果这个被证明可行，那也从另一个角度证明了这一点。
 
-参考资料：[Rick and Morty S1E4](https://www.imdb.com/title/tt3333830/), [Rick and Morty S2E6](https://www.imdb.com/title/tt4832268/)
+参考资料：
+
+[Rick and Morty S1E4](https://www.imdb.com/title/tt3333830/){:target="_blank"}
+
+[Rick and Morty S2E6](https://www.imdb.com/title/tt4832268/){:target="_blank"}
