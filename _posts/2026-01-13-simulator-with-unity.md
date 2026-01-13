@@ -19,7 +19,7 @@ categories: thoughts
 Unity 中逻辑脚本主要分为两个部分：Start() 包含程序启动时会加载的逻辑；Update() 中放置程序运行过程中不断作用的交互逻辑。
 
 ### Get Started
-首先在 Unity Editor 中创建两个 3D Object - Plane & Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组建 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到空格信号就向上有一个冲力。
+首先在 Unity Editor 中创建两个 3D Object - Plane & Sphere；将 Plane 的坐标位置设置在原点 (0, 0, 0)，Sphere 的坐标位置放在 (0, 1, 0)；给 Sphere 添加重力组件 Rigidbody；编写脚本使 Sphere 初始加载重力，随后接收到键入空格信号则向上作用一个冲力。
 
 BallController.cs
 
@@ -44,9 +44,9 @@ void Update()
 }
 ```
 
-接着给球体添加 Script 组件，选择上方脚本，运行项目即可测试功能。
+接着给球体添加 Script 组件，选择上方脚本，运行项目即可测试初始功能。
 
-接着给球添加外观。在项目 Assets 目录中创建 Material，Surface Inputs 中修改 Base Map 颜色，将这个材料组件添加给球体。
+接着给球添加外观。在项目 Assets 目录中创建 Material，在 Surface Inputs 中修改 Base Map 颜色，将这个材料组件添加给球体。
 
 然后设置规则：只有当球在地面上才能跳起，对此需要增加变量记录球体与地面接触的状态。定义球体和平台碰撞（接触）时，接触状态为“是”；当按下空格的瞬间，接触状态变为“否”。
 
