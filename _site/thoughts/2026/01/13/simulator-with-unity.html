@@ -57,19 +57,19 @@
 <span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>
 <span class="k">public</span> <span class="k">class</span> <span class="nc">BallController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>  
 <span class="p">{</span>  
-<span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>  
-<span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>  
-<span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>  
-<span class="p">{</span>  
-	<span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>  
-<span class="p">}</span>  
-<span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>  
-<span class="p">{</span>  
-	<span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span><span class="p">)</span>  
-	<span class="p">{</span>  
-		<span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>  
-	<span class="p">}</span> 
-<span class="p">}</span>  
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>  
+    <span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>
+    <span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>  
+    <span class="p">{</span>  
+        <span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>  
+    <span class="p">}</span>  
+    <span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>  
+    <span class="p">{</span>  
+    <span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span><span class="p">)</span>  
+    <span class="p">{</span>  
+        <span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>  
+    <span class="p">}</span> 
+    <span class="p">}</span>  
 <span class="p">}</span>
 </code></pre></div></div>
 
@@ -81,32 +81,33 @@
 
 <p>BallController.cs</p>
 
-<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>  
-<span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>  
-<span class="k">public</span> <span class="k">class</span> <span class="nc">BallController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>  
-<span class="p">{</span>  
-	<span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>  
-	<span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>  
-	<span class="k">public</span> <span class="kt">bool</span> <span class="n">isGrounded</span><span class="p">;</span>  
-	<span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>  
-	<span class="p">{</span>  
-		<span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>  
-	<span class="p">}</span>  
-	<span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>  
-	<span class="p">{</span>  
-		<span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span> <span class="p">&amp;&amp;</span> <span class="n">isGrounded</span><span class="p">)</span>  
-		<span class="p">{</span>  
-		<span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>  
-		<span class="n">isGrounded</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>  
-		<span class="p">}</span>  
-	<span class="p">}</span>
-	<span class="k">private</span> <span class="k">void</span> <span class="nf">OnCollisionEnter</span><span class="p">(</span><span class="n">Collision</span> <span class="n">collision</span><span class="p">)</span>  
-	<span class="p">{</span>  
-		<span class="k">if</span> <span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Plane"</span><span class="p">)</span>  
-		<span class="p">{</span>  
-			<span class="n">isGrounded</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>  
-		<span class="p">}</span>  
-	<span class="p">}</span>  
+<div class="language-c# highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">UnityEngine</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">UnityEngine.InputSystem</span><span class="p">;</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">BallController</span> <span class="p">:</span> <span class="n">MonoBehaviour</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">float</span> <span class="n">jumpForce</span> <span class="p">=</span> <span class="m">5f</span><span class="p">;</span>
+    <span class="k">private</span> <span class="n">Rigidbody</span> <span class="n">rb</span><span class="p">;</span>
+    <span class="k">public</span> <span class="kt">bool</span> <span class="n">isGrounded</span><span class="p">;</span>
+    <span class="k">void</span> <span class="nf">Start</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">rb</span> <span class="p">=</span> <span class="n">GetComponent</span><span class="p">&lt;</span><span class="n">Rigidbody</span><span class="p">&gt;();</span>
+    <span class="p">}</span>
+    <span class="k">void</span> <span class="nf">Update</span><span class="p">()</span>
+    <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Keyboard</span><span class="p">.</span><span class="n">current</span><span class="p">.</span><span class="n">spaceKey</span><span class="p">.</span><span class="n">wasPressedThisFrame</span> <span class="p">&amp;&amp;</span> <span class="n">isGrounded</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">rb</span><span class="p">.</span><span class="nf">AddForce</span><span class="p">(</span><span class="n">Vector3</span><span class="p">.</span><span class="n">up</span> <span class="p">*</span> <span class="n">jumpForce</span><span class="p">,</span> <span class="n">ForceMode</span><span class="p">.</span><span class="n">Impulse</span><span class="p">);</span>
+        <span class="n">isGrounded</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">OnCollisionEnter</span><span class="p">(</span><span class="n">Collision</span> <span class="n">collision</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">collision</span><span class="p">.</span><span class="n">gameObject</span><span class="p">.</span><span class="n">name</span> <span class="p">==</span> <span class="s">"Plane"</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">isGrounded</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
 

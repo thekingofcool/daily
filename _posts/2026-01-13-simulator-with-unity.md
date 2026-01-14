@@ -28,19 +28,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class BallController : MonoBehaviour  
 {  
-public float jumpForce = 5f;  
-private Rigidbody rb;  
-void Start()  
-{  
-	rb = GetComponent<Rigidbody>();  
-}  
-void Update()  
-{  
-	if (Keyboard.current.spaceKey.wasPressedThisFrame)  
-	{  
-		rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);  
-	} 
-}  
+    public float jumpForce = 5f;  
+    private Rigidbody rb;
+    void Start()  
+    {  
+        rb = GetComponent<Rigidbody>();  
+    }  
+    void Update()  
+    {  
+    if (Keyboard.current.spaceKey.wasPressedThisFrame)  
+    {  
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);  
+    } 
+    }  
 }
 ```
 
@@ -53,32 +53,33 @@ void Update()
 BallController.cs
 
 ```c#
-using UnityEngine;  
-using UnityEngine.InputSystem;  
-public class BallController : MonoBehaviour  
-{  
-	public float jumpForce = 5f;  
-	private Rigidbody rb;  
-	public bool isGrounded;  
-	void Start()  
-	{  
-		rb = GetComponent<Rigidbody>();  
-	}  
-	void Update()  
-	{  
-		if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded)  
-		{  
-		rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);  
-		isGrounded = false;  
-		}  
-	}
-	private void OnCollisionEnter(Collision collision)  
-	{  
-		if (collision.gameObject.name == "Plane")  
-		{  
-			isGrounded = true;  
-		}  
-	}  
+using UnityEngine;
+using UnityEngine.InputSystem;
+public class BallController : MonoBehaviour
+{
+    public float jumpForce = 5f;
+    private Rigidbody rb;
+    public bool isGrounded;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+    void Update()
+    {
+    if (Keyboard.current.spaceKey.wasPressedThisFrame && isGrounded)
+    {
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        isGrounded = false;
+    }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Plane")
+        {
+            isGrounded = true;
+        }
+    }
 }
 ```
 
