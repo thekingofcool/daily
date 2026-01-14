@@ -6,11 +6,11 @@ description: "todo for today"
 ---
 
 - [x] training for war
-- [ ] unity for xr
-- [ ] on-device small language model
-- [ ] find investment opportunity from ark
 - [ ] learn to build neural networks
+- [ ] find investment opportunity from ark
+- [ ] on-device small language model
 - [ ] practice drum
+- [x] unity for simulation
 - [x] update trading strategy
 - [x] setup tada list pattern
 - [x] setup general agents
