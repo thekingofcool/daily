@@ -246,6 +246,17 @@ public class Bullet : MonoBehaviour
 }
 ```
 
+### Capability
+Unity 引擎的 Package Manager 是为开发者实现降本增效的关键，它大体分为三类：
+
+1. Scriptable Render Pipeline(SRP): Universal Render Pipeline(URP), High Definition Render Pipeline(HDRP)。渲染管线架构，只需维护一套逻辑，就能同时占领低算力和高算力市场，相比于 Unreal 更注重高端，这是 Unity 一个显著的差异化优势。
+
+2. Data-Oriented Technology Stack(DOTS): Entities, Burst Compiler, C# Job System。面向数据的技术栈，对底层重构，允许代码默认利用多核处理器，让普通设备也能运行以前只有超高端设备才能运行的复杂场景，同屏渲染海量单元而不卡顿，这对于大型开放世界模拟和工业数字孪生至关重要。
+
+3. 游戏开发，运营，变现形成闭环：Unity Ads, LevelPlay, Unity Gaming Services(UGS)。改变公司收入结构，通过提供多人联网、云存档、分析以及广告聚合等功能，从单纯收引擎订阅费过渡为引擎订阅 & 广告盈利 & 高价值用户获取 & 云服务的全生命周期介入的盈利模式。
+
+另外，Unity Asset Store 里丰富的成熟模块、庞大的开发者生态社群以及引擎对 AI 的整合（开发辅助 & 端侧运行 NPC AI 模型）对提升开发效率同样不可忽视。这家公司的愿景是推动技术平权，让小团队开发者拥有不亚于大型工作室的产出能力。
+
 ### Thoughts
 马斯克说这个世界大概率是一个模拟器，我们能做的就是有点幽默感，因为如果太无聊了高维生物会把服务器关掉。你无法说这是一个笑话，因为就目前为止没人能够验证我们是否处在模拟器中。
 
