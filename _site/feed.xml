@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-14T12:10:29+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="daily.thekingof.cool/feed.xml" rel="self" type="application/atom+xml" /><link href="daily.thekingof.cool/" rel="alternate" type="text/html" /><updated>2026-01-14T12:14:27+08:00</updated><id>daily.thekingof.cool/feed.xml</id><title type="html">thekingofcool’s daily thoughts</title><subtitle>you&apos;re too slow and have no rhythm. 
 </subtitle><author><name>thekingofcool</name></author><entry><title type="html">使用 Unity 构建模拟器</title><link href="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html" rel="alternate" type="text/html" title="使用 Unity 构建模拟器" /><published>2026-01-13T00:00:00+08:00</published><updated>2026-01-13T00:00:00+08:00</updated><id>daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity</id><content type="html" xml:base="daily.thekingof.cool/thoughts/2026/01/13/simulator-with-unity.html"><![CDATA[<h3 id="overview">Overview</h3>
 <p>一个模拟器世界观由三部分构成：物体（Object），物理规则（Physical Limit），逻辑脚本（Script）。</p>
 
@@ -248,13 +248,13 @@
 
 <ol>
   <li>
-    <p>Scriptable Render Pipeline(SRP): Universal Render Pipeline(URP), High Definition Render Pipeline(HDRP)。渲染管线架构，只需维护一套逻辑，就能同时占领低算力和高算力市场，相比于 Unreal 更注重高端，这是 Unity 一个显著的差异化优势。</p>
+    <p>渲染管线架构: Universal Render Pipeline(URP), High Definition Render Pipeline(HDRP)。只需维护一套逻辑，就能同时占领低算力和高算力市场，相比于 Unreal 更注重高端，这是 Unity 一个显著的差异化优势。</p>
   </li>
   <li>
-    <p>Data-Oriented Technology Stack(DOTS): Entities, Burst Compiler, C# Job System。面向数据的技术栈，对底层重构，允许代码默认利用多核处理器，让普通设备也能运行以前只有超高端设备才能运行的复杂场景，同屏渲染海量单元而不卡顿，这对于大型开放世界模拟和工业数字孪生至关重要。</p>
+    <p>面向数据的技术栈(DOTS): Entities, Burst Compiler, C# Job System。对底层重构，允许代码默认利用多核处理器，让普通设备也能运行以前只有超高端设备才能运行的复杂场景，同屏渲染海量单元而不卡顿，这对于大型开放世界模拟和工业数字孪生至关重要。</p>
   </li>
   <li>
-    <p>游戏开发，运营，变现形成闭环：Unity Ads, LevelPlay, Unity Gaming Services(UGS)。改变公司收入结构，通过提供多人联网、云存档、分析以及广告聚合等功能，从单纯收引擎订阅费过渡为引擎订阅 &amp; 广告盈利 &amp; 高价值用户获取 &amp; 云服务的全生命周期介入的盈利模式。</p>
+    <p>游戏开发，运营，变现形成闭环：Unity Ads, LevelPlay, Unity Gaming Services(UGS)。改变公司收入结构，通过提供多人联网、云存档、分析以及广告聚合等功能，从单纯引擎订阅过渡为引擎订阅 &amp; 广告盈利 &amp; 高价值用户获取 &amp; 云服务的全生命周期介入的盈利模式。</p>
   </li>
 </ol>
 
