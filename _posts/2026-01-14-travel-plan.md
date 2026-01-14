@@ -73,12 +73,12 @@ categories: thoughts
 - 中档舒适版（推荐，提前订票、中档酒店、包含音乐剧）：$5,000 – $6,800 USD
 - 较高版（更好座位/酒店、更多活动）：$7,000+ USD
 
-最现实中档落在$5,200 – $6,500（含税、小费、意外缓冲）。 breakdown类似之前：交通≈$1,200–$2,000；住宿（7晚）≈$1,400–$2,200；餐饮≈$800–$1,200；景点/娱乐≈$500–$1,000；杂费≈$400–$700。
+最现实中档落在$5,200 – $6,500（含税、小费、意外缓冲）。 breakdown：交通≈$1,200–$2,000；住宿（7晚）≈$1,400–$2,200；餐饮≈$800–$1,200；景点/娱乐≈$500–$1,000；杂费≈$400–$700。
 
 ### 需要特别注意的事项
 
-1. Starbase Beach/Highway 4关闭：Boca Chica Beach和Highway 4经常因SpaceX测试/发射临时关闭（有时提前几天通知，有时当天）。2025年后Starbase市有部分控制权，关闭更灵活。强烈建议：提前查
-    - 官网：[https://www.cameroncountytx.gov/spacex/](https://www.cameroncountytx.gov/spacex/) （最新关闭令）。
+1. Starbase Beach/Highway 4关闭：Boca Chica Beach和Highway 4经常因SpaceX测试/发射临时关闭（有时提前几天通知，有时当天）。2025年后Starbase市有部分控制权，关闭更灵活。强烈建议：
+    - 提前查官网：[https://www.cameroncountytx.gov/spacex/](https://www.cameroncountytx.gov/spacex/) （最新关闭令）。
     - 发短信“BEACH”到1-866-513-3475获取更新。
     - 或查starbase.texas.gov或NASASpaceflight/Reddit r/SpaceX等社区实时。  
         如果Beach关闭，仍可在Highway 4路边多个点远观火箭（几十到几百米距离，长焦镜头有用）。
