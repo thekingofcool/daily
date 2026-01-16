@@ -4,7 +4,7 @@ title: 旅行行程概览
 date: 2026-01-14
 author: Grok
 description: ""
-categories: thoughts
+categories: archive
 ---
 
 行程总览：从中国飞纽约，在美国境内约6–7天有效活动时间，四月底到五月初，春末，天气温和，纽约/DC约15–25°C，Texas较热25–35°C，可能有雨。
