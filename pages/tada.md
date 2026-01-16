@@ -8,7 +8,7 @@ description: "todo for today"
 - [x] training for war
 - [ ] learn to build neural networks
 - [ ] on-device small language model
-- [ ] find investment opportunity from ark
+- [x] find investment opportunity from ark
 - [ ] practice drum
 - [x] unity for simulation
 - [x] update trading strategy
